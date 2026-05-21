@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 220" role="img" aria-label="Colorado">
+  <title>Colorado</title>
+  <defs>
+    
+    <clipPath id="co-sun-clip">
+      <circle cx="148" cy="110" r="44"></circle>
+    </clipPath>
+  </defs>
+
+  
+  <path d="M 196 36&#xA;       A 76 76 0 0 0 72 110&#xA;       L 110 110&#xA;       A 38 38 0 0 1 168 73&#xA;       Z" fill="#BF0A30"></path>
+
+  
+  <path d="M 196 184&#xA;       A 76 76 0 0 1 72 110&#xA;       L 110 110&#xA;       A 38 38 0 0 0 168 147&#xA;       Z" fill="#002F87"></path>
+
+  
+  <circle cx="148" cy="110" r="44" fill="#FFD700" stroke="#FFFFFF" stroke-width="3"></circle>
+
+  
+  <g clip-path="url(#co-sun-clip)">
+    
+    <path d="M 96 162&#xA;         L 130 80&#xA;         L 148 130&#xA;         L 130 162&#xA;         Z" fill="#7A8B3E"></path>
+    
+    <path d="M 130 162&#xA;         L 148 110&#xA;         L 174 80&#xA;         L 200 162&#xA;         Z" fill="#1F3461"></path>
+  </g>
+
+  
+  <path d="M 56 196&#xA;       L 14 196&#xA;       L 30 168&#xA;       L 18 168&#xA;       L 32 142&#xA;       L 22 142&#xA;       L 38 116&#xA;       L 28 116&#xA;       L 42 92&#xA;       L 32 92&#xA;       L 50 64&#xA;       L 68 92&#xA;       L 58 92&#xA;       L 72 116&#xA;       L 62 116&#xA;       L 78 142&#xA;       L 68 142&#xA;       L 82 168&#xA;       L 70 168&#xA;       L 86 196&#xA;       L 56 196&#xA;       Z" fill="#1F5B2A"></path>
+</svg>

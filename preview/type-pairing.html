@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<link rel="stylesheet" href="../components.css">
+<style>
+  html { font-size: 16px; }
+  body { margin: 0; padding: 32px 40px; background: hsl(var(--background)); min-height: 100vh; display: flex; align-items: center; justify-content: center; gap: 48px; }
+  .col { display: flex; flex-direction: column; gap: 12px; }
+  .col .lbl { font: 600 10px/1 var(--font-body); letter-spacing: 0.2em; text-transform: uppercase; color: hsl(var(--muted-foreground)); }
+  .col .meta { font: 400 13px/1.4 var(--font-body); color: hsl(var(--muted-foreground)); }
+  .brand-block .word { font: 400 64px/1 var(--font-brand); letter-spacing: 0.04em; color: hsl(var(--foreground)); }
+  .ui-block .word { font: 800 64px/1 var(--font-display); letter-spacing: -0.035em; color: hsl(var(--foreground)); }
+  .divider { width: 1px; align-self: stretch; background: hsl(var(--border)); }
+  .swatch-letters { display: flex; gap: 10px; align-items: baseline; }
+  .swatch-letters span { font-size: 28px; color: hsl(var(--foreground) / 0.7); }
+  .swatch-letters .heavy { font-weight: 800; }
+  .swatch-letters .reg { font-weight: 400; }
+  .swatch-letters .ital { font-style: italic; }
+</style>
+</head>
+<body>
+  <div class="col brand-block">
+    <span class="lbl">Brand display</span>
+    <span class="word">ACTZ</span>
+    <span class="meta">Ethnocentric · 400 / italic 400<br>Wordmark + hero accents only</span>
+  </div>
+  <div class="divider"></div>
+  <div class="col ui-block">
+    <span class="lbl">UI / display</span>
+    <span class="word">Manrope</span>
+    <div class="swatch-letters" style="font-family: var(--font-display)">
+      <span class="reg">300</span>
+      <span style="font-weight: 400">400</span>
+      <span style="font-weight: 500">500</span>
+      <span style="font-weight: 600">600</span>
+      <span style="font-weight: 700">700</span>
+      <span class="heavy">800</span>
+    </div>
+    <span class="meta">Manrope · 300–800<br>All UI body + headings</span>
+  </div>
+</body>
+</html>

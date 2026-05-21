@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  html { font-size: 16px; }
+  body { margin: 0; padding: 24px; background: hsl(var(--background)); min-height: 100vh; display: flex; align-items: center; gap: 18px; }
+  .swatch { flex: 1; border-radius: 18px; padding: 18px 20px; min-height: 168px; display: flex; flex-direction: column; justify-content: space-between; border: 1px solid hsl(var(--border)); position: relative; overflow: hidden; }
+  .swatch .name { font: 700 17px/1.1 var(--font-display); letter-spacing: -0.01em; }
+  .swatch .pms  { font: 500 10px/1 var(--font-body); letter-spacing: 0.18em; text-transform: uppercase; opacity: 0.7; margin-top: 2px; }
+  .swatch .hex  { font: 600 12px/1 var(--font-body); opacity: 0.85; letter-spacing: 0.04em; }
+  .swatch .hsl  { font: 400 10px/1.3 var(--font-body); opacity: 0.6; font-variant-numeric: tabular-nums; }
+  .navy { background: hsl(var(--co-navy-deep)); color: hsl(var(--foreground)); }
+  .blue { background: hsl(var(--co-blue)); color: white; }
+  .red  { background: hsl(var(--co-red)); color: white; }
+  .gold { background: hsl(var(--co-gold)); color: hsl(215 60% 8%); }
+</style>
+</head>
+<body>
+  <div class="swatch navy">
+    <div>
+      <div class="name">Navy Deep</div>
+      <div class="pms">Canvas</div>
+    </div>
+    <div>
+      <div class="hex">#04080F</div>
+      <div class="hsl">hsl(215 60% 5%)</div>
+    </div>
+  </div>
+  <div class="swatch blue">
+    <div>
+      <div class="name">Flag Blue</div>
+      <div class="pms">PMS 287 · Secondary</div>
+    </div>
+    <div>
+      <div class="hex">#2D7AF5</div>
+      <div class="hsl">hsl(215 95% 58%)</div>
+    </div>
+  </div>
+  <div class="swatch red">
+    <div>
+      <div class="name">Flag Red</div>
+      <div class="pms">PMS 200 · Primary</div>
+    </div>
+    <div>
+      <div class="hex">#DE124E</div>
+      <div class="hsl">hsl(348 85% 47%)</div>
+    </div>
+  </div>
+  <div class="swatch gold">
+    <div>
+      <div class="name">Flag Gold</div>
+      <div class="pms">PMS 116 · Accent</div>
+    </div>
+    <div>
+      <div class="hex">#F1C923</div>
+      <div class="hsl">hsl(48 95% 55%)</div>
+    </div>
+  </div>
+</body>
+</html>

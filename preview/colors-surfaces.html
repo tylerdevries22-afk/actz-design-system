@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  html { font-size: 16px; }
+  body { margin: 0; padding: 24px; background: hsl(var(--background)); min-height: 100vh; display: flex; align-items: center; gap: 14px; }
+  .swatch { flex: 1; border-radius: 16px; padding: 14px 16px; min-height: 132px; display: flex; flex-direction: column; justify-content: space-between; border: 1px solid hsl(var(--border)); color: hsl(var(--foreground)); }
+  .swatch .lbl { font: 700 13px/1 var(--font-display); letter-spacing: -0.005em; }
+  .swatch .tok { font: 500 10px/1 var(--font-body); letter-spacing: 0.12em; text-transform: uppercase; color: hsl(var(--muted-foreground)); margin-top: 2px; }
+  .swatch .hex { font: 600 11px/1 var(--font-body); color: hsl(var(--foreground) / 0.7); }
+  .s1 { background: hsl(var(--co-navy-deep)); }
+  .s2 { background: hsl(var(--co-navy)); }
+  .s3 { background: hsl(var(--co-navy-soft)); }
+  .s4 { background: hsl(215 35% 12%); }
+  .s5 { background: hsl(var(--co-stroke)); }
+  .border-only { background: hsl(var(--co-navy-deep)); border: 1px dashed hsl(var(--border)); }
+  .border-only .lbl { color: hsl(var(--foreground) / 0.9); }
+</style>
+</head>
+<body>
+  <div class="swatch s1">
+    <div><div class="lbl">background</div><div class="tok">--background</div></div>
+    <div class="hex">215 60% 5%</div>
+  </div>
+  <div class="swatch s2">
+    <div><div class="lbl">popover</div><div class="tok">--popover</div></div>
+    <div class="hex">215 55% 9%</div>
+  </div>
+  <div class="swatch s3">
+    <div><div class="lbl">card</div><div class="tok">--card</div></div>
+    <div class="hex">215 45% 14%</div>
+  </div>
+  <div class="swatch s4">
+    <div><div class="lbl">muted</div><div class="tok">--muted</div></div>
+    <div class="hex">215 35% 12%</div>
+  </div>
+  <div class="swatch s5">
+    <div><div class="lbl">border</div><div class="tok">--border / --input</div></div>
+    <div class="hex">215 30% 22%</div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>ACTZ · Onboarding flow</title>
+<link rel="icon" href="../../assets/brand/favicon.svg">
+<link rel="stylesheet" href="../../colors_and_type.css">
+<link rel="stylesheet" href="../../components.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+  body { margin: 0; background: hsl(var(--background)); min-height: 100vh; padding: 56px 32px 80px; }
+  .header { max-width: 920px; margin: 0 auto 44px; text-align: center; }
+  .header .eyebrow { font: 600 10px/1 var(--font-body); letter-spacing: 0.28em; text-transform: uppercase; color: hsl(var(--primary)); display: inline-flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .header .eyebrow::before, .header .eyebrow::after { content: ''; width: 28px; height: 1px; background: hsl(var(--primary)); }
+  .header h1 { margin: 0 auto; max-width: 22ch; font: 700 clamp(32px, 4.2vw, 50px)/1.05 var(--font-display); letter-spacing: -0.03em; color: hsl(var(--foreground)); text-wrap: balance; }
+  .header p  { margin: 14px auto 0; max-width: 56ch; font: 400 15px/1.55 var(--font-body); color: hsl(var(--foreground) / 0.7); }
+
+  .stage { display: flex; gap: 56px; justify-content: center; align-items: flex-start; flex-wrap: wrap; }
+  .device-col { display: flex; flex-direction: column; align-items: center; gap: 18px; }
+  .device-frame-wrap { width: 290px; height: 630px; position: relative; }
+  .device-frame-wrap > div { transform: scale(0.72); transform-origin: top left; position: absolute; top: 0; left: 0; }
+  .stage-label { font: 600 10px/1 var(--font-body); letter-spacing: 0.22em; text-transform: uppercase; color: hsl(var(--muted-foreground)); }
+  .stage-label .num { color: hsl(var(--primary)); margin-right: 8px; font-variant-numeric: tabular-nums; }
+
+  /* stepper sidebar */
+  .stepper {
+    display: flex; flex-direction: column; gap: 4px;
+    padding: 24px;
+    min-width: 296px; max-width: 320px;
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+    border-radius: 22px;
+    box-shadow: 0 24px 60px -24px rgba(0,0,0,0.5);
+  }
+  .stepper .kicker { font: 600 10px/1 var(--font-body); letter-spacing: 0.22em; text-transform: uppercase; color: hsl(var(--primary)); margin-bottom: 10px; }
+  .stepper h3 { margin: 0 0 6px; font: 700 19px/1.15 var(--font-display); letter-spacing: -0.02em; color: hsl(var(--foreground)); }
+  .stepper p  { margin: 0 0 14px; font: 400 13px/1.5 var(--font-body); color: hsl(var(--foreground) / 0.6); }
+  .step-list { display: flex; flex-direction: column; gap: 4px; }
+  .step-list button {
+    text-align: left; padding: 11px 12px; border-radius: 12px;
+    background: transparent; border: 1px solid transparent;
+    color: hsl(var(--foreground) / 0.78); cursor: pointer;
+    font: 500 13px/1.2 var(--font-body);
+    display: flex; align-items: center; gap: 12px;
+    transition: all 220ms var(--ease-out-expo);
+  }
+  .step-list button:hover { background: rgba(255,255,255,0.03); color: hsl(var(--foreground)); }
+  .step-list button[data-active="true"] {
+    background: hsl(var(--primary) / 0.10);
+    border-color: hsl(var(--primary) / 0.55);
+    color: hsl(var(--foreground));
+  }
+  .step-list .num {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid hsl(var(--border));
+    display: inline-flex; align-items: center; justify-content: center;
+    font: 700 10px/1 var(--font-body);
+    color: hsl(var(--foreground) / 0.7); flex-shrink: 0;
+    font-variant-numeric: tabular-nums;
+  }
+  .step-list button[data-active="true"] .num {
+    background: hsl(var(--primary));
+    border-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+    box-shadow: 0 0 12px hsl(var(--primary) / 0.5);
+  }
+  .step-list button[data-done="true"] .num {
+    background: hsl(var(--primary) / 0.18);
+    border-color: hsl(var(--primary) / 0.45);
+    color: hsl(var(--primary));
+  }
+  .stepper .meta-label { display: block; font-weight: 600; }
+  .stepper .meta-sub { display: block; font: 400 11px/1.35 var(--font-body); color: hsl(var(--foreground) / 0.55); margin-top: 2px; }
+  .stepper .hint {
+    margin-top: 14px; padding-top: 14px;
+    border-top: 1px solid hsl(var(--border));
+    font: 500 10px/1.5 var(--font-body); letter-spacing: 0.14em;
+    text-transform: uppercase; color: hsl(var(--foreground) / 0.5);
+  }
+  .nav-pager {
+    display: flex; gap: 8px; margin-top: 18px;
+  }
+  .nav-pager button {
+    flex: 1; padding: 10px 14px; border-radius: 12px;
+    background: rgba(255,255,255,0.04); border: 1px solid hsl(var(--border));
+    color: hsl(var(--foreground) / 0.85);
+    font: 600 12px/1 var(--font-body); letter-spacing: -0.005em;
+    cursor: pointer;
+    transition: all 220ms var(--ease-out-expo);
+  }
+  .nav-pager button:hover { border-color: hsl(var(--foreground) / 0.3); color: hsl(var(--foreground)); }
+  .nav-pager button:disabled { opacity: 0.3; cursor: not-allowed; }
+  .nav-pager .pri { background: hsl(var(--primary)); border-color: hsl(var(--primary)); color: hsl(var(--primary-foreground)); }
+  .nav-pager .pri:hover { background: hsl(var(--primary) / 0.9); }
+
+  /* ============================================================
+     Onboarding-specific motion + landing-page DNA, scoped to the
+     phone-frame interior. Mirrors marketing/index.html visual
+     vocabulary at phone scale.
+     ============================================================ */
+
+  /* tilted infinite marquee — mini variant for phone */
+  .onb-marquee {
+    position: relative; overflow: hidden;
+    height: 112px;
+    perspective: 900px;
+    transform-style: preserve-3d;
+  }
+  .onb-marquee .track {
+    display: flex; gap: 12px;
+    width: max-content;
+    will-change: transform;
+    transform-style: preserve-3d;
+  }
+  .onb-marquee.top    .track { transform: rotateX(10deg);  animation: onbMarq 32s linear infinite; }
+  .onb-marquee.bot    .track { transform: rotateX(-10deg); animation: onbMarqRev 38s linear infinite; }
+  .onb-marquee:hover  .track { animation-play-state: paused; }
+  .onb-marquee .card  {
+    flex-shrink: 0; width: 96px; height: 96px;
+    border-radius: 18px; overflow: hidden;
+    box-shadow: 0 16px 32px -10px rgba(0,0,0,0.55);
+    border: 1px solid rgba(255,255,255,0.10);
+  }
+  .onb-marquee .card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .onb-marquee::before, .onb-marquee::after {
+    content: ''; position: absolute; top: 0; bottom: 0; width: 36px; z-index: 2; pointer-events: none;
+  }
+  .onb-marquee::before { left: 0;  background: linear-gradient(to right, hsl(var(--background)) 0%, transparent 100%); }
+  .onb-marquee::after  { right: 0; background: linear-gradient(to left,  hsl(var(--background)) 0%, transparent 100%); }
+  @keyframes onbMarq    { from { translate: 0 }   to { translate: -50% } }
+  @keyframes onbMarqRev { from { translate: -50% } to { translate: 0 } }
+
+  /* italic gradient accent — matches landing .accent */
+  .onb-accent {
+    font-style: italic;
+    background: linear-gradient(135deg,
+      hsl(var(--primary-light)) 0%,
+      hsl(var(--primary))       55%,
+      hsl(var(--secondary))     100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+
+  /* hero-badge mini — pill + note in glass */
+  .onb-hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 4px 12px 4px 4px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.04);
+    backdrop-filter: blur(40px) saturate(140%);
+    -webkit-backdrop-filter: blur(40px) saturate(140%);
+    border: 1px solid rgba(255,255,255,0.10);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+  }
+  .onb-hero-badge .pill {
+    background: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+    padding: 4px 10px; border-radius: 999px;
+    font: 700 9px/1 var(--font-body);
+    letter-spacing: 0.12em; text-transform: uppercase;
+  }
+  .onb-hero-badge .note {
+    font: 500 12px/1 var(--font-body);
+    color: rgba(255,255,255,0.9);
+    white-space: nowrap;
+    padding-right: 2px;
+  }
+
+  /* fade-in on screen mount */
+  @keyframes onbFadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .onb-anim     { animation: onbFadeUp 540ms var(--ease-out-expo) both; }
+  .onb-anim-1   { animation-delay: 60ms; }
+  .onb-anim-2   { animation-delay: 140ms; }
+  .onb-anim-3   { animation-delay: 220ms; }
+  .onb-anim-4   { animation-delay: 300ms; }
+
+  /* pulse for active-state ring */
+  @keyframes onbPulse { 0%, 100% { box-shadow: 0 0 0 0 hsl(var(--primary) / 0.55); } 50% { box-shadow: 0 0 0 8px hsl(var(--primary) / 0); } }
+
+  /* phone-scoped category pill mirror */
+  .onb-genre-pill {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 9px 14px 9px 12px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.10);
+    color: rgba(255,255,255,0.92);
+    font: 500 13px/1 var(--font-body);
+    cursor: pointer; white-space: nowrap;
+    transition: all 240ms var(--ease-out-expo);
+  }
+  .onb-genre-pill:hover {
+    background: hsl(var(--primary) / 0.15);
+    border-color: hsl(var(--primary) / 0.55);
+    transform: translateY(-1px);
+  }
+  .onb-genre-pill[data-on="true"] {
+    background: hsl(var(--primary));
+    border-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+    box-shadow: 0 6px 18px -4px hsl(var(--primary) / 0.55);
+    transform: scale(0.98);
+  }
+
+  /* status-pill (landing-page variant) */
+  .onb-status-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 10px; border-radius: 999px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.10);
+    color: rgba(255,255,255,0.85);
+    font: 700 9px/1 var(--font-body);
+    letter-spacing: 0.12em; text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .onb-status-pill .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: hsl(var(--accent));
+    box-shadow: 0 0 8px hsl(var(--accent));
+  }
+</style>
+</head>
+<body>
+
+<div class="header" data-screen-label="00 Header">
+  <div class="eyebrow">Onboarding · flow prototype</div>
+  <h1>Six taps to a personalized first trip.</h1>
+  <p>Welcome → interests → destination → travel mode → notifications → ready. Tap any step on the right to jump to it. Selections persist as you move.</p>
+</div>
+
+<div class="stage" id="stage"></div>
+
+<script type="text/babel" src="ios-frame.jsx"></script>
+<script type="text/babel" src="Data.jsx"></script>
+<script type="text/babel" src="Onboarding.jsx"></script>
+<script type="text/babel">
+  const { IOSDevice, OnboardingFlow } = window;
+  const STEP_LABELS = [
+    { id: 0, label: 'Welcome',       sub: 'Brand splash + start CTA' },
+    { id: 1, label: 'Interests',     sub: 'Multi-select category chips' },
+    { id: 2, label: 'Destination',   sub: '4-tile photo picker + search' },
+    { id: 3, label: 'Travel mode',   sub: 'Solo · Crew · Family' },
+    { id: 4, label: 'Notifications', sub: 'iOS permission ask · contextual' },
+    { id: 5, label: 'You\u2019re in',sub: 'Confirmation + start app' },
+  ];
+
+  function App() {
+    const [step, setStep] = React.useState(0);
+    const [picks, setPicks] = React.useState(['Hiking', 'Camping', 'Hot springs']);
+    const [picked, setPicked] = React.useState('Aspen');
+    const [mode, setMode] = React.useState('crew');
+
+    const go = (s) => setStep(s);
+    const back = () => setStep(Math.max(0, step - 1));
+    const next = () => setStep(Math.min(5, step + 1));
+    const total = 6;
+
+    const screens = {
+      0: <WelcomeStep go={go} total={total} />,
+      1: <InterestsStep go={go} back={back} total={total} picks={picks} setPicks={setPicks} />,
+      2: <WhereStep go={go} back={back} total={total} picked={picked} setPicked={setPicked} />,
+      3: <CrewStep go={go} back={back} total={total} mode={mode} setMode={setMode} />,
+      4: <NotifyStep go={go} back={back} total={total} />,
+      5: <DoneStep go={go} back={back} total={total} picks={picks} picked={picked} mode={mode} />,
+    };
+
+    return (
+      <React.Fragment>
+        <div className="device-col" data-screen-label={`0${step+1} ${STEP_LABELS[step].label}`}>
+          <div className="device-frame-wrap">
+            <div>
+              <IOSDevice width={402} height={874} dark={true}>
+                {screens[step]}
+              </IOSDevice>
+            </div>
+          </div>
+          <div className="stage-label">
+            <span className="num">{String(step+1).padStart(2,'0')}</span>
+            {STEP_LABELS[step].label} · step {step+1} of 6
+          </div>
+        </div>
+
+        <aside className="stepper">
+          <div className="kicker">Walk the flow</div>
+          <h3>Six steps, 60 seconds</h3>
+          <p>Tap a step to jump. Your selections persist as you move through the flow.</p>
+          <div className="step-list">
+            {STEP_LABELS.map(s => (
+              <button
+                key={s.id}
+                data-active={s.id === step}
+                data-done={s.id < step}
+                onClick={() => setStep(s.id)}
+              >
+                <span className="num">{String(s.id + 1).padStart(2,'0')}</span>
+                <span style={{ flex: 1 }}>
+                  <span className="meta-label">{s.label}</span>
+                  <span className="meta-sub">{s.sub}</span>
+                </span>
+              </button>
+            ))}
+          </div>
+          <div className="nav-pager">
+            <button onClick={back} disabled={step === 0}>← Back</button>
+            <button className="pri" onClick={next} disabled={step === 5}>Next →</button>
+          </div>
+          <div className="hint">Or tap inside the phone to advance.</div>
+        </aside>
+      </React.Fragment>
+    );
+  }
+
+  ReactDOM.createRoot(document.getElementById('stage')).render(<App />);
+</script>
+</body>
+</html>

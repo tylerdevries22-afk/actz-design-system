@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ACTZ for Georgetown · Destination OS for mountain towns</title>
+<meta name="description" content="Tourism infrastructure for Georgetown, Colorado. AI itinerary generation, real-time KPIs, multi-town alliance. From $499/month.">
+<link rel="icon" href="../assets/brand/favicon.svg">
+<link rel="stylesheet" href="../colors_and_type.css">
+<link rel="stylesheet" href="../components.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  html, body { overflow-x: hidden; }
+  body { margin: 0; }
+  [data-lucide] { width: 16px; height: 16px; stroke-width: 2; flex-shrink: 0; }
+
+  /* ============================== NAV ============================== */
+  .nav-shell { position: fixed; top: 14px; left: 50%; transform: translateX(-50%); width: min(1140px, calc(100vw - 24px)); z-index: 50; }
+  .nav-inner { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 8px 8px 18px; border-radius: 999px; }
+  .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .nav-brand img { height: 26px; }
+  .nav-brand .pill { font: 600 9px/1 var(--font-body); letter-spacing: 0.22em; text-transform: uppercase; color: hsl(var(--primary)); padding: 4px 10px; border: 1px solid hsl(var(--primary) / 0.4); border-radius: 999px; white-space: nowrap; }
+  .nav-links { display: flex; gap: 0; }
+  .nav-links a { padding: 8px 14px; font: 500 13px/1 var(--font-body); color: hsl(var(--foreground) / 0.75); text-decoration: none; border-radius: 999px; transition: all 200ms; }
+  .nav-links a:hover { color: hsl(var(--foreground)); background: hsl(var(--foreground) / 0.06); }
+  @media (max-width: 760px) { .nav-links { display: none; } }
+
+  /* ============================== HERO ============================== */
+  .hero { position: relative; min-height: 92vh; padding: 130px 24px 80px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; overflow: hidden; }
+  .hero-bg { position: absolute; inset: 0; z-index: 0; }
+  .hero-bg img { width: 100%; height: 100%; object-fit: cover; opacity: 0.35; }
+  .hero-bg::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, hsl(var(--background) / 0.4) 0%, hsl(var(--background) / 0.85) 60%, hsl(var(--background)) 100%), radial-gradient(60% 50% at 50% 50%, hsl(var(--primary) / 0.18) 0%, transparent 60%); }
+  .hero-inner { position: relative; z-index: 1; max-width: 920px; }
+  .hero .eyebrow { display: inline-flex; align-items: center; gap: 10px; padding: 6px 14px; border-radius: 999px; background: hsl(215 60% 6% / 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid hsl(var(--border)); margin-bottom: 26px; font: 600 11px/1 var(--font-body); letter-spacing: 0.2em; text-transform: uppercase; color: hsl(var(--accent)); }
+  .hero .eyebrow::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: hsl(var(--accent)); box-shadow: 0 0 8px hsl(var(--accent)); }
+  .hero h1 { margin: 0; font: 800 clamp(40px, 7vw, 92px)/1 var(--font-display); letter-spacing: -0.04em; text-wrap: balance; color: hsl(var(--foreground)); }
+  .hero h1 span { font-style: italic; padding-right: 0.18em; margin-right: -0.08em; background: linear-gradient(95deg, hsl(var(--co-gold)) 0%, hsl(var(--co-red)) 50%, hsl(var(--co-blue-light)) 80%, hsl(var(--co-blue)) 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; }
+  .hero p.lead { margin: 28px auto 0; max-width: 60ch; font: 400 clamp(15px, 1.4vw, 19px)/1.55 var(--font-body); color: hsl(var(--foreground) / 0.85); }
+  .hero .ctas { margin-top: 36px; display: inline-flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+  .hero .scroll-cue { margin-top: 56px; font: 600 10px/1 var(--font-body); letter-spacing: 0.22em; text-transform: uppercase; color: hsl(var(--foreground) / 0.5); display: inline-flex; align-items: center; gap: 8px; }
+  .hero .scroll-cue::after { content: ''; width: 1px; height: 28px; background: hsl(var(--foreground) / 0.3); margin-left: 4px; animation: drop 2s ease-in-out infinite; transform-origin: top; }
+  @keyframes drop { 0%, 100% { transform: scaleY(0.4); opacity: 0.4; } 50% { transform: scaleY(1); opacity: 1; } }
+
+  /* ============================== KPI STRIP ============================== */
+  .kpi-section { padding: 0 24px 80px; }
+  .kpi-strip { max-width: 1100px; margin: 0 auto; padding: 22px 28px; background: hsl(var(--card)); border: 1px solid hsl(var(--border)); border-radius: 24px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; }
+  @media (max-width: 720px) { .kpi-strip { grid-template-columns: repeat(2, 1fr); gap: 22px; padding: 24px; } }
+  .kpi-strip .item { display: flex; flex-direction: column; gap: 4px; padding-right: 22px; position: relative; }
+  .kpi-strip .item + .item::before { content: ''; position: absolute; left: -14px; top: 6px; bottom: 6px; width: 1px; background: hsl(var(--border)); }
+  @media (max-width: 720px) { .kpi-strip .item + .item::before { display: none; } }
+  .kpi-strip .v { font: 800 clamp(28px, 3.5vw, 40px)/1 var(--font-display); letter-spacing: -0.03em; color: hsl(var(--foreground)); font-variant-numeric: tabular-nums; }
+  .kpi-strip .v small { font-size: 14px; font-weight: 600; color: hsl(var(--foreground) / 0.55); letter-spacing: 0; margin-left: 3px; }
+  .kpi-strip .l { font: 500 10px/1.3 var(--font-body); letter-spacing: 0.18em; text-transform: uppercase; color: hsl(var(--muted-foreground)); margin-top: 4px; }
+
+  /* ============================== SECTION HEADERS ============================== */
+  section.body { padding: 80px 24px; max-width: 1140px; margin: 0 auto; }
+  .section-eyebrow { font: 600 11px/1 var(--font-body); letter-spacing: 0.24em; text-transform: uppercase; color: hsl(var(--accent)); margin-bottom: 18px; display: flex; align-items: center; gap: 12px; }
+  .section-eyebrow::before { content: ''; width: 32px; height: 1px; background: hsl(var(--accent)); }
+  section h2.section-title { margin: 0 0 18px; font: 700 clamp(34px, 4.6vw, 56px)/1.05 var(--font-display); letter-spacing: -0.03em; color: hsl(var(--foreground)); max-width: 20ch; text-wrap: balance; }
+  section p.section-lead { margin: 0; font: 400 17px/1.6 var(--font-body); color: hsl(var(--foreground) / 0.75); max-width: 58ch; }
+
+  /* ============================== TIERS ============================== */
+  .tiers-grid { margin-top: 48px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; align-items: stretch; }
+  @media (max-width: 920px) { .tiers-grid { grid-template-columns: 1fr; } }
+  .tier-card {
+    position: relative;
+    padding: 28px 26px 26px;
+    border-radius: var(--r-l);
+    border: 1px solid hsl(var(--border));
+    background: hsl(var(--card));
+    display: flex; flex-direction: column; gap: 18px;
+    transition: transform 320ms var(--ease-out-expo), border-color 320ms;
+  }
+  .tier-card:hover { transform: translateY(-4px); border-color: hsl(var(--foreground) / 0.25); }
+  .tier-card.recommended {
+    border-color: hsl(var(--primary));
+    background: hsl(var(--primary) / 0.06);
+    box-shadow: 0 0 32px hsl(var(--primary) / 0.18);
+  }
+  .tier-card .badge-rec { position: absolute; top: -12px; left: 24px; padding: 5px 14px; border-radius: 999px; background: hsl(var(--primary)); color: hsl(var(--primary-foreground)); font: 700 10px/1 var(--font-body); letter-spacing: 0.2em; text-transform: uppercase; white-space: nowrap; }
+  .tier-card .num { display: inline-flex; align-items: center; gap: 10px; font: 600 10px/1 var(--font-body); letter-spacing: 0.2em; text-transform: uppercase; color: hsl(var(--muted-foreground)); }
+  .tier-card .num .glyph { width: 26px; height: 26px; border-radius: 8px; background: hsl(var(--co-navy)); border: 1px solid hsl(var(--border)); display: inline-flex; align-items: center; justify-content: center; font: 700 13px/1 var(--font-display); color: hsl(var(--foreground)); }
+  .tier-card.recommended .num .glyph { background: hsl(var(--primary)); border-color: hsl(var(--primary)); color: hsl(var(--primary-foreground)); }
+  .tier-card h3 { margin: 0; font: 700 24px/1.1 var(--font-display); letter-spacing: -0.025em; color: hsl(var(--foreground)); }
+  .tier-card .price-block { display: flex; flex-direction: column; gap: 2px; }
+  .tier-card .price { font: 800 36px/1 var(--font-display); letter-spacing: -0.03em; color: hsl(var(--foreground)); font-variant-numeric: tabular-nums; }
+  .tier-card .price small { font-size: 16px; color: hsl(var(--foreground) / 0.55); font-weight: 600; letter-spacing: 0; margin-left: 4px; }
+  .tier-card .price-sub { font: 500 11px/1.4 var(--font-body); color: hsl(var(--muted-foreground)); letter-spacing: 0.04em; }
+  .tier-card .pitch { font: 400 14px/1.55 var(--font-body); color: hsl(var(--foreground) / 0.82); padding-bottom: 6px; border-bottom: 1px solid hsl(var(--border)); }
+  .tier-card ul.feats { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 9px; }
+  .tier-card ul.feats li { display: flex; align-items: flex-start; gap: 10px; font: 400 13.5px/1.45 var(--font-body); color: hsl(var(--foreground) / 0.88); }
+  .tier-card ul.feats li .ic { width: 22px; height: 22px; border-radius: 6px; background: hsl(var(--co-blue) / 0.18); color: hsl(var(--co-blue-light)); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+  .tier-card ul.feats li .ic [data-lucide] { width: 12px; height: 12px; stroke-width: 2.25; }
+  .tier-card ul.feats li b { font-weight: 600; color: hsl(var(--foreground)); }
+  .tier-card .tier-cta { margin-top: auto; padding-top: 8px; }
+  .tier-card .tier-cta button {
+    width: 100%; padding: 13px 18px; border-radius: 999px;
+    font: 600 13px/1 var(--font-body); cursor: pointer; border: 0;
+    background: transparent; color: hsl(var(--foreground));
+    border: 1px solid hsl(var(--border));
+    transition: all 200ms;
+  }
+  .tier-card .tier-cta button:hover { border-color: hsl(var(--foreground) / 0.35); background: hsl(var(--foreground) / 0.04); }
+  .tier-card.recommended .tier-cta button { background: hsl(var(--primary)); color: hsl(var(--primary-foreground)); border-color: hsl(var(--primary)); box-shadow: 0 0 20px hsl(var(--primary) / 0.3); }
+  .tier-card.recommended .tier-cta button:hover { transform: translateY(-1px); }
+
+  /* ============================== FOUNDATION ============================== */
+  .foundation-section { padding: 80px 24px; max-width: 1140px; margin: 0 auto; }
+  .foundation-card { padding: 36px 32px; border: 1px solid hsl(var(--border)); border-radius: var(--r-l); background: hsl(215 40% 8% / 0.6); }
+  .foundation-card .head { display: flex; flex-direction: column; gap: 10px; max-width: 50ch; margin-bottom: 24px; }
+  .foundation-card h2 { margin: 0; font: 700 28px/1.1 var(--font-display); letter-spacing: -0.025em; color: hsl(var(--foreground)); }
+  .foundation-card p { margin: 0; font: 400 15px/1.5 var(--font-body); color: hsl(var(--foreground) / 0.7); }
+  .foundation-card .pills { display: flex; flex-wrap: wrap; gap: 8px; }
+  .foundation-card .pill { display: inline-flex; align-items: center; gap: 7px; padding: 8px 14px; border-radius: 999px; background: rgba(255,255,255,0.04); border: 1px solid hsl(var(--border)); color: hsl(var(--foreground) / 0.9); font: 500 13px/1 var(--font-body); }
+  .foundation-card .pill [data-lucide] { width: 13px; height: 13px; color: hsl(var(--accent)); }
+
+  /* ============================== TIMELINE ============================== */
+  .timeline-section { padding: 80px 24px; max-width: 1140px; margin: 0 auto; }
+  .timeline-grid { margin-top: 40px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; position: relative; }
+  @media (max-width: 720px) { .timeline-grid { grid-template-columns: 1fr; } }
+  .timeline-grid::before { content: ''; position: absolute; left: 28px; right: 28px; top: 28px; height: 1px; background: linear-gradient(to right, transparent, hsl(var(--border)) 10%, hsl(var(--border)) 90%, transparent); z-index: 0; }
+  @media (max-width: 720px) { .timeline-grid::before { display: none; } }
+  .step { position: relative; z-index: 1; padding: 22px 22px 22px; border-radius: 18px; background: hsl(var(--card)); border: 1px solid hsl(var(--border)); }
+  .step .n { width: 44px; height: 44px; border-radius: 50%; background: hsl(var(--background)); border: 1px solid hsl(var(--border)); display: inline-flex; align-items: center; justify-content: center; font: 800 18px/1 var(--font-display); color: hsl(var(--accent)); margin-bottom: 16px; }
+  .step h4 { margin: 0 0 6px; font: 700 16px/1.2 var(--font-display); letter-spacing: -0.015em; color: hsl(var(--foreground)); }
+  .step p  { margin: 0; font: 400 13px/1.5 var(--font-body); color: hsl(var(--foreground) / 0.7); }
+  .step .when { font: 600 10px/1 var(--font-body); letter-spacing: 0.16em; text-transform: uppercase; color: hsl(var(--accent)); margin-bottom: 6px; }
+
+  /* ============================== TESTIMONY ============================== */
+  .testimony-section { padding: 80px 24px; max-width: 980px; margin: 0 auto; text-align: center; }
+  .testimony-section blockquote { margin: 0 auto; max-width: 30ch; font: 700 clamp(28px, 3.6vw, 44px)/1.2 var(--font-display); letter-spacing: -0.025em; color: hsl(var(--foreground)); text-wrap: balance; }
+  .testimony-section blockquote::before { content: '"'; display: block; font-size: 80px; line-height: 0.6; color: hsl(var(--primary)); margin-bottom: 14px; }
+  .testimony-section cite { display: block; margin-top: 28px; font: 500 12px/1.5 var(--font-body); letter-spacing: 0.16em; text-transform: uppercase; color: hsl(var(--muted-foreground)); font-style: normal; }
+  .testimony-section cite b { color: hsl(var(--foreground)); font-weight: 700; }
+
+  /* ============================== CTA ============================== */
+  .cta-block { padding: 130px 24px; text-align: center; position: relative; overflow: hidden; }
+  .cta-block::before { content: ''; position: absolute; inset: 0; background: radial-gradient(50% 70% at 50% 30%, hsl(var(--primary) / 0.22) 0%, transparent 70%); pointer-events: none; }
+  .cta-block .eyebrow { position: relative; font: 600 11px/1 var(--font-body); letter-spacing: 0.24em; text-transform: uppercase; color: hsl(var(--accent)); margin-bottom: 18px; }
+  .cta-block h2 { position: relative; margin: 0 auto; max-width: 22ch; font: 800 clamp(36px, 5.6vw, 76px)/1 var(--font-display); letter-spacing: -0.04em; color: hsl(var(--foreground)); text-wrap: balance; }
+  .cta-block p  { position: relative; margin: 24px auto 0; max-width: 46ch; font: 400 16px/1.55 var(--font-body); color: hsl(var(--foreground) / 0.78); }
+  .cta-block .actions { position: relative; margin-top: 36px; display: inline-flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+  .cta-block .actions .btn-hero { padding: 14px 22px; }
+
+  /* ============================== FOOTER ============================== */
+  footer.site-footer { padding: 40px 24px 32px; border-top: 1px solid hsl(var(--border)); }
+  .footer-inner { max-width: 1140px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start; justify-content: space-between; }
+  .footer-brand { display: flex; flex-direction: column; gap: 8px; max-width: 32ch; }
+  .footer-brand .word { font: 400 24px/1 var(--font-brand); letter-spacing: 0.04em; color: hsl(var(--foreground)); }
+  .footer-brand p { margin: 0; font: 400 12px/1.55 var(--font-body); color: hsl(var(--foreground) / 0.6); }
+  .footer-contact { display: flex; flex-direction: column; gap: 4px; font: 500 12px/1.5 var(--font-body); letter-spacing: 0.06em; text-transform: uppercase; color: hsl(var(--muted-foreground)); text-align: right; }
+  .footer-contact b { color: hsl(var(--foreground)); font-weight: 600; }
+  .footer-contact a { color: hsl(var(--accent)); text-decoration: none; }
+  .copy-row { margin-top: 24px; padding-top: 20px; border-top: 1px solid hsl(var(--border)); max-width: 1140px; margin-left: auto; margin-right: auto; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; font: 500 11px/1 var(--font-body); letter-spacing: 0.1em; text-transform: uppercase; color: hsl(var(--muted-foreground)); }
+</style>
+</head>
+<body>
+
+<!-- ============================== NAV ============================== -->
+<header class="nav-shell">
+  <div class="nav-inner liquid-glass">
+    <a class="nav-brand" href="#top">
+      <img src="../assets/brand/actz-logo-color.webp" alt="ACTZ">
+      <span class="pill">For Georgetown</span>
+    </a>
+    <nav class="nav-links">
+      <a href="#tiers">Pricing</a>
+      <a href="#foundation">What's Included</a>
+      <a href="#timeline">Launch Plan</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <a href="#contact" class="btn btn-hero" style="padding: 0.6rem 1.1rem; font-size: 13px;">Book a Walkthrough <i data-lucide="arrow-right"></i></a>
+  </div>
+</header>
+
+<!-- ============================== HERO ============================== -->
+<section id="top" class="hero" data-screen-label="01 Hero">
+  <div class="hero-bg"><img src="../assets/imagery/hero-08.webp" alt=""></div>
+  <div class="hero-inner">
+    <div class="eyebrow">Tourism infrastructure · Built in Colorado</div>
+    <h1>A destination <span>OS</span> sized for mountain towns.</h1>
+    <p class="lead">Replace the patchwork of static websites, spreadsheets, and aging visitor PDFs with one platform that books trips, tracks economic impact, and routes every traveler through Georgetown.</p>
+    <div class="ctas">
+      <a href="#tiers" class="btn btn-hero"><i data-lucide="arrow-down"></i>See pricing</a>
+      <a href="#contact" class="btn btn-hero-glass"><i data-lucide="calendar"></i>Book a 30-min walkthrough</a>
+    </div>
+    <div class="scroll-cue">Starts at $499/month · No setup</div>
+  </div>
+</section>
+
+<!-- ============================== KPI STRIP ============================== -->
+<section class="kpi-section" data-screen-label="02 KPIs">
+  <div class="kpi-strip">
+    <div class="item"><div class="v">60<small>sec</small></div><div class="l">Itinerary draft time</div></div>
+    <div class="item"><div class="v">8<small>sources</small></div><div class="l">Live activity inventory</div></div>
+    <div class="item"><div class="v">24/7</div><div class="l">AI visitor concierge</div></div>
+    <div class="item"><div class="v">$0</div><div class="l">Setup &middot; per-booking markup</div></div>
+  </div>
+</section>
+
+<!-- ============================== TIERS ============================== -->
+<section id="tiers" class="body" data-screen-label="03 Tiers">
+  <div class="section-eyebrow">Three tiers · grow when ready</div>
+  <h2 class="section-title">Pricing that scales with your visitor volume.</h2>
+  <p class="section-lead">Start with a branded hub and council-ready data for under $500/month. Add AI concierge, overtourism controls, and an embedded strategist when you're ready. Go regional when the alliance is.</p>
+
+  <div class="tiers-grid">
+
+    <!-- Tier 1 -->
+    <article class="tier-card">
+      <div class="num"><span class="glyph">1</span>Tier 01 · Starter</div>
+      <h3>Destination Starter</h3>
+      <div class="price-block">
+        <div class="price">$499<small>/mo</small></div>
+        <div class="price-sub">$5,988 / yr &middot; month-to-month available</div>
+      </div>
+      <div class="pitch">Replace your static visitor PDF. Live booking, branded hub, council-ready data in 30 days.</div>
+      <ul class="feats">
+        <li><span class="ic"><i data-lucide="globe"></i></span><span><b>Georgetown.visit.actz.com</b> branded hub</span></li>
+        <li><span class="ic"><i data-lucide="bar-chart-3"></i></span><span><b>Real-time KPI dashboard</b> — bookings &amp; revenue</span></li>
+        <li><span class="ic"><i data-lucide="map-pin"></i></span><span><b>Visitor origin reports</b> — feeder markets</span></li>
+        <li><span class="ic"><i data-lucide="dollar-sign"></i></span><span><b>Spend-per-capita</b> — hard ROI for council</span></li>
+        <li><span class="ic"><i data-lucide="clock"></i></span><span><b>Length-of-stay analytics</b></span></li>
+        <li><span class="ic"><i data-lucide="store"></i></span><span><b>All Georgetown businesses</b> listed free</span></li>
+      </ul>
+      <div class="tier-cta"><button>Start with Starter</button></div>
+    </article>
+
+    <!-- Tier 2 -->
+    <article class="tier-card recommended">
+      <span class="badge-rec">Recommended for Georgetown</span>
+      <div class="num"><span class="glyph">2</span>Tier 02 · Growth</div>
+      <h3>Growth Operating System</h3>
+      <div class="price-block">
+        <div class="price">$1,500<small>/mo</small></div>
+        <div class="price-sub">$18K / yr &middot; founding price locked for life</div>
+      </div>
+      <div class="pitch">When visitor volume justifies deeper investment. 24/7 AI concierge, marketing services, &amp; overtourism controls.</div>
+      <ul class="feats">
+        <li><span class="ic"><i data-lucide="sparkles"></i></span><span><b>24/7 AI tourism concierge</b> · no staff</span></li>
+        <li><span class="ic"><i data-lucide="activity"></i></span><span><b>Visitor flow heatmaps</b> &amp; spend zones</span></li>
+        <li><span class="ic"><i data-lucide="alert-triangle"></i></span><span><b>Carrying-capacity alerts</b></span></li>
+        <li><span class="ic"><i data-lucide="megaphone"></i></span><span><b>Emergency push broadcasts</b></span></li>
+        <li><span class="ic"><i data-lucide="repeat"></i></span><span><b>Visitor loyalty program</b></span></li>
+        <li><span class="ic"><i data-lucide="languages"></i></span><span><b>Multilingual visitor support</b></span></li>
+        <li><span class="ic"><i data-lucide="users"></i></span><span><b>Embedded strategy</b> · 1 hr/week</span></li>
+      </ul>
+      <div class="tier-cta"><button>Lock founding price</button></div>
+    </article>
+
+    <!-- Tier 3 -->
+    <article class="tier-card">
+      <div class="num"><span class="glyph">3</span>Tier 03 · Regional</div>
+      <h3>Regional Infrastructure</h3>
+      <div class="price-block">
+        <div class="price">$4,000<small>/mo</small></div>
+        <div class="price-sub">$48K / yr &middot; split across alliance towns</div>
+      </div>
+      <div class="pitch">Multi-town alliance with federal-land coordination, joint grants, cross-town pass. Best with 3+ towns.</div>
+      <ul class="feats">
+        <li><span class="ic"><i data-lucide="network"></i></span><span><b>Multi-town alliance</b> · Clear Creek County</span></li>
+        <li><span class="ic"><i data-lucide="tree-pine"></i></span><span><b>BLM / USFS / NPS</b> single window</span></li>
+        <li><span class="ic"><i data-lucide="file-text"></i></span><span><b>Joint grant pipeline</b> · GOCO / USDA</span></li>
+        <li><span class="ic"><i data-lucide="ticket"></i></span><span><b>Cross-town visitor pass</b></span></li>
+        <li><span class="ic"><i data-lucide="bus"></i></span><span><b>Georgetown Loop shuttle</b> integration</span></li>
+        <li><span class="ic"><i data-lucide="leaf"></i></span><span><b>Carbon + ESG reporting</b></span></li>
+        <li><span class="ic"><i data-lucide="code-2"></i></span><span><b>API + white-label subdomain</b></span></li>
+      </ul>
+      <div class="tier-cta"><button>Convene the alliance</button></div>
+    </article>
+
+  </div>
+</section>
+
+<!-- ============================== FOUNDATION ============================== -->
+<section id="foundation" class="foundation-section" data-screen-label="04 Foundation">
+  <div class="foundation-card">
+    <div class="head">
+      <div class="section-eyebrow" style="margin-bottom: 0">Foundation · every tier</div>
+      <h2>Ten capabilities included at every price.</h2>
+      <p>You don't pay extra for the integrations that make the platform work. AI trip generation, Stripe checkout, AllTrails + RIDB inventory, ADA compliance — all in the base price.</p>
+    </div>
+    <div class="pills">
+      <span class="pill"><i data-lucide="sparkles"></i>AI trip generation · 60s</span>
+      <span class="pill"><i data-lucide="credit-card"></i>Stripe checkout &amp; payouts</span>
+      <span class="pill"><i data-lucide="map"></i>Google Maps routing</span>
+      <span class="pill"><i data-lucide="mountain"></i>AllTrails + RIDB trails</span>
+      <span class="pill"><i data-lucide="music"></i>Ticketmaster + Eventbrite</span>
+      <span class="pill"><i data-lucide="anchor"></i>FareHarbor business import</span>
+      <span class="pill"><i data-lucide="user-cog"></i>Provider portal · role-based</span>
+      <span class="pill"><i data-lucide="bell"></i>CRM + booking alerts</span>
+      <span class="pill"><i data-lucide="image"></i>Pro photo / video CDN</span>
+      <span class="pill"><i data-lucide="accessibility"></i>ADA accessibility mode</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== TIMELINE ============================== -->
+<section id="timeline" class="timeline-section" data-screen-label="05 Timeline">
+  <div class="section-eyebrow">Launch plan</div>
+  <h2 class="section-title">Live in 30 days.</h2>
+  <p class="section-lead">From sign-off to a branded, bookable visitor experience for Georgetown. Co-designed with your team.</p>
+  <div class="timeline-grid">
+    <article class="step">
+      <div class="n">1</div>
+      <div class="when">Week 1</div>
+      <h4>Co-design kickoff</h4>
+      <p>Brand, color, voice, business import list. Council read-out scheduled.</p>
+    </article>
+    <article class="step">
+      <div class="n">2</div>
+      <div class="when">Week 2</div>
+      <h4>Import &amp; configure</h4>
+      <p>Trails, events, lodging, FareHarbor. Provider portal opens for local businesses.</p>
+    </article>
+    <article class="step">
+      <div class="n">3</div>
+      <div class="when">Week 3</div>
+      <h4>Branded hub live</h4>
+      <p>Georgetown.visit.actz.com goes live in soft launch. KPI dashboard goes hot.</p>
+    </article>
+    <article class="step">
+      <div class="n">4</div>
+      <div class="when">Week 4</div>
+      <h4>Council walkthrough</h4>
+      <p>First weekly KPI report. Marketing collateral co-branded. Public launch.</p>
+    </article>
+  </div>
+</section>
+
+<!-- ============================== TESTIMONY / VISION ============================== -->
+<section class="testimony-section" data-screen-label="06 Vision">
+  <blockquote>Make Georgetown the first town in Colorado where every visit is measured, mapped, and earned.</blockquote>
+  <cite><b>Tyler DeVries</b> · Founder &amp; CEO, ACTZ</cite>
+</section>
+
+<!-- ============================== CTA ============================== -->
+<section id="contact" class="cta-block" data-screen-label="07 CTA">
+  <div class="eyebrow">Founding partner · Q3 2026 launch window</div>
+  <h2>First town in Clear Creek County. Founding price for life.</h2>
+  <p>Co-design the roadmap with us. 30-minute walkthrough, no commitment — see Georgetown's live dashboard mockup, get a feasibility memo for council.</p>
+  <div class="actions">
+    <a href="mailto:tylerdevries22@gmail.com?subject=ACTZ%20for%20Georgetown%20-%20Council%20walkthrough" class="btn btn-hero"><i data-lucide="calendar"></i>Book a walkthrough</a>
+    <a href="mailto:tylerdevries22@gmail.com" class="btn btn-hero-glass"><i data-lucide="mail"></i>Email Tyler directly</a>
+  </div>
+</section>
+
+<!-- ============================== FOOTER ============================== -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span class="word">ACTZ</span>
+      <p>AI-powered tourism infrastructure for mountain towns. Built in Colorado.</p>
+    </div>
+    <div class="footer-contact">
+      <span><b>Tyler DeVries</b> · Founder &amp; CEO</span>
+      <a href="mailto:tylerdevries22@gmail.com">tylerdevries22@gmail.com</a>
+      <a href="https://actz.com">actz.com</a>
+    </div>
+  </div>
+  <div class="copy-row">
+    <span>© 2026 ACTZ. All rights reserved.</span>
+    <span>Prepared for Georgetown, CO · Confidential</span>
+  </div>
+</footer>
+
+<script>
+  lucide.createIcons();
+  // Smooth anchor scroll
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', (e) => {
+      const id = a.getAttribute('href');
+      if (id.length < 2) return;
+      const target = document.querySelector(id);
+      if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+    });
+  });
+</script>
+</body>
+</html>

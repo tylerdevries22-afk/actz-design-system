@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  html { font-size: 16px; }
+  body { margin: 0; padding: 22px 28px; background: hsl(var(--background)); min-height: 100vh; display: flex; flex-direction: column; gap: 18px; align-items: stretch; justify-content: center; }
+  .eyebrow { font: 600 10px/1 var(--font-body); letter-spacing: 0.22em; text-transform: uppercase; color: hsl(var(--muted-foreground)); display: inline-flex; align-items: center; gap: 10px; align-self: center; }
+  .eyebrow::before, .eyebrow::after { content: ''; width: 22px; height: 1px; background: hsl(var(--border)); }
+  .strip {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    align-items: center;
+    column-gap: 4px; padding: 16px 0;
+    border-top: 1px solid hsl(var(--border));
+    border-bottom: 1px solid hsl(var(--border));
+  }
+  .strip > span {
+    display: inline-flex; align-items: center; justify-content: center;
+    height: 28px; transition: opacity 240ms, filter 240ms;
+  }
+  .strip img {
+    max-height: 22px; max-width: 90%;
+    filter: grayscale(1) brightness(1.5);
+    opacity: 0.6;
+    transition: opacity 240ms, filter 240ms;
+  }
+  .strip span:hover img { filter: none; opacity: 1; }
+  /* per-logo height tweaks so weights read as equal */
+  .strip .colorado img { max-height: 18px; }
+  .strip .fareharbor img { max-height: 24px; }
+  .strip .cotrex img { max-height: 22px; }
+  .strip .supabase img { max-height: 18px; }
+  .strip .ridb img { max-height: 26px; }
+  .footer-line { display: flex; gap: 24px; justify-content: center; font: 500 10px/1 var(--font-body); letter-spacing: 0.16em; text-transform: uppercase; color: hsl(var(--foreground) / 0.5); }
+  .footer-line span { display: inline-flex; align-items: center; gap: 6px; }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: hsl(var(--accent)); box-shadow: 0 0 8px hsl(var(--accent) / 0.7); }
+</style>
+</head>
+<body>
+  <div class="eyebrow">Trusted partners · live inventory</div>
+  <div class="strip">
+    <span><img src="../assets/partners/apple-wordmark.svg" alt="Apple"></span>
+    <span><img src="../assets/partners/google-wordmark.svg" alt="Google"></span>
+    <span><img src="../assets/partners/stripe-wordmark.svg" alt="Stripe"></span>
+    <span><img src="../assets/partners/amadeus-wordmark.svg" alt="Amadeus"></span>
+    <span><img src="../assets/partners/ticketmaster-wordmark.svg" alt="Ticketmaster"></span>
+    <span class="fareharbor"><img src="../assets/partners/fareharbor-wordmark.png" alt="FareHarbor"></span>
+    <span><img src="../assets/partners/cloudflare-wordmark.svg" alt="Cloudflare"></span>
+    <span class="colorado"><img src="../assets/partners/colorado-wordmark.svg" alt="Colorado"></span>
+  </div>
+  <div class="footer-line">
+    <span><span class="dot"></span>Live availability</span>
+    <span><span class="dot" style="background: hsl(var(--secondary)); box-shadow: 0 0 8px hsl(var(--secondary) / 0.7)"></span>Verified providers</span>
+    <span><span class="dot" style="background: hsl(var(--primary)); box-shadow: 0 0 8px hsl(var(--primary) / 0.7)"></span>One checkout</span>
+  </div>
+</body>
+</html>

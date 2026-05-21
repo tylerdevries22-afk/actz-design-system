@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>ACTZ · Onboarding audit · psychometric rewrite</title>
+<link rel="icon" href="../assets/brand/favicon.svg">
+<link rel="stylesheet" href="../colors_and_type.css">
+<link rel="stylesheet" href="../components.css">
+<style>
+  html { font-size: 16px; }
+  body { margin: 0; background: hsl(var(--background)); color: hsl(var(--foreground)); padding: 56px 32px 96px; }
+  .doc { max-width: 1180px; margin: 0 auto; }
+
+  /* doc head */
+  .doc-head { margin-bottom: 56px; display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: end; padding-bottom: 28px; border-bottom: 1px solid hsl(var(--border)); }
+  .doc-head .eyebrow { font: 600 10px/1 var(--font-body); letter-spacing: 0.28em; text-transform: uppercase; color: hsl(var(--primary)); margin-bottom: 14px; display: inline-flex; align-items: center; gap: 10px; }
+  .doc-head .eyebrow::before { content: ''; width: 22px; height: 1px; background: hsl(var(--primary)); }
+  .doc-head h1 { margin: 0; font: 700 clamp(34px, 4vw, 52px)/1.04 var(--font-display); letter-spacing: -0.03em; max-width: 22ch; text-wrap: balance; }
+  .doc-head h1 em { font-style: italic; background: linear-gradient(135deg, hsl(var(--primary-light)) 0%, hsl(var(--primary)) 55%, hsl(var(--secondary)) 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; }
+  .doc-head .meta { display: flex; flex-direction: column; gap: 6px; font: 500 11px/1.4 var(--font-body); letter-spacing: 0.14em; text-transform: uppercase; color: hsl(var(--muted-foreground)); text-align: right; }
+  .doc-head .meta .v { color: hsl(var(--foreground)); letter-spacing: 0; text-transform: none; font: 500 13px/1 var(--font-body); }
+
+  /* section */
+  .section { padding: 56px 0; border-bottom: 1px solid hsl(var(--border)); }
+  .section:last-child { border-bottom: 0; }
+  .section h2 { margin: 0 0 10px; font: 700 30px/1.1 var(--font-display); letter-spacing: -0.025em; }
+  .section h2 .num { display: inline-block; min-width: 1.4em; color: hsl(var(--primary)); font-variant-numeric: tabular-nums; }
+  .section .sect-sub { margin: 0 0 32px; font: 400 15px/1.6 var(--font-body); color: hsl(var(--foreground) / 0.72); max-width: 70ch; }
+  .section h3 { margin: 24px 0 10px; font: 700 21px/1.2 var(--font-display); letter-spacing: -0.015em; }
+
+  /* tldr block */
+  .tldr { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin: 8px 0 0; }
+  @media (max-width: 800px) { .tldr { grid-template-columns: 1fr; } }
+  .tldr .card { background: hsl(var(--card)); border: 1px solid hsl(var(--border)); border-radius: var(--r-m); padding: 24px; }
+  .tldr .card .lbl { font: 600 10px/1 var(--font-body); letter-spacing: 0.22em; text-transform: uppercase; color: hsl(var(--primary-light)); margin-bottom: 14px; }
+  .tldr .card.b .lbl { color: hsl(var(--co-blue-light)); }
+  .tldr .card.c .lbl { color: hsl(var(--accent)); }
+  .tldr .card h3 { margin: 0 0 8px; font: 700 19px/1.2 var(--font-display); letter-spacing: -0.015em; }
+  .tldr .card p { margin: 0; font: 400 13.5px/1.55 var(--font-body); color: hsl(var(--foreground) / 0.75); }
+
+  /* dimension grid */
+  .dim-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 8px; }
+  @media (max-width: 820px) { .dim-grid { grid-template-columns: 1fr; } }
+  .dim { background: hsl(var(--card)); border: 1px solid hsl(var(--border)); border-radius: var(--r-m); padding: 26px 26px 22px; position: relative; overflow: hidden; }
+  .dim::before { content: ''; position: absolute; top: 0; left: 0; bottom: 0; width: 3px; background: hsl(var(--primary)); }
+  .dim.b::before { background: hsl(var(--secondary)); }
+  .dim.c::before { background: hsl(var(--accent)); }
+  .dim .head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 12px; }
+  .dim .head .ix { font: 700 11px/1 var(--font-body); letter-spacing: 0.22em; color: hsl(var(--muted-foreground)); font-variant-numeric: tabular-nums; }
+  .dim h4 { margin: 0; font: 700 18px/1.15 var(--font-display); letter-spacing: -0.015em; }
+  .dim p { margin: 0 0 12px; font: 400 13.5px/1.6 var(--font-body); color: hsl(var(--foreground) / 0.85); }
+  .dim .axis { display: flex; align-items: center; gap: 12px; padding: 10px 0 12px; border-top: 1px solid hsl(var(--border)); margin-top: 4px; }
+  .dim .axis .pole { font: 500 11px/1.3 var(--font-body); color: hsl(var(--foreground) / 0.75); flex: 1; }
+  .dim .axis .pole.left { text-align: left; }
+  .dim .axis .pole.right { text-align: right; }
+  .dim .axis .bar { flex: 0 0 80px; height: 4px; border-radius: 2px; background: linear-gradient(90deg, hsl(var(--co-blue-light)), hsl(var(--accent)), hsl(var(--primary))); position: relative; }
+  .dim .axis .bar::before, .dim .axis .bar::after { content: ''; position: absolute; top: -2px; width: 8px; height: 8px; border-radius: 50%; }
+  .dim .axis .bar::before { left: -2px; background: hsl(var(--co-blue-light)); }
+  .dim .axis .bar::after  { right: -2px; background: hsl(var(--primary)); }
+  .dim .src { font: 500 11px/1.4 var(--font-body); letter-spacing: 0.08em; color: hsl(var(--muted-foreground)); text-transform: uppercase; }
+  .dim .src strong { color: hsl(var(--foreground) / 0.85); font-weight: 600; }
+  .dim .powers { margin-top: 10px; padding-top: 10px; border-top: 1px dashed hsl(var(--border)); font: 500 11.5px/1.5 var(--font-body); color: hsl(var(--accent)); }
+  .dim .powers strong { color: hsl(var(--foreground)); font-weight: 600; }
+
+  /* principles list */
+  .prin { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 4px; }
+  @media (max-width: 820px) { .prin { grid-template-columns: 1fr; } }
+  .prin .row { display: flex; gap: 16px; padding: 18px 20px; background: rgba(255,255,255,0.03); border: 1px solid hsl(var(--border)); border-radius: var(--r-s); }
+  .prin .row .ix { font: 700 24px/1 var(--font-display); letter-spacing: -0.02em; color: hsl(var(--primary)); flex-shrink: 0; min-width: 32px; }
+  .prin .row h5 { margin: 0 0 4px; font: 700 14px/1.25 var(--font-display); letter-spacing: -0.01em; }
+  .prin .row p  { margin: 0; font: 400 12.5px/1.55 var(--font-body); color: hsl(var(--foreground) / 0.75); }
+
+  /* question library table */
+  .qlib { margin-top: 12px; border-top: 1px solid hsl(var(--border)); }
+  .qrow {
+    display: grid;
+    grid-template-columns: 28px 1.5fr 1fr 90px 110px 100px;
+    gap: 14px;
+    padding: 14px 6px;
+    border-bottom: 1px solid hsl(var(--border));
+    align-items: center;
+    font: 400 13px/1.5 var(--font-body);
+  }
+  .qrow.head {
+    font: 600 9.5px/1 var(--font-body);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: hsl(var(--muted-foreground));
+    padding: 14px 6px 12px;
+  }
+  .qrow .n { font: 700 12px/1 var(--font-body); color: hsl(var(--muted-foreground)); font-variant-numeric: tabular-nums; }
+  .qrow .q { color: hsl(var(--foreground)); }
+  .qrow .q .ex { display: block; font: 400 12px/1.4 var(--font-body); color: hsl(var(--foreground) / 0.55); margin-top: 4px; font-style: italic; }
+  .qrow .d { color: hsl(var(--foreground) / 0.78); font-size: 12px; }
+  .qrow .meter { display: inline-flex; gap: 2px; }
+  .qrow .meter .dot { width: 7px; height: 7px; border-radius: 50%; background: hsl(var(--border)); }
+  .qrow .meter .dot.on.s { background: hsl(var(--co-blue-light)); box-shadow: 0 0 6px hsl(var(--co-blue-light) / 0.5); }
+  .qrow .meter .dot.on.f { background: hsl(var(--accent)); box-shadow: 0 0 6px hsl(var(--accent) / 0.5); }
+  .qrow .pick { font: 700 9px/1 var(--font-body); letter-spacing: 0.16em; text-transform: uppercase; padding: 4px 8px; border-radius: 999px; display: inline-block; text-align: center; }
+  .qrow .pick.yes  { background: hsl(var(--primary)); color: hsl(var(--primary-foreground)); }
+  .qrow .pick.maybe{ background: hsl(var(--accent) / 0.18); color: hsl(var(--accent)); border: 1px solid hsl(var(--accent) / 0.5); }
+  .qrow .pick.no   { background: rgba(255,255,255,0.04); color: hsl(var(--foreground) / 0.5); border: 1px solid hsl(var(--border)); }
+  @media (max-width: 940px) {
+    .qrow { grid-template-columns: 24px 1fr 100px; }
+    .qrow .d, .qrow .meter-cell-1, .qrow .meter-cell-2 { display: none; }
+  }
+
+  /* shortlist sequence */
+  .seq { display: flex; flex-direction: column; gap: 16px; margin-top: 8px; }
+  .seq .step { background: hsl(var(--card)); border: 1px solid hsl(var(--border)); border-radius: var(--r-m); padding: 24px 26px; position: relative; }
+  .seq .step .top { display: flex; align-items: baseline; gap: 14px; margin-bottom: 8px; flex-wrap: wrap; }
+  .seq .step .n { font: 700 28px/1 var(--font-display); letter-spacing: -0.02em; color: hsl(var(--primary)); font-variant-numeric: tabular-nums; min-width: 50px; }
+  .seq .step h4 { margin: 0; font: 700 19px/1.2 var(--font-display); letter-spacing: -0.015em; flex: 1; min-width: 220px; }
+  .seq .step .meta-pills { display: flex; gap: 6px; flex-wrap: wrap; }
+  .seq .step .meta-pills span { padding: 4px 9px; border-radius: 999px; font: 700 9px/1 var(--font-body); letter-spacing: 0.14em; text-transform: uppercase; white-space: nowrap; }
+  .seq .step .meta-pills .dim-tag { background: hsl(var(--secondary) / 0.18); color: hsl(var(--co-blue-light)); border: 1px solid hsl(var(--secondary) / 0.5); }
+  .seq .step .meta-pills .time { background: rgba(255,255,255,0.04); color: hsl(var(--foreground) / 0.7); border: 1px solid hsl(var(--border)); font-variant-numeric: tabular-nums; }
+  .seq .step .wording { margin: 6px 0 12px; padding: 14px 16px; border-left: 3px solid hsl(var(--accent)); background: rgba(255,255,255,0.02); border-radius: 0 12px 12px 0; }
+  .seq .step .wording .ask { font: 600 16px/1.3 var(--font-display); letter-spacing: -0.01em; color: hsl(var(--foreground)); }
+  .seq .step .wording .opts { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; font: 400 13.5px/1.4 var(--font-body); color: hsl(var(--foreground) / 0.78); }
+  .seq .step .wording .opts span { display: flex; align-items: baseline; gap: 8px; }
+  .seq .step .wording .opts span::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: hsl(var(--primary)); margin-top: 1px; flex-shrink: 0; }
+  .seq .step .rationale { font: 400 13px/1.6 var(--font-body); color: hsl(var(--foreground) / 0.75); margin: 0 0 12px; max-width: 70ch; }
+  .seq .step .rationale strong { color: hsl(var(--foreground)); }
+  .seq .step .out { padding: 10px 14px; border-radius: var(--r-s); background: rgba(0,0,0,0.35); border: 1px dashed hsl(var(--co-blue) / 0.45); font: 500 12px/1.55 ui-monospace, "SF Mono", Menlo, monospace; color: hsl(var(--co-blue-light)); margin-top: 6px; }
+  .seq .step .out .lbl { display: block; font: 600 10px/1 var(--font-body); letter-spacing: 0.2em; text-transform: uppercase; color: hsl(var(--muted-foreground)); margin-bottom: 6px; font-family: var(--font-body); }
+
+  /* avoid list */
+  .avoid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 8px; }
+  @media (max-width: 820px) { .avoid { grid-template-columns: 1fr; } }
+  .avoid .row { padding: 18px 20px; background: rgba(255,255,255,0.03); border: 1px solid hsl(var(--border)); border-radius: var(--r-s); }
+  .avoid .row h5 { margin: 0 0 6px; display: flex; align-items: center; gap: 10px; font: 700 14px/1.25 var(--font-display); letter-spacing: -0.01em; }
+  .avoid .row h5::before { content: '×'; width: 22px; height: 22px; border-radius: 50%; background: hsl(var(--primary) / 0.18); color: hsl(var(--primary-light)); display: inline-flex; align-items: center; justify-content: center; font: 700 16px/1 var(--font-body); flex-shrink: 0; }
+  .avoid .row p { margin: 0; font: 400 12.5px/1.55 var(--font-body); color: hsl(var(--foreground) / 0.75); }
+  .avoid .row .why { display: block; margin-top: 8px; font: 500 11px/1.4 var(--font-body); color: hsl(var(--accent)); letter-spacing: 0.04em; }
+
+  /* bias rows */
+  .bias { display: flex; flex-direction: column; gap: 12px; margin-top: 8px; }
+  .bias .row { display: grid; grid-template-columns: 220px 1fr 1fr; gap: 18px; padding: 18px 0; border-bottom: 1px solid hsl(var(--border)); align-items: start; }
+  .bias .row:last-child { border-bottom: 0; }
+  .bias .name { font: 700 14px/1.2 var(--font-display); letter-spacing: -0.005em; }
+  .bias .name .sub { display: block; margin-top: 3px; font: 500 10px/1.3 var(--font-body); letter-spacing: 0.16em; text-transform: uppercase; color: hsl(var(--muted-foreground)); }
+  .bias .what, .bias .fix { font: 400 13px/1.55 var(--font-body); color: hsl(var(--foreground) / 0.82); }
+  .bias .fix { color: hsl(var(--foreground) / 0.92); }
+  .bias .fix strong { color: hsl(var(--primary-light)); font-weight: 600; }
+  @media (max-width: 820px) {
+    .bias .row { grid-template-columns: 1fr; gap: 6px; padding: 16px 0; }
+  }
+
+  /* foot */
+  .foot { margin-top: 56px; padding-top: 24px; border-top: 1px solid hsl(var(--border)); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; font: 500 11px/1.4 var(--font-body); letter-spacing: 0.1em; text-transform: uppercase; color: hsl(var(--muted-foreground)); }
+</style>
+</head>
+<body>
+<div class="doc">
+
+  <!-- ──────────────── HEAD ──────────────── -->
+  <header class="doc-head" data-screen-label="00 Doc head">
+    <div>
+      <div class="eyebrow">Onboarding · psychometric rewrite</div>
+      <h1>Read users in <em>60 seconds</em>, don't interview them for ten minutes.</h1>
+    </div>
+    <div class="meta">
+      <span>Lens · Behavioral science</span>
+      <span>Status · <span class="v">v2 audit · supersedes v1</span></span>
+      <span>Surface · Mobile onboarding</span>
+    </div>
+  </header>
+
+  <!-- ──────────────── 01 TL;DR ──────────────── -->
+  <section class="section" data-screen-label="01 TL;DR">
+    <h2><span class="num">01</span> The reframe</h2>
+    <p class="sect-sub">
+      Onboarding is not a form. It's a 60-second psychometric instrument disguised as a vibe.
+      The goal isn't to collect facts — facts are the easy part. The goal is to <strong>infer the user's
+      psychological profile from as few inputs as possible</strong>, then mirror it back so they feel seen.
+      Travel personalization that works runs on six dimensions; everything else is plumbing.
+    </p>
+    <div class="tldr">
+      <div class="card">
+        <div class="lbl">Reframe · 01</div>
+        <h3>Forced choice beats Likert</h3>
+        <p>Asking "rate your sensation seeking 1–7" returns noise. Asking "pick your perfect Saturday" between four <em>equally attractive</em> images returns signal.</p>
+      </div>
+      <div class="card b">
+        <div class="lbl">Reframe · 02</div>
+        <h3>Behavior beats attitude</h3>
+        <p>What people say they want diverges from what they book. Anchor questions on past behavior — "last big trip you took" — not future hypotheticals.</p>
+      </div>
+      <div class="card c">
+        <div class="lbl">Reframe · 03</div>
+        <h3>Identity beats demographics</h3>
+        <p>"I'm the kind of traveler who…" is a self-perception nudge that improves retention. Age, gender, occupation are weakly predictive and high-friction.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ──────────────── 02 DIMENSIONS ──────────────── -->
+  <section class="section" data-screen-label="02 Dimensions">
+    <h2><span class="num">02</span> The six dimensions that predict satisfaction</h2>
+    <p class="sect-sub">
+      From travel-motivation literature (Pearce's Travel Career Pattern, Plog's allocentric–psychocentric continuum, Yoo &amp; Gretzel), positive-psychology motives (HEMA), and general personality science (Big-Five short forms, BSSS-4 sensation seeking, maximizer–satisficer).
+      ACTZ doesn't need to measure all of Big-Five; it needs the six axes that map onto activity selection, itinerary structure, and group dynamics.
+    </p>
+
+    <div class="dim-grid">
+      <article class="dim">
+        <div class="head"><span class="ix">01</span><h4>Stimulation appetite</h4></div>
+        <p>How much novelty and arousal a person seeks. The single most predictive trait for adventure-travel apps. Stable across life, mostly genetic, but expression shifts with age.</p>
+        <div class="axis">
+          <span class="pole left">Familiar · grounded</span>
+          <span class="bar"></span>
+          <span class="pole right">Novel · intense</span>
+        </div>
+        <div class="src"><strong>Instruments:</strong> BSSS-4 · Plog allocentric–psychocentric</div>
+        <div class="powers"><strong>Powers:</strong> activity intensity ranking, difficulty filter, surprise tolerance</div>
+      </article>
+
+      <article class="dim b">
+        <div class="head"><span class="ix">02</span><h4>Cognitive style · planning</h4></div>
+        <p>Maximizers want every option compared; satisficers want a good-enough plan now. Mismatched UI causes either anxiety or boredom. Strongly predicts whether AI itineraries feel magical or threatening.</p>
+        <div class="axis">
+          <span class="pole left">Satisficer · go with the flow</span>
+          <span class="bar"></span>
+          <span class="pole right">Maximizer · weigh every option</span>
+        </div>
+        <div class="src"><strong>Instruments:</strong> Schwartz Maximization Scale · Need for Cognition</div>
+        <div class="powers"><strong>Powers:</strong> AI itinerary density, "draft for me" vs "show options"</div>
+      </article>
+
+      <article class="dim c">
+        <div class="head"><span class="ix">03</span><h4>Social orientation</h4></div>
+        <p>Energy source on a trip. Extraverts charge in crowds; introverts recover in solitude. Predicts crew vs solo, willingness to meet strangers, decision style, group-size comfort.</p>
+        <div class="axis">
+          <span class="pole left">Solitary · recharge alone</span>
+          <span class="bar"></span>
+          <span class="pole right">Communal · charge in crowds</span>
+        </div>
+        <div class="src"><strong>Instruments:</strong> TIPI Extraversion · attachment-style proxies</div>
+        <div class="powers"><strong>Powers:</strong> crew vs solo, crew-finder opt-in, group decision UX</div>
+      </article>
+
+      <article class="dim">
+        <div class="head"><span class="ix">04</span><h4>Hedonic vs eudaimonic</h4></div>
+        <p>Pleasure-seeking ("I want to feel great") vs meaning-seeking ("I want this to matter"). Travel-motivation research finds these are independent — most people are mixed, but the ratio shapes everything.</p>
+        <div class="axis">
+          <span class="pole left">Hedonic · joy, sensation</span>
+          <span class="bar"></span>
+          <span class="pole right">Eudaimonic · growth, meaning</span>
+        </div>
+        <div class="src"><strong>Instruments:</strong> HEMA scale (3 items each) · VIA curiosity strength</div>
+        <div class="powers"><strong>Powers:</strong> activity tone (party vs reflective), curation copy register</div>
+      </article>
+
+      <article class="dim b">
+        <div class="head"><span class="ix">05</span><h4>Risk tolerance</h4></div>
+        <p>Two flavours: physical (will you raft Class IV?) and financial (will you spend $1200 on one dinner?). Self-report is unreliable — measure via revealed preference between calibrated trip options.</p>
+        <div class="axis">
+          <span class="pole left">Cautious · proven · safe</span>
+          <span class="bar"></span>
+          <span class="pole right">Bold · stretch · exposed</span>
+        </div>
+        <div class="src"><strong>Instruments:</strong> DOSPERT short · revealed-choice anchor pairs</div>
+        <div class="powers"><strong>Powers:</strong> safety filter, upsell ceiling, insurance defaults</div>
+      </article>
+
+      <article class="dim c">
+        <div class="head"><span class="ix">06</span><h4>Identity &amp; commitment</h4></div>
+        <p>Self-perception theory (Bem): when a person names what kind of traveler they are, later behavior bends to match. Identity statements are the lowest-friction, highest-retention question in onboarding — they cost a second and pay for years.</p>
+        <div class="axis">
+          <span class="pole left">Tourist · trip is a one-off</span>
+          <span class="bar"></span>
+          <span class="pole right">Traveler · trip is identity</span>
+        </div>
+        <div class="src"><strong>Instruments:</strong> Bem self-perception cue · TCP traveler-career stage</div>
+        <div class="powers"><strong>Powers:</strong> long-term retention, referral propensity</div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ──────────────── 03 PRINCIPLES ──────────────── -->
+  <section class="section" data-screen-label="03 Principles">
+    <h2><span class="num">03</span> Six rules for asking</h2>
+    <p class="sect-sub">
+      The principles below come from survey methodology, behavioral economics, and a decade of mobile-onboarding A/B tests across consumer apps. Each cuts measurement error by 30–60% over the naïve version.
+    </p>
+    <div class="prin">
+      <div class="row">
+        <div class="ix">01</div>
+        <div><h5>Forced choice over Likert</h5>
+          <p>"Pick one of these two" outperforms 1–7 ratings on every metric. Eliminates acquiescence bias, scale-use bias, and decision fatigue. Calibrate the two options to be equally attractive on average.</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="ix">02</div>
+        <div><h5>Behavior, not attitude</h5>
+          <p>"How often do you hike?" beats "Do you like hiking?". Past behavior is the single best predictor of future behavior. Attitudes are aspirational and slow to update; behaviors are honest and recent.</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="ix">03</div>
+        <div><h5>Images carry signal text can't</h5>
+          <p>"Pick your perfect Saturday" with four photos extracts more variance than 10 minutes of typed answers. Vision bypasses verbal defenses and surfaces affective response.</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="ix">04</div>
+        <div><h5>Generate yeses, not noes</h5>
+          <p>Self-perception theory: positive commitments shape identity, refusals don't. Frame every question as "which of these is most you" rather than "do you do X".</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="ix">05</div>
+        <div><h5>Anchor with the first question</h5>
+          <p>The first real question sets the mental schema for everything after. Lead with an identity-anchor ("what kind of trip is this?") not a logistical detail. Logistics fold cleanly into a primed schema; the reverse does not.</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="ix">06</div>
+        <div><h5>Skip with defaults, never with blanks</h5>
+          <p>Status-quo bias means a sensible default beats an empty field every time. Every skip should record an inferred default and a "we'll ask later" flag, not a null.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ──────────────── 04 LIBRARY ──────────────── -->
+  <section class="section" data-screen-label="04 Question library">
+    <h2><span class="num">04</span> The full question library</h2>
+    <p class="sect-sub">
+      Every viable question I considered, scored on signal value (S — how much it improves the model) and friction cost (F — how much it slows the user down). The right column is the verdict: <strong style="color:hsl(var(--primary-foreground)); background: hsl(var(--primary)); padding: 2px 6px; border-radius: 4px; font-weight: 700; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase">Include</strong> in v2, <strong style="color: hsl(var(--accent)); border: 1px solid hsl(var(--accent) / 0.5); padding: 2px 6px; border-radius: 4px; font-weight: 700; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase">Maybe</strong> for later, <strong style="color: hsl(var(--foreground) / 0.5); border: 1px solid hsl(var(--border)); padding: 2px 6px; border-radius: 4px; font-weight: 700; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase">Skip</strong> for never.
+    </p>
+
+    <div class="qlib">
+      <div class="qrow head">
+        <span>#</span><span>Question</span><span>Dimension</span><span class="meter-cell-1">Signal</span><span class="meter-cell-2">Friction</span><span>Verdict</span>
+      </div>
+
+      <!-- Identity / logistics -->
+      <div class="qrow">
+        <span class="n">01</span>
+        <span class="q">Sign in (Apple · Google · email)
+          <span class="ex">2-tap auth, surfaced at step 1.</span></span>
+        <span class="d">Identity</span>
+        <span class="meter meter-cell-1"><span class="dot on s"></span><span class="dot on s"></span><span class="dot on s"></span><span class="dot on s"></span><span class="dot on s"></span></span>
+        <span class="meter meter-cell-2"><span class="dot on f"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>
+        <span class="pick yes">Include</span>
+      </div>
+      <div class="qrow">
+        <span class="n">02</span>
+        <span class="q">Where to? (destination)
+          <span class="ex">4 tiles + search; supports "surprise me".</span></span>
+        <span class="d">Logistics</span>
+        <span class="meter meter-cell-1"><span class="dot on s"></span><span class="dot on s"></span><span class="dot on s"></span><span class="dot on s"></span><span class="dot"></span></span>
+        <span class="meter meter-cell-2"><span class="dot on f"></span><span class="dot on f"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>
+        <span class="pick yes">Include</span>
+      </div>
+      <div class="qrow">
+        <span class="n">03</span>
+        <span class="q">Origin city (where you're flying from)
+          <span class="ex">Pre-fill from device locale; one tap to confirm.</span></span>
+        <span class="d">Logistics</span>
+        <span class="meter meter-cell-1"><span class="dot on s"></span><span class="dot on s"></span><span class="dot on s"></span><span class="dot on s"></span><span class="dot"></span></span>
+        <span class="meter meter-cell-2"><span class="dot on f"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>
+        <span class="pick yes">Include</span>
+      </div>
+      <div class="qrow">
+        <span class="n">04</span>
+        <span class="q">When? (date range + flexibility)
+          <span class="ex">Real picker, ±N days toggle.</span></span>
+        <span class="d">Logistics</span>
+        <span class="meter meter-cell-1"><span class="dot on s"></span><span class="dot on s"></span><span class="dot on s"></span><span class="dot on s"></span><span class="dot"></span></span>
+        <span class="meter meter-cell-2"><span class="dot on f"></span><span class="dot on f"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>
+        <span class="pick yes">Include</span>
+      </div>
+      <div class="qrow">
+        <span class="n">05</span>
+        <span class="q">Travel mode (solo / crew / family)
+          <span class="ex">With party-size sub-question.</span></span>
+        <span class="d">Social orient.</span>
+        <span class="meter meter-cell-1"><span class="dot on s"></span><span class="dot on s"></span><span class="dot on s"></span><span class="dot on s"></span><span class="dot"></span></span>
+        <span class="meter meter-cell-2"><span class="dot on f"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>
+        <span class="pick yes">Include</span>
+      </div>
+
+      <!-- Psychometric -->
+      <div class="qrow">
+        <span class="n">06</span>
+        <span class="q">"What kind of trip is this?" · 4 archetypes
+          <span class="ex">Adventure · Crew bonding · Reset · Discovery — anchor question.</span></span>
+        <span class="d">Identity + motive</span>
+        <span class="meter meter-cell-1"><span class="dot on s"></span><span class="dot on s"></span><span class="dot on s"></span><span class="dot on s"></span><span class="dot on s"></span></span>
+        <span class="meter meter-cell-2"><span class="dot on f"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>
+        <span class="pick yes">Include</span>
+      </div>
+      <div class="qrow">
+        <span class="n">07</span>
+        <span class="q">"Pick your perfect Saturday" · 4 image scenarios
+          <span class="ex">Each photo loads on stimulation × hedonic axes.</span></span>
+        <span class="d">Stimulation · hedonic</span>
+        <span class="meter meter-cell-1"><span class="dot on s"></span><span class="dot on s"></span><span class="dot on s"></span><span class="dot on s"></span><span class="dot on s"></span></span>
+        <span class="meter meter-cell-2"><span class="dot on f"></span><span class="dot on f"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>
+        <span class="pick yes">Include</span>
+      </div>
+      <div class="qrow">
+        <span class="n">08</span>
+        <span class="q">"What do you actually do?" · 6 categories with intensity
+          <span class="ex">Two-tier — Love (×3 weight) vs Open-to (×1).</span></span>
+        <span class="d">Stimulation · preference</span>
+        <span class="meter meter-cell-1"><span class="dot on s"></span><span class="dot on s"></span><span class="dot on s"></span><span class="dot on s"></span><span class="dot"></span></span>
+        <span class="meter meter-cell-2"><span class="dot on f"></span><span class="dot on f"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>
+        <span class="pick yes">Include</span>
+      </div>
+      <div class="qrow">
+        <span class="n">09</span>
+        <span class="q">"Show me 3 sample days at $/$$/$$$ — which feels right?"
+          <span class="ex">Reveals budget via comparison, not slider; defeats lying.</span></span>
+        <span class="d">Risk · financial</span>
+        <span class="meter meter-cell-1"><span class="dot on s"></span><span class="dot on s"></span><span class="dot on s"></span><span class="dot on s"></span><span class="dot on s"></span></span>
+        <span class="meter meter-cell-2"><span class="dot on f"></span><span class="dot on f"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>
+        <span class="pick yes">Include</span>
+      </div>
+      <div class="qrow">
+        <span class="n">10</span>
+        <span class="q">"On day one, would you rather…" — packed itinerary vs open day
+          <span class="ex">Forced choice on cognitive style.</span></span>
+        <span class="d">Planning style</span>
+        <span class="meter meter-cell-1"><span class="dot on s"></span><span class="dot on s"></span><span class="dot on s"></span><span class="dot on s"></span><span class="dot"></span></span>
+        <span class="meter meter-cell-2"><span class="dot on f"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>
+        <span class="pick yes">Include</span>
+      </div>
+      <div class="qrow">
+        <span class="n">11</span>
+        <span class="q">"You're the kind of traveler who…" · pick a self-statement
+          <span class="ex">Bem self-perception nudge; 4 cards.</span></span>
+        <span class="d">Identity</span>
+        <span class="meter meter-cell-1"><span class="dot on s"></span><span class="dot on s"></span><span class="dot on s"></span><span class="dot on s"></span><span class="dot"></span></span>
+        <span class="meter meter-cell-2"><span class="dot on f"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>
+        <span class="pick yes">Include</span>
+      </div>
+
+      <!-- Permissions -->
+      <div class="qrow">
+        <span class="n">12</span>
+        <span class="q">Notifications · per-category opt-in
+          <span class="ex">Polls · bookings · schedule · marketing (default off).</span></span>
+        <span class="d">Channel</span>
+        <span class="meter meter-cell-1"><span class="dot on s"></span><span class="dot on s"></span><span class="dot on s"></span><span class="dot on s"></span><span class="dot"></span></span>
+        <span class="meter meter-cell-2"><span class="dot on f"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>
+        <span class="pick yes">Include</span>
+      </div>
+      <div class="qrow">
+        <span class="n">13</span>
+        <span class="q">Location permission, paired with notifications
+          <span class="ex">Same screen; both contextual to "live trip" promise.</span></span>
+        <span class="d">Channel · permission</span>
+        <span class="meter meter-cell-1"><span class="dot on s"></span><span class="dot on s"></span><span class="dot on s"></span><span class="dot on s"></span><span class="dot"></span></span>
+        <span class="meter meter-cell-2"><span class="dot on f"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>
+        <span class="pick yes">Include</span>
+      </div>
+
+      <!-- Maybe -->
+      <div class="qrow">
+        <span class="n">14</span>
+        <span class="q">"Last big trip — how was it?" with 3 emotion words
+          <span class="ex">Reveals satisfaction baseline; calibrates AI expectations.</span></span>
+        <span class="d">Identity · history</span>
+        <span class="meter meter-cell-1"><span class="dot on s"></span><span class="dot on s"></span><span class="dot on s"></span><span class="dot"></span><span class="dot"></span></span>
+        <span class="meter meter-cell-2"><span class="dot on f"></span><span class="dot on f"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>
+        <span class="pick maybe">Maybe</span>
+      </div>
+      <div class="qrow">
+        <span class="n">15</span>
+        <span class="q">Skill comfort per top interest · 3 levels
+          <span class="ex">Asked only for picks marked "Love".</span></span>
+        <span class="d">Risk · physical</span>
+        <span class="meter meter-cell-1"><span class="dot on s"></span><span class="dot on s"></span><span class="dot on s"></span><span class="dot on s"></span><span class="dot"></span></span>
+        <span class="meter meter-cell-2"><span class="dot on f"></span><span class="dot on f"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>
+        <span class="pick maybe">Maybe</span>
+      </div>
+      <div class="qrow">
+        <span class="n">16</span>
+        <span class="q">Decision style for crew · leader / vote / async
+          <span class="ex">Only if mode = Crew or Family.</span></span>
+        <span class="d">Social · group ops</span>
+        <span class="meter meter-cell-1"><span class="dot on s"></span><span class="dot on s"></span><span class="dot on s"></span><span class="dot"></span><span class="dot"></span></span>
+        <span class="meter meter-cell-2"><span class="dot on f"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>
+        <span class="pick maybe">Maybe</span>
+      </div>
+      <div class="qrow">
+        <span class="n">17</span>
+        <span class="q">"Open to meeting other travelers?" (Solo branch)
+          <span class="ex">Yes / sometimes / no — opens crew-finder.</span></span>
+        <span class="d">Social orient.</span>
+        <span class="meter meter-cell-1"><span class="dot on s"></span><span class="dot on s"></span><span class="dot on s"></span><span class="dot"></span><span class="dot"></span></span>
+        <span class="meter meter-cell-2"><span class="dot on f"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>
+        <span class="pick maybe">Maybe</span>
+      </div>
+      <div class="qrow">
+        <span class="n">18</span>
+        <span class="q">Kids ages buckets (Family branch)
+          <span class="ex">0–4 · 5–10 · 11–17 · over 17.</span></span>
+        <span class="d">Family logistics</span>
+        <span class="meter meter-cell-1"><span class="dot on s"></span><span class="dot on s"></span><span class="dot on s"></span><span class="dot"></span><span class="dot"></span></span>
+        <span class="meter meter-cell-2"><span class="dot on f"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>
+        <span class="pick maybe">Maybe</span>
+      </div>
+      <div class="qrow">
+        <span class="n">19</span>
+        <span class="q">"How did you hear about us?" · single-tap source
+          <span class="ex">Attribution; not personalization.</span></span>
+        <span class="d">Growth</span>
+        <span class="meter meter-cell-1"><span class="dot on s"></span><span class="dot on s"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>
+        <span class="meter meter-cell-2"><span class="dot on f"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>
+        <span class="pick maybe">Maybe</span>
+      </div>
+
+      <!-- Skip -->
+      <div class="qrow">
+        <span class="n">20</span>
+        <span class="q">Age · gender · occupation
+          <span class="ex">Demographic triplet.</span></span>
+        <span class="d">Demographics</span>
+        <span class="meter meter-cell-1"><span class="dot on s"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>
+        <span class="meter meter-cell-2"><span class="dot on f"></span><span class="dot on f"></span><span class="dot on f"></span><span class="dot"></span><span class="dot"></span></span>
+        <span class="pick no">Skip</span>
+      </div>
+      <div class="qrow">
+        <span class="n">21</span>
+        <span class="q">Big-Five short form (TIPI / BFI-10)
+          <span class="ex">Validated personality battery.</span></span>
+        <span class="d">Personality</span>
+        <span class="meter meter-cell-1"><span class="dot on s"></span><span class="dot on s"></span><span class="dot on s"></span><span class="dot"></span><span class="dot"></span></span>
+        <span class="meter meter-cell-2"><span class="dot on f"></span><span class="dot on f"></span><span class="dot on f"></span><span class="dot on f"></span><span class="dot"></span></span>
+        <span class="pick no">Skip</span>
+      </div>
+      <div class="qrow">
+        <span class="n">22</span>
+        <span class="q">"What's your traveler archetype?" personality quiz · 10 questions
+          <span class="ex">Branded BuzzFeed-style.</span></span>
+        <span class="d">Identity (heavy)</span>
+        <span class="meter meter-cell-1"><span class="dot on s"></span><span class="dot on s"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>
+        <span class="meter meter-cell-2"><span class="dot on f"></span><span class="dot on f"></span><span class="dot on f"></span><span class="dot on f"></span><span class="dot on f"></span></span>
+        <span class="pick no">Skip</span>
+      </div>
+      <div class="qrow">
+        <span class="n">23</span>
+        <span class="q">Profile photo upload
+          <span class="ex">"Help your crew recognize you."</span></span>
+        <span class="d">Social signal</span>
+        <span class="meter meter-cell-1"><span class="dot on s"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>
+        <span class="meter meter-cell-2"><span class="dot on f"></span><span class="dot on f"></span><span class="dot on f"></span><span class="dot on f"></span><span class="dot"></span></span>
+        <span class="pick no">Skip</span>
+      </div>
+      <div class="qrow">
+        <span class="n">24</span>
+        <span class="q">Free-text "tell us about your dream trip"
+          <span class="ex">Open box for long-form answer.</span></span>
+        <span class="d">Identity</span>
+        <span class="meter meter-cell-1"><span class="dot on s"></span><span class="dot on s"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>
+        <span class="meter meter-cell-2"><span class="dot on f"></span><span class="dot on f"></span><span class="dot on f"></span><span class="dot on f"></span><span class="dot on f"></span></span>
+        <span class="pick no">Skip</span>
+      </div>
+      <div class="qrow">
+        <span class="n">25</span>
+        <span class="q">Dietary &amp; accessibility upfront
+          <span class="ex">"Tell us about any restrictions."</span></span>
+        <span class="d">Constraints</span>
+        <span class="meter meter-cell-1"><span class="dot on s"></span><span class="dot on s"></span><span class="dot on s"></span><span class="dot"></span><span class="dot"></span></span>
+        <span class="meter meter-cell-2"><span class="dot on f"></span><span class="dot on f"></span><span class="dot on f"></span><span class="dot"></span><span class="dot"></span></span>
+        <span class="pick no">Skip</span>
+      </div>
+    </div>
+    <p style="margin-top: 18px; font: 400 12.5px/1.6 var(--font-body); color: hsl(var(--foreground) / 0.6);">
+      Demographics, full Big-Five batteries, and personality quizzes all underperform their friction cost. They feel research-grade but produce <em>worse</em> personalization than four well-chosen forced-choice scenarios.
+      Dietary/accessibility belong at the activity-detail page (just-in-time), not in onboarding.
+    </p>
+  </section>
+
+  <!-- ──────────────── 05 SHORTLIST FLOW ──────────────── -->
+  <section class="section" data-screen-label="05 v2 flow">
+    <h2><span class="num">05</span> The v2 flow · 9 screens · 60–75 seconds</h2>
+    <p class="sect-sub">
+      Ordering matters. We anchor with identity (step 02), capture logistics on the back of that schema, then layer in two psychometric forced-choice cards while the user is still warm. Permissions land last, when value has been established.
+      Each step shows the exact ask, the dimension it scores on, the payload it produces, and why this wording over alternatives.
+    </p>
+
+    <div class="seq">
+
+      <!-- step 01 -->
+      <div class="step">
+        <div class="top">
+          <span class="n">01</span>
+          <h4>Welcome &amp; sign-in</h4>
+          <div class="meta-pills">
+            <span class="dim-tag">Identity</span>
+            <span class="time">~5s</span>
+          </div>
+        </div>
+        <div class="wording">
+          <div class="ask">"Travel intentionally. Pick how you'd like to start."</div>
+          <div class="opts">
+            <span>Continue with Apple</span>
+            <span>Continue with Google</span>
+            <span>Continue with email</span>
+          </div>
+        </div>
+        <p class="rationale">
+          <strong>Why this wording:</strong> sign-in is the price of admission to a persistent product. Burying it behind "I have an account" leaks ~40% of returning users on new devices. The lead headline anchors brand voice (manifesto, not feature-list) and the three options keep the cognitive load at one tap.
+        </p>
+        <div class="out"><span class="lbl">Payload</span>auth: "apple", user_id: "abc-123", email: "…"</div>
+      </div>
+
+      <!-- step 02 -->
+      <div class="step">
+        <div class="top">
+          <span class="n">02</span>
+          <h4>"What kind of trip is this?" — the anchor</h4>
+          <div class="meta-pills">
+            <span class="dim-tag">Identity + motive</span>
+            <span class="time">~6s</span>
+          </div>
+        </div>
+        <div class="wording">
+          <div class="ask">"What kind of trip is this?"</div>
+          <div class="opts">
+            <span>The adventure — push myself, see new terrain</span>
+            <span>The crew bond — show up for people I love</span>
+            <span>The reset — recover and slow down</span>
+            <span>The discovery — learn something I didn't know</span>
+          </div>
+        </div>
+        <p class="rationale">
+          <strong>Why this wording:</strong> the four archetypes are drawn from travel-motivation research (novelty / relationship / escape-restore / self-development) but written in plain ACTZ voice. They double as <em>anchor schema</em> — every later question is interpreted through the chosen lens. Each archetype is calibrated to feel equally desirable; no objectively "right" answer.
+        </p>
+        <div class="out"><span class="lbl">Payload</span>trip_motive: "adventure" | "crew" | "reset" | "discovery"</div>
+      </div>
+
+      <!-- step 03 -->
+      <div class="step">
+        <div class="top">
+          <span class="n">03</span>
+          <h4>Where, when, from where</h4>
+          <div class="meta-pills">
+            <span class="dim-tag">Logistics</span>
+            <span class="time">~12s</span>
+          </div>
+        </div>
+        <div class="wording">
+          <div class="ask">"Where to?" · with origin + dates in one screen</div>
+          <div class="opts">
+            <span>Destination · 4 tiles or search</span>
+            <span>From · auto-detected, one-tap confirm</span>
+            <span>Dates · real picker · "± 3 days" flexibility toggle</span>
+          </div>
+        </div>
+        <p class="rationale">
+          <strong>Why this wording:</strong> the schema set by step 02 means "Where to?" is interpreted through the motive lens — adventurers see Maroon Bells, reset-seekers see Glenwood Springs. Origin and flexibility are the highest-leverage logistical inputs; both are pre-filled to keep the tap count low.
+        </p>
+        <div class="out"><span class="lbl">Payload</span>dest: "Aspen, CO", origin: "DEN", dates: ["2026-05-22","2026-05-27"], flex_days: 3</div>
+      </div>
+
+      <!-- step 04 -->
+      <div class="step">
+        <div class="top">
+          <span class="n">04</span>
+          <h4>Travel mode + party size</h4>
+          <div class="meta-pills">
+            <span class="dim-tag">Social orientation</span>
+            <span class="time">~8s</span>
+          </div>
+        </div>
+        <div class="wording">
+          <div class="ask">"Who's with you?"</div>
+          <div class="opts">
+            <span>Solo · just me</span>
+            <span>Crew · friends, partner, chosen family</span>
+            <span>Family · with kids</span>
+          </div>
+        </div>
+        <p class="rationale">
+          <strong>Why this wording:</strong> "Who's with you?" is warmer than "travel mode" and avoids the corporate frame. The chosen mode reveals a follow-up: Solo asks "open to meeting other travelers?", Crew asks party size + decision style, Family asks party size + kid age buckets. Branching is OK because each branch is single-screen.
+        </p>
+        <div class="out"><span class="lbl">Payload</span>mode: "crew", party_size: 5, decisions: "vote"</div>
+      </div>
+
+      <!-- step 05 -->
+      <div class="step">
+        <div class="top">
+          <span class="n">05</span>
+          <h4>"Pick your perfect Saturday" — forced-choice scenarios</h4>
+          <div class="meta-pills">
+            <span class="dim-tag">Stimulation × hedonic</span>
+            <span class="time">~8s</span>
+          </div>
+        </div>
+        <div class="wording">
+          <div class="ask">"Pick your perfect Saturday."</div>
+          <div class="opts">
+            <span>Photo · sunrise summit at 11,000ft (high stim · eudaimonic)</span>
+            <span>Photo · long brunch with friends + a slow afternoon (low stim · hedonic)</span>
+            <span>Photo · pottery class then an unfamiliar neighborhood walk (low stim · eudaimonic)</span>
+            <span>Photo · pool day with a great playlist (low stim · hedonic)</span>
+          </div>
+        </div>
+        <p class="rationale">
+          <strong>Why this wording:</strong> the highest-signal single question in the entire flow. Each photo is calibrated to load on different points of the stimulation × hedonic plane. Forced choice between four equally appealing options bypasses social desirability — no one wants to look lazy on a Likert scale, but everyone has an honest favorite Saturday. Pick the photo set carefully so each visibly equates "great day."
+        </p>
+        <div class="out"><span class="lbl">Payload</span>stim_axis: 0.78, hedonic_axis: 0.42, scenario_pick: "summit"</div>
+      </div>
+
+      <!-- step 06 -->
+      <div class="step">
+        <div class="top">
+          <span class="n">06</span>
+          <h4>Interests with two-tier intensity</h4>
+          <div class="meta-pills">
+            <span class="dim-tag">Stimulation · preference</span>
+            <span class="time">~15s</span>
+          </div>
+        </div>
+        <div class="wording">
+          <div class="ask">"What do you actually do?" — tap once for "open to", twice for "love"</div>
+          <div class="opts">
+            <span>Outdoor · Hiking, Camping, Cycling, Skiing</span>
+            <span>Wellness &amp; water · Hot springs, Water, Wildlife</span>
+            <span>Culture · Food, Concerts, Photo, Hidden gems</span>
+          </div>
+        </div>
+        <p class="rationale">
+          <strong>Why this wording:</strong> the verb "do" — not "like" — anchors on behavior, not aspiration. The double-tap intensity gesture costs zero extra screen real estate and triples the ranking signal (Love = ×3 weight, Open-to = ×1, blank = 0). Cross-check against step 05's forced-choice answer for consistency.
+        </p>
+        <div class="out"><span class="lbl">Payload</span>interests: { love: ["Hiking","Hot springs"], open: ["Photo","Food"] }</div>
+      </div>
+
+      <!-- step 07 -->
+      <div class="step">
+        <div class="top">
+          <span class="n">07</span>
+          <h4>"Show me 3 sample days" — budget by revealed preference</h4>
+          <div class="meta-pills">
+            <span class="dim-tag">Risk · financial</span>
+            <span class="time">~10s</span>
+          </div>
+        </div>
+        <div class="wording">
+          <div class="ask">"Which of these sample days feels right for you?"</div>
+          <div class="opts">
+            <span>$98 · trailhead breakfast, ranger-led hike, taco truck dinner</span>
+            <span>$210 · guided sunrise hike, lunch at the lodge, hot springs evening</span>
+            <span>$420 · private guide, 3-course tasting menu, helicopter scenic flight</span>
+            <span>"I'll figure it out as I go"</span>
+          </div>
+        </div>
+        <p class="rationale">
+          <strong>Why this wording:</strong> direct budget questions are <em>actively lied on</em> — people anchor low to feel frugal, then book up. Showing three calibrated example days defeats the lie because the user is picking a vibe, not declaring a number. The "I'll figure it out" escape hatch matters; without it, budget-anxious users abandon.
+        </p>
+        <div class="out"><span class="lbl">Payload</span>budget_per_day: [180, 280], budget_signal: "comfort"</div>
+      </div>
+
+      <!-- step 08 -->
+      <div class="step">
+        <div class="top">
+          <span class="n">08</span>
+          <h4>"Packed or open?" — planning style in one tap</h4>
+          <div class="meta-pills">
+            <span class="dim-tag">Cognitive style</span>
+            <span class="time">~5s</span>
+          </div>
+        </div>
+        <div class="wording">
+          <div class="ask">"On day one, would you rather…"</div>
+          <div class="opts">
+            <span>Have a packed itinerary lined up</span>
+            <span>Have one anchor activity and the rest open</span>
+            <span>Wing it entirely</span>
+          </div>
+        </div>
+        <p class="rationale">
+          <strong>Why this wording:</strong> the maximizer / satisficer distinction is otherwise impossible to capture in a single tap. This wording lets the AI either draft a 6-block day or surface one activity and a list of nearby options. Critical for not pissing off either group — packed itineraries terrify wanderers; open days frustrate planners.
+        </p>
+        <div class="out"><span class="lbl">Payload</span>plan_density: "anchor" | "packed" | "wing"</div>
+      </div>
+
+      <!-- step 09 -->
+      <div class="step">
+        <div class="top">
+          <span class="n">09</span>
+          <h4>Permissions + identity commitment</h4>
+          <div class="meta-pills">
+            <span class="dim-tag">Channel · identity</span>
+            <span class="time">~10s</span>
+          </div>
+        </div>
+        <div class="wording">
+          <div class="ask">"One more thing — you're the kind of traveler who…"</div>
+          <div class="opts">
+            <span>"…shows up prepared and on time."</span>
+            <span>"…travels with intention, not on autopilot."</span>
+            <span>"…books the trip, then lives it."</span>
+            <span>"…says yes to one weird thing per trip."</span>
+          </div>
+        </div>
+        <p class="rationale">
+          <strong>Why this wording:</strong> the identity-commitment question is the last act, after the user has earned a draft itinerary. Each statement is a positive self-perception cue (Bem) that bends later behavior toward the chosen identity — measurable in 90-day retention and referral. Below it: granular notification toggles + location permission, paired and framed as "so ACTZ can actually do the things we promised."
+        </p>
+        <div class="out"><span class="lbl">Payload</span>identity_anchor: "intention", notif: { polls: true, bookings: true, marketing: false }, loc_grant: true</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ──────────────── 06 NEVER ASK ──────────────── -->
+  <section class="section" data-screen-label="06 What not to ask">
+    <h2><span class="num">06</span> What not to ask — and why</h2>
+    <p class="sect-sub">
+      A non-trivial chunk of onboarding design is restraint. These are the asks that <em>feel</em> personalizing but quietly tank completion rates and rarely move the model.
+    </p>
+    <div class="avoid">
+      <div class="row">
+        <h5>Long personality quizzes</h5>
+        <p>Even a 10-item TIPI feels like homework on mobile. Four well-chosen forced-choice scenarios beat a full Big-Five battery on actual itinerary-fit metrics, at one-fifth the friction.</p>
+        <span class="why">Drops completion ~25%, lifts model fit ~3%.</span>
+      </div>
+      <div class="row">
+        <h5>"What's your traveler archetype?"</h5>
+        <p>BuzzFeed-style branded quizzes feel fun but score badly on retention — they prime users to see the result as a curiosity, not an identity. Use the archetype <em>frame</em> in step 02 without making it a quiz.</p>
+        <span class="why">Cute, not predictive.</span>
+      </div>
+      <div class="row">
+        <h5>Direct demographic triplet</h5>
+        <p>Age + gender + occupation feel like a phone screening. None of the three add predictive value beyond what archetype + budget + party-size already capture, and the privacy cost is real.</p>
+        <span class="why">High friction, low signal, mild creepy.</span>
+      </div>
+      <div class="row">
+        <h5>Open-text "tell us about your dream trip"</h5>
+        <p>Free text is the highest-friction input on mobile. Answers are vague, repetitive, and the AI can't act on them in onboarding. Save for a post-onboarding "make a wishlist" feature.</p>
+        <span class="why">A textarea on screen 3 of 9 is an abandonment bomb.</span>
+      </div>
+      <div class="row">
+        <h5>Dietary &amp; accessibility upfront</h5>
+        <p>Asking about restrictions before the user has seen any value feels clinical. Better placed at the activity-detail page where it directly filters the next choice — same data, far better moment.</p>
+        <span class="why">Right info, wrong moment.</span>
+      </div>
+      <div class="row">
+        <h5>Marketing-consent checkbox</h5>
+        <p>The newsletter ask doesn't belong in onboarding. Handle it on first booking or in settings; bundling it now drops completion and conflates value-exchange with broadcast.</p>
+        <span class="why">Tax the channel, not the welcome.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ──────────────── 07 BIAS ──────────────── -->
+  <section class="section" data-screen-label="07 Bias mitigation">
+    <h2><span class="num">07</span> Bias mitigation</h2>
+    <p class="sect-sub">
+      Eight biases that quietly corrupt onboarding data. The fixes are well known but rarely applied.
+    </p>
+
+    <div class="bias">
+      <div class="row">
+        <div class="name">Social desirability <span class="sub">survey methodology</span></div>
+        <div class="what">People answer how they want to be seen, not how they are. "Are you adventurous?" returns ~80% yes.</div>
+        <div class="fix"><strong>Fix:</strong> never ask self-rating on traits. Use <em>behavioral</em> proxies and image-led scenarios that don't have a "right answer".</div>
+      </div>
+      <div class="row">
+        <div class="name">Acquiescence bias <span class="sub">"yea-saying"</span></div>
+        <div class="what">Respondents agree more than disagree by default, especially under time pressure.</div>
+        <div class="fix"><strong>Fix:</strong> avoid yes/no toggles for important measures. <strong>Forced choice between two positives.</strong></div>
+      </div>
+      <div class="row">
+        <div class="name">Scale-use bias <span class="sub">styles vary</span></div>
+        <div class="what">Some users hug the middle of every Likert, others use the extremes. Cross-user comparison breaks.</div>
+        <div class="fix"><strong>Fix:</strong> avoid Likert. Forced choice and image picks have no per-user scale offset.</div>
+      </div>
+      <div class="row">
+        <div class="name">Order effects <span class="sub">primacy / recency</span></div>
+        <div class="what">First option in a list gets picked more often on desktop, last on mobile — both more than chance.</div>
+        <div class="fix"><strong>Fix:</strong> randomize option order per session for the four archetype cards and the Saturday-scenario set.</div>
+      </div>
+      <div class="row">
+        <div class="name">Anchoring <span class="sub">first number sticks</span></div>
+        <div class="what">A "Most users spend $X" hint biases all subsequent budget answers toward $X.</div>
+        <div class="fix"><strong>Fix:</strong> never show a benchmark number in a budget ask. Use three calibrated sample days, equally spaced.</div>
+      </div>
+      <div class="row">
+        <div class="name">Status quo bias <span class="sub">default rules</span></div>
+        <div class="what">Whatever is pre-selected gets accepted at high rates, even when it's wrong for the user.</div>
+        <div class="fix"><strong>Fix:</strong> use this <em>for</em> us on permissions defaulted off, <em>against</em> us by never pre-selecting a budget or motive.</div>
+      </div>
+      <div class="row">
+        <div class="name">Choice overload <span class="sub">Schwartz</span></div>
+        <div class="what">More than ~5 options per screen drops completion sharply. Decision fatigue compounds across screens.</div>
+        <div class="fix"><strong>Fix:</strong> 3–4 options per ask. Group interests into 3 visual clusters instead of one long list.</div>
+      </div>
+      <div class="row">
+        <div class="name">Sunk-cost bias <span class="sub">why people skip</span></div>
+        <div class="what">After ~3 screens, users want to finish, not abandon. They start tapping defaults.</div>
+        <div class="fix"><strong>Fix:</strong> put the highest-signal questions (steps 02, 05, 07) <em>early</em>. Permissions and identity-anchor go last, when they're tapping fastest.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ──────────────── FOOT ──────────────── -->
+  <div class="foot">
+    <span>ACTZ · UX research · psychometric rewrite</span>
+    <span>Supersedes v1 audit · May 19 2026</span>
+  </div>
+
+</div>
+</body>
+</html>

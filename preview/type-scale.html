@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<link rel="stylesheet" href="../components.css">
+<style>
+  html { font-size: 16px; }
+  body { margin: 0; padding: 24px 32px; background: hsl(var(--background)); min-height: 100vh; display: flex; align-items: center; }
+  .row { display: flex; align-items: baseline; gap: 36px; flex-wrap: wrap; }
+  .spec { display: flex; flex-direction: column; gap: 4px; }
+  .spec .label { font: 600 9px/1 var(--font-body); letter-spacing: 0.2em; text-transform: uppercase; color: hsl(var(--muted-foreground)); }
+  .display-word { font: 800 96px/1 var(--font-display); letter-spacing: -0.04em; color: hsl(var(--foreground)); }
+  .h1-word { font: 800 56px/1 var(--font-display); letter-spacing: -0.035em; color: hsl(var(--foreground)); }
+  .h2-word { font: 700 38px/1.05 var(--font-display); letter-spacing: -0.03em; color: hsl(var(--foreground)); }
+  .h3-word { font: 700 26px/1.1 var(--font-display); letter-spacing: -0.02em; color: hsl(var(--foreground)); }
+  .body-word { font: 400 16px/1.5 var(--font-body); color: hsl(var(--foreground) / 0.85); max-width: 320px; }
+  .meta-word { font: 500 11px/1 var(--font-body); letter-spacing: 0.16em; text-transform: uppercase; color: hsl(var(--muted-foreground)); }
+</style>
+</head>
+<body>
+  <div class="row">
+    <div class="spec">
+      <span class="label">Display · 800 · -0.04em</span>
+      <span class="display-word">Aa</span>
+    </div>
+    <div class="spec">
+      <span class="label">H1 · 800 · -0.035em</span>
+      <span class="h1-word">Built for action.</span>
+    </div>
+    <div class="spec">
+      <span class="label">H2 · 700</span>
+      <span class="h2-word">Travel intentionally.</span>
+    </div>
+    <div class="spec">
+      <span class="label">H3 · 700</span>
+      <span class="h3-word">An enhanced experience.</span>
+    </div>
+    <div class="spec">
+      <span class="label">Body · 400 · 1.5lh</span>
+      <span class="body-word">A direct-to-traveler activity platform for discovery, community, and adventure.</span>
+    </div>
+    <div class="spec">
+      <span class="label">Eyebrow</span>
+      <span class="meta-word">Featured · Aspen</span>
+    </div>
+  </div>
+</body>
+</html>

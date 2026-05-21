@@ -1,0 +1,375 @@
+/* ============================================================
+   ACTZ Design System — Component primitives
+   Buttons, glass surfaces, pills, cards. Apply on top of
+   colors_and_type.css.
+   ============================================================ */
+
+/* ============================================================
+   Glass surfaces. Four flavours.
+   ============================================================ */
+.liquid-glass {
+  background: rgba(255, 255, 255, 0.01);
+  background-blend-mode: luminosity;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: none;
+  box-shadow: var(--shadow-inset-hi);
+  position: relative;
+  overflow: hidden;
+}
+.liquid-glass::before {
+  content: '';
+  position: absolute; inset: 0;
+  border-radius: inherit;
+  padding: 1.4px;
+  background: linear-gradient(180deg,
+    rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.15) 20%,
+    rgba(255,255,255,0)    40%, rgba(255,255,255,0)    60%,
+    rgba(255,255,255,0.15) 80%, rgba(255,255,255,0.45) 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  pointer-events: none;
+}
+.liquid-glass-strong {
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(50px) saturate(140%);
+  -webkit-backdrop-filter: blur(50px) saturate(140%);
+  box-shadow: 4px 4px 4px rgba(0,0,0,0.05), var(--shadow-inset-hi);
+  position: relative;
+  overflow: hidden;
+}
+.frosted-glass-card {
+  background: var(--glass-light-bg);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--r-m);
+}
+.dark-frosted-glass {
+  background: var(--glass-dark-bg);
+  backdrop-filter: blur(var(--glass-dark-blur));
+  -webkit-backdrop-filter: blur(var(--glass-dark-blur));
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* ============================================================
+   Joy card — the canonical content card on the dark surface.
+   ============================================================ */
+.joy-card {
+  background: hsl(215 50% 11% / 0.85);
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  border: 1px solid hsl(var(--co-stroke));
+  border-radius: var(--r-l);
+  padding: var(--sp-xl);
+  box-shadow: var(--shadow-inset-hi);
+}
+
+/* ============================================================
+   Buttons.
+     .btn-hero        — primary CTA, solid red pill
+     .btn-hero-glass  — secondary CTA, glass pill
+     .btn-hero-solid  — white pill (used in nav for "Google Play")
+     .btn-ghost       — link-style on dark
+   All pills, all generous, all use Manrope medium.
+   ============================================================ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: var(--font-body);
+  font-weight: 500;
+  text-decoration: none;
+  border: 0;
+  cursor: pointer;
+  transition: transform 0.4s var(--ease-back-out),
+              background-color 0.3s var(--ease-out-expo),
+              color 0.3s var(--ease-out-expo),
+              border-color 0.3s var(--ease-out-expo);
+  white-space: nowrap;
+  user-select: none;
+}
+.btn:focus-visible {
+  outline: 2px solid hsl(var(--ring) / 0.7);
+  outline-offset: 2px;
+}
+.btn-hero {
+  padding: 1rem 1.75rem;
+  border-radius: var(--r-pill);
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  font-size: var(--fs-btn-m);
+  letter-spacing: -0.01em;
+}
+.btn-hero:hover { transform: translateY(-2px); background: hsl(var(--primary) / 0.9); }
+.btn-hero-glass {
+  padding: 1rem 1.75rem;
+  border-radius: var(--r-pill);
+  background: rgba(255,255,255,0.02);
+  backdrop-filter: blur(50px) saturate(140%);
+  -webkit-backdrop-filter: blur(50px) saturate(140%);
+  color: hsl(var(--foreground));
+  box-shadow: var(--shadow-inset-hi);
+  font-size: var(--fs-btn-m);
+}
+.btn-hero-glass:hover { transform: translateY(-2px); background: rgba(255,255,255,0.06); }
+.btn-hero-solid {
+  padding: 1rem 1.75rem;
+  border-radius: var(--r-pill);
+  background: hsl(var(--foreground));
+  color: hsl(var(--background));
+  font-size: var(--fs-btn-m);
+}
+.btn-hero-solid:hover { transform: translateY(-2px); background: hsl(var(--foreground) / 0.9); }
+.btn-ghost {
+  padding: 0.6rem 0.85rem;
+  border-radius: 0.6rem;
+  background: transparent;
+  color: hsl(var(--foreground) / 0.75);
+  font-size: var(--fs-btn-s);
+}
+.btn-ghost:hover { color: hsl(var(--foreground)); background: hsl(var(--foreground) / 0.05); }
+
+/* Small chip-pill button used in marketplace UI */
+.btn-chip {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: var(--r-pill);
+  background: rgba(255,255,255,0.06);
+  border: 1px solid hsl(var(--border));
+  color: hsl(var(--foreground) / 0.85);
+  font-size: var(--fs-body-xs);
+  font-weight: 500;
+  transition: all 240ms var(--ease-out-expo);
+  cursor: pointer;
+}
+.btn-chip:hover {
+  background: hsl(var(--primary) / 0.15);
+  border-color: hsl(var(--primary) / 0.55);
+  color: hsl(var(--foreground));
+  transform: translateY(-1px);
+}
+.btn-chip[data-active="true"] {
+  background: hsl(var(--primary));
+  border-color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+}
+
+/* ============================================================
+   Genre / category pill. Used everywhere on the landing page.
+   ============================================================ */
+.genre-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1rem;
+  border-radius: var(--r-pill);
+  font: 500 var(--fs-body-s)/1 var(--font-body);
+  background: rgba(255,255,255,0.04);
+  border: var(--stroke) solid hsl(var(--border));
+  color: hsl(var(--foreground) / 0.85);
+  transition: all 240ms var(--ease-out-expo);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.genre-pill:hover {
+  background: hsl(var(--primary) / 0.15);
+  border-color: hsl(var(--primary) / 0.55);
+  color: hsl(var(--foreground));
+  transform: translateY(-2px);
+}
+
+/* Status pill — used for "Booked", "Live", etc. */
+.status-pill {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  padding: 0.3rem 0.7rem;
+  border-radius: var(--r-pill);
+  font: 700 0.65rem/1 var(--font-body);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: var(--glass-dark-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  color: white;
+  box-shadow: var(--shadow-pop);
+}
+.status-pill .dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: hsl(var(--accent));
+  box-shadow: 0 0 8px hsl(var(--accent));
+}
+
+/* ============================================================
+   Form inputs — dark, rounded.
+   ============================================================ */
+.input {
+  width: 100%;
+  padding: 0.85rem 1.1rem;
+  background: hsl(var(--co-navy));
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--r-s);
+  color: hsl(var(--foreground));
+  font: 400 var(--fs-body-s)/1 var(--font-body);
+  transition: border-color 200ms var(--ease-out-expo),
+              box-shadow 200ms var(--ease-out-expo);
+}
+.input::placeholder { color: hsl(var(--muted-foreground)); }
+.input:focus {
+  outline: none;
+  border-color: hsl(var(--ring) / 0.7);
+  box-shadow: 0 0 0 3px hsl(var(--ring) / 0.18);
+}
+
+/* Search bar — special, large rounded ("Hero search bar is the CTA"). */
+.search-bar {
+  display: flex; align-items: center; gap: 0.6rem;
+  padding: 0.6rem 0.6rem 0.6rem 1.25rem;
+  background: var(--glass-dark-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--r-pill);
+  box-shadow: var(--shadow-card);
+}
+.search-bar input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: hsl(var(--foreground));
+  font: 400 var(--fs-body-m)/1 var(--font-body);
+}
+.search-bar input:focus { outline: none; }
+.search-bar input::placeholder { color: hsl(var(--foreground) / 0.5); }
+.search-bar .submit {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: hsl(var(--primary));
+  display: inline-flex; align-items: center; justify-content: center;
+  color: hsl(var(--primary-foreground));
+  border: 0; cursor: pointer;
+  transition: transform 0.3s var(--ease-back-out);
+}
+.search-bar .submit:hover { transform: scale(1.05); }
+
+/* ============================================================
+   Marketplace card — the canonical content tile used in the
+   marketplace grid + map carousel.
+   ============================================================ */
+.mkt-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border-radius: 20px;
+  overflow: hidden;
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  cursor: pointer;
+  transition: transform 320ms var(--ease-out-expo),
+              box-shadow 320ms var(--ease-out-expo),
+              border-color 320ms var(--ease-out-expo);
+}
+.mkt-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-card);
+  border-color: hsl(var(--foreground) / 0.2);
+}
+.mkt-card .media {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+}
+.mkt-card .media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.mkt-card .body { padding: 0.7rem 0.85rem 0.95rem; display: flex; flex-direction: column; gap: 0.3rem; }
+.mkt-card .title { font: 600 var(--fs-body-s)/1.2 var(--font-body); color: hsl(var(--foreground)); }
+.mkt-card .meta  { font: 400 var(--fs-body-xs)/1.3 var(--font-body); color: hsl(var(--foreground) / 0.6); display: flex; align-items: center; gap: 0.3rem; }
+.mkt-card .rating { display: inline-flex; align-items: center; gap: 0.2rem; color: hsl(var(--accent)); font-weight: 600; }
+.mkt-card .actions {
+  position: absolute; top: 0.6rem; right: 0.6rem;
+  display: flex; gap: 0.35rem;
+}
+.mkt-card .actions button {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--glass-dark-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: white; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+  transition: transform 200ms var(--ease-out-expo), background 200ms var(--ease-out-expo);
+}
+.mkt-card .actions button:hover { transform: scale(1.08); background: hsl(var(--primary)); }
+.mkt-card .actions button[data-active="true"] { background: hsl(var(--primary)); }
+
+/* ============================================================
+   Bottom navbar (mobile). Floating pill at bottom of screen.
+   Yellow "selected indicator" is a signature ACTZ detail.
+   ============================================================ */
+.mobile-tabbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: 0.25rem;
+  padding: 0.6rem 0.5rem;
+  background: var(--glass-dark-bg);
+  backdrop-filter: blur(28px) saturate(160%);
+  -webkit-backdrop-filter: blur(28px) saturate(160%);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--r-pill);
+  box-shadow: var(--shadow-card);
+}
+.mobile-tabbar .tab {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.4rem 0.7rem;
+  color: hsl(var(--foreground) / 0.65);
+  border: 0; background: transparent;
+  font: 500 0.6rem/1 var(--font-body);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+}
+.mobile-tabbar .tab[data-active="true"] { color: hsl(var(--primary)); }
+.mobile-tabbar .tab[data-active="true"]::after {
+  content: '';
+  position: absolute;
+  top: -0.6rem;
+  left: 50%; transform: translateX(-50%);
+  width: 30%; height: 3px; border-radius: 2px;
+  background: hsl(var(--primary));
+  box-shadow: 0 0 12px hsl(var(--primary) / 0.7);
+}
+
+/* ============================================================
+   Page-edge fade (used inside hero / carousels to fade row edges
+   into the background).
+   ============================================================ */
+.edge-fade-left {
+  background: linear-gradient(to right, hsl(var(--background)) 0%, transparent 100%);
+}
+.edge-fade-right {
+  background: linear-gradient(to left, hsl(var(--background)) 0%, transparent 100%);
+}
+
+/* Radial background glow (hero, section header). */
+.bg-radial-glow {
+  background:
+    radial-gradient(60% 50% at 50% 50%, hsl(var(--primary) / 0.12) 0%, transparent 60%),
+    radial-gradient(60% 50% at 80% 20%, hsl(var(--secondary) / 0.10) 0%, transparent 60%);
+}
+
+/* Subtle dot grid — used inside provider dashboards / empty states */
+.bg-dot-grid {
+  background-image: radial-gradient(hsl(var(--foreground) / 0.06) 1px, transparent 1px);
+  background-size: 18px 18px;
+}
+
+/* Ring glow utility */
+.ring-glow {
+  box-shadow:
+    0 0 0 1px hsl(var(--primary) / 0.5),
+    0 0 32px 0 hsl(var(--primary) / 0.25);
+}

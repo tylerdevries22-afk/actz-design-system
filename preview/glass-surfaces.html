@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<link rel="stylesheet" href="../components.css">
+<style>
+  html { font-size: 16px; }
+  body { margin: 0; padding: 22px; background: url("../assets/imagery/hero-02.webp") center/cover, hsl(var(--background)); min-height: 100vh; display: flex; gap: 16px; align-items: center; justify-content: center; position: relative; }
+  body::before { content: ''; position: absolute; inset: 0; background: linear-gradient(to right, hsl(var(--background)) 0%, hsl(var(--background) / 0.6) 50%, hsl(var(--background) / 0.4) 100%); pointer-events: none; }
+  .card { position: relative; z-index: 1; width: 200px; padding: 18px 20px; display: flex; flex-direction: column; gap: 6px; }
+  .card h4 { margin: 0; font: 700 14px/1.1 var(--font-display); color: hsl(var(--foreground)); }
+  .card p  { margin: 0; font: 400 11px/1.4 var(--font-body); color: hsl(var(--foreground) / 0.7); }
+  .card .tok { font: 600 9px/1 var(--font-body); letter-spacing: 0.18em; text-transform: uppercase; color: hsl(var(--muted-foreground)); margin-top: 4px; }
+  .liquid-glass { padding: 18px 20px; border-radius: 22px; min-height: 100px; }
+  .frosted-glass-card { padding: 18px 20px; min-height: 100px; }
+  .dark-frosted-glass { padding: 18px 20px; border-radius: 22px; min-height: 100px; }
+</style>
+</head>
+<body>
+  <div class="card liquid-glass">
+    <h4>liquid-glass</h4>
+    <p>Tight 4px blur. Nav pill on the marketing site.</p>
+    <span class="tok">.liquid-glass</span>
+  </div>
+  <div class="card frosted-glass-card">
+    <h4>frosted-glass</h4>
+    <p>20px blur, light tint. Cards floating over photography.</p>
+    <span class="tok">.frosted-glass-card</span>
+  </div>
+  <div class="card dark-frosted-glass">
+    <h4>dark-frosted-glass</h4>
+    <p>Dark navy 72% + 20px blur. Badge overlays, tabbar.</p>
+    <span class="tok">.dark-frosted-glass</span>
+  </div>
+</body>
+</html>

@@ -1,0 +1,239 @@
+/* ============================================================
+   ACTZ Design System — Colors & Type
+   Source: tylerdevries22-afk/actz-may (landing-page + client)
+   Theme: dark, cinematic, Colorado-flag palette + frosted glass.
+   ============================================================ */
+
+/* -------- Web fonts --------
+   Manrope is the primary UI typeface (loaded via Google Fonts for
+   simplicity). Ethnocentric is the brand-display face used on the
+   ACTZ logotype and large headlines. */
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap');
+
+@font-face {
+  font-family: 'Ethnocentric';
+  src: url('fonts/Ethnocentric-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Ethnocentric';
+  src: url('fonts/Ethnocentric-Italic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+:root {
+  /* ============================================================
+     Colorado flag palette — the literal source of brand color.
+     PMS 287 Navy · PMS 200 Red · PMS 116 Gold.
+     Stored as HSL triplets so we can use them in hsl(var(--x) / a).
+     ============================================================ */
+  --co-navy-deep:   215 60% 5%;     /* page background */
+  --co-navy:        215 55% 9%;     /* elevated surface */
+  --co-navy-soft:   215 45% 14%;    /* card / popover */
+  --co-stroke:      215 30% 22%;    /* hairlines, dividers */
+  --co-blue:        215 95% 58%;    /* Colorado flag blue */
+  --co-blue-light:  210 100% 72%;
+  --co-red:         348 85% 47%;    /* Colorado flag red */
+  --co-red-light:   348 90% 62%;
+  --co-gold:         48 95% 55%;    /* Colorado flag gold */
+  --co-cream:        40 35% 94%;    /* off-white surface */
+
+  /* ------------------------------------------------------------
+     Semantic surface + ink tokens (the names code actually uses).
+     ------------------------------------------------------------ */
+  --background:           var(--co-navy-deep);
+  --foreground:           210 30% 96%;
+  --card:                 var(--co-navy-soft);
+  --card-foreground:      210 30% 96%;
+  --popover:              var(--co-navy);
+  --popover-foreground:   210 30% 96%;
+
+  --primary:              var(--co-gold);         /* CTAs (Colorado flag gold) */
+  --primary-light:        50 100% 70%;
+  --primary-foreground:   215 60% 8%;
+  --secondary:            var(--co-blue);         /* companion accent */
+  --secondary-foreground: 0 0% 100%;
+  --accent:               var(--co-red);          /* red highlights, favorites */
+  --accent-foreground:    0 0% 100%;
+
+  --muted:                215 35% 12%;
+  --muted-foreground:     215 18% 70%;
+  --destructive:           0 72% 51%;
+  --destructive-foreground:0 0% 100%;
+
+  --border:               var(--co-stroke);
+  --input:                var(--co-stroke);
+  --ring:                 var(--co-blue);
+
+  /* ============================================================
+     Type system. Manrope is the universal UI face; Ethnocentric
+     is the brand display face used very sparingly (logotype,
+     hero word-marks). System fallbacks mirror the codebase.
+     ============================================================ */
+  --font-display: "Manrope", "Inter", -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+  --font-body:    "Manrope", "Inter", -apple-system, BlinkMacSystemFont, "Helvetica Neue", system-ui, sans-serif;
+  --font-brand:   "Ethnocentric", "Manrope", monospace;
+  --font-accent:  "Manrope", "Inter", -apple-system, sans-serif;
+
+  /* Joyjam type scale, in rem (designed against a fluid html
+     font-size — see html rule below). */
+  --fs-display-l: 9.72rem;
+  --fs-h1:        6rem;
+  --fs-h2:        4.4rem;
+  --fs-h3:        3.3rem;
+  --fs-h4:        2.2rem;
+  --fs-h5:        1.66rem;
+  --fs-sub-l:     1.38rem;
+  --fs-sub-m:     1.25rem;
+  --fs-sub-s:     0.98rem;
+  --fs-body-l:    1.25rem;
+  --fs-body-m:    1.1rem;
+  --fs-body-s:    0.98rem;
+  --fs-body-xs:   0.84rem;
+  --fs-btn-m:     1.1rem;
+  --fs-btn-s:     0.98rem;
+  --fs-btn-xs:    0.84rem;
+
+  --lh-tight:    110%;
+  --lh-headline: 120%;
+  --lh-body:     150%;
+  --lh-loose:    160%;
+
+  /* ============================================================
+     Spacing scale — multiples of 0.55rem, joyjam-derived.
+     ============================================================ */
+  --sp-xs:   0.55rem;
+  --sp-s:    1.1rem;
+  --sp-m:    1.66rem;
+  --sp-l:    2.2rem;
+  --sp-xl:   3.3rem;
+  --sp-2xl:  5rem;
+
+  /* ============================================================
+     Corner radii — generous. ACTZ uses very rounded corners on
+     everything: pill nav, 26-30px cards, infinite-pill buttons.
+     ============================================================ */
+  --r-s:     1.1rem;     /* 17.6 px */
+  --r-m:     1.66rem;    /* 26.5 px — default card */
+  --r-l:     2.2rem;     /* 35 px — hero / featured */
+  --r-pill:  256rem;     /* full pill */
+  --stroke:  0.1rem;     /* default hairline */
+  --radius:  1.66rem;    /* legacy alias used by shadcn */
+
+  /* ============================================================
+     Shadows. Dark cards live on dark surfaces, so most "shadow"
+     work is done by inner light borders + soft outer glow. The
+     marketplace card and hero spotlight use a deep drop shadow.
+     ============================================================ */
+  --shadow-card:    0 22px 50px -15px rgba(0, 0, 0, 0.55);
+  --shadow-pop:     0 18px 40px -10px rgba(0, 0, 0, 0.55);
+  --shadow-glow-primary:   0 0 24px 0 hsl(var(--primary) / 0.35),
+                           0 0 56px 0 hsl(var(--primary) / 0.18);
+  --shadow-glow-secondary: 0 0 24px 0 hsl(var(--secondary) / 0.35),
+                           0 0 56px 0 hsl(var(--secondary) / 0.18);
+  --shadow-glow-accent:    0 0 24px 0 hsl(var(--accent) / 0.45);
+  --shadow-inset-hi:       inset 0 1px 1px rgba(255, 255, 255, 0.08);
+
+  /* ============================================================
+     Easings — pulled directly from landing-page CSS scan.
+     Use these instead of generic 'ease-out' for branded motion.
+     ============================================================ */
+  --ease-out-expo:    cubic-bezier(0.19, 1, 0.22, 1);
+  --ease-back-out:    cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --ease-in-out-expo: cubic-bezier(0.696, 0.001, 0.304, 0.995);
+  --ease-in-out-cubic: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* ============================================================
+     Glass tokens. Three flavours used across the product:
+       - liquid-glass        : tight blur, used on nav pills
+       - frosted-glass       : standard blur for cards
+       - dark-frosted-glass  : pure dark navy overlay for badges
+     ============================================================ */
+  --glass-dark-bg:    hsl(215 60% 6% / 0.72);
+  --glass-dark-blur:  20px;
+  --glass-light-bg:   hsl(210 90% 96% / 0.06);
+  --glass-light-blur: 22px;
+  --glass-tint-blue:  hsl(215 95% 58% / 0.08);
+}
+
+/* ============================================================
+   Fluid base. ACTZ uses `1rem ≈ 1vw` clamped between 13 and
+   19.2 px so the entire scale shrinks/grows with viewport.
+   ============================================================ */
+html {
+  font-size: clamp(13px, 1.05vw, 19.2px);
+  scroll-behavior: smooth;
+}
+body {
+  font-family: var(--font-body);
+  font-size: var(--fs-body-m);
+  line-height: var(--lh-headline);
+  color: hsl(var(--foreground));
+  background: hsl(var(--background));
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* ============================================================
+   Semantic type classes — apply to your HTML tags directly.
+   These are the names code uses (see landing-page/src/index.css).
+   ============================================================ */
+.font-display { font-family: var(--font-display); font-weight: 800; letter-spacing: -0.02em; }
+.font-body    { font-family: var(--font-body); }
+.font-accent  { font-family: var(--font-accent); font-weight: 700; letter-spacing: 0.04em; }
+.font-brand   { font-family: var(--font-brand); letter-spacing: 0.02em; }
+
+.h-display { font: 800 var(--fs-display-l)/var(--lh-tight) var(--font-display);     letter-spacing: -0.035em; }
+.h1        { font: 800 var(--fs-h1)/var(--lh-tight) var(--font-display);            letter-spacing: -0.035em; }
+.h2        { font: 700 var(--fs-h2)/var(--lh-tight) var(--font-display);            letter-spacing: -0.03em; }
+.h3        { font: 700 var(--fs-h3)/var(--lh-headline) var(--font-display);         letter-spacing: -0.02em; }
+.h4        { font: 600 var(--fs-h4)/var(--lh-headline) var(--font-display);         letter-spacing: -0.015em; }
+.h5        { font: 600 var(--fs-h5)/var(--lh-headline) var(--font-display); }
+
+.sub-l { font: 500 var(--fs-sub-l)/var(--lh-headline) var(--font-body); }
+.sub-m { font: 500 var(--fs-sub-m)/var(--lh-headline) var(--font-body); }
+.sub-s { font: 500 var(--fs-sub-s)/var(--lh-headline) var(--font-body); }
+
+.body-l  { font: 400 var(--fs-body-l)/var(--lh-body) var(--font-body); }
+.body-m  { font: 400 var(--fs-body-m)/var(--lh-body) var(--font-body); }
+.body-s  { font: 400 var(--fs-body-s)/var(--lh-body) var(--font-body); }
+.body-xs { font: 400 var(--fs-body-xs)/var(--lh-loose) var(--font-body); }
+
+.eyebrow {
+  font: 600 var(--fs-body-xs)/var(--lh-headline) var(--font-body);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: hsl(var(--foreground) / 0.55);
+}
+
+/* ============================================================
+   Brand gradient text — used on hero accent words.
+   "action" / "active" / "ACTZ" wordmark variant.
+   ============================================================ */
+.gradient-text-primary {
+  background: linear-gradient(95deg,
+    hsl(var(--co-gold))      0%,
+    hsl(var(--co-red))       50%,
+    hsl(var(--co-blue-light)) 80%,
+    hsl(var(--co-blue))     100%);
+  -webkit-background-clip: text;
+          background-clip: text;
+  -webkit-text-fill-color: transparent;
+          color: transparent;
+  padding-right: 0.18em;
+  margin-right: -0.08em;
+}
+.gradient-text-flag {
+  background: linear-gradient(90deg,
+    hsl(var(--co-blue)) 0%,
+    hsl(var(--co-red)) 50%,
+    hsl(var(--co-gold)) 100%);
+  -webkit-background-clip: text;
+          background-clip: text;
+  -webkit-text-fill-color: transparent;
+          color: transparent;
+}

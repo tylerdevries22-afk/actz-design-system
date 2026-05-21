@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  html { font-size: 16px; }
+  body { margin: 0; padding: 28px 32px; background: hsl(var(--background)); min-height: 100vh; display: flex; flex-direction: column; gap: 16px; justify-content: center; }
+  .stack { display: flex; flex-direction: column; gap: 10px; }
+  .line { display: flex; align-items: baseline; gap: 16px; }
+  .line .tag { font: 500 9px/1 var(--font-body); letter-spacing: 0.18em; text-transform: uppercase; color: hsl(var(--muted-foreground)); width: 170px; }
+  .fg   { color: hsl(var(--foreground)); font: 600 17px/1 var(--font-display); }
+  .fg85 { color: hsl(var(--foreground) / 0.85); font: 400 16px/1 var(--font-body); }
+  .mut  { color: hsl(var(--muted-foreground)); font: 400 15px/1 var(--font-body); }
+  .mute2 { color: hsl(var(--foreground) / 0.55); font: 500 11px/1 var(--font-body); letter-spacing: 0.2em; text-transform: uppercase; }
+  .ring-demo { display: inline-flex; align-items: center; padding: 8px 14px; border-radius: 12px; background: hsl(var(--co-navy)); border: 1px solid hsl(var(--border)); color: hsl(var(--foreground)); font: 500 13px/1 var(--font-body); box-shadow: 0 0 0 3px hsl(var(--ring) / 0.4); }
+</style>
+</head>
+<body>
+  <div class="stack">
+    <div class="line"><span class="tag">foreground</span><span class="fg">The mountains are out today.</span></div>
+    <div class="line"><span class="tag">fg / 0.85</span><span class="fg85">Body copy weight, slightly dimmed.</span></div>
+    <div class="line"><span class="tag">muted-foreground</span><span class="mut">Meta / captions / placeholder.</span></div>
+    <div class="line"><span class="tag">fg / 0.55 · eyebrow</span><span class="mute2">Scroll to explore</span></div>
+    <div class="line"><span class="tag">ring (focus)</span><span class="ring-demo">Focused input</span></div>
+  </div>
+</body>
+</html>

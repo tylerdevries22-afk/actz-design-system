@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<link rel="stylesheet" href="../components.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  html { font-size: 16px; }
+  body {
+    margin: 0; padding: 36px 28px 48px;
+    background: hsl(var(--background)); min-height: 100vh;
+    color: hsl(var(--foreground));
+    display: flex; flex-direction: column; gap: 26px; align-items: center;
+  }
+  [data-lucide] { width: 16px; height: 16px; stroke-width: 2; color: hsl(var(--foreground) / 0.6); flex-shrink: 0; }
+
+  /* ─────────────────────────────────────────────────────────────
+     Group header
+     ───────────────────────────────────────────────────────────── */
+  .group {
+    width: 100%; max-width: 520px;
+    display: flex; align-items: center; gap: 12px;
+    font: 700 10px/1 var(--font-body);
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: hsl(var(--foreground) / 0.85);
+  }
+  .group::before { content: ''; width: 14px; height: 1px; background: hsl(var(--border)); }
+  .group::after  { content: ''; flex: 1; height: 1px; background: hsl(var(--border)); }
+
+  /* ─────────────────────────────────────────────────────────────
+     Per-search-bar stage — labels what tab it belongs to
+     ───────────────────────────────────────────────────────────── */
+  .stage {
+    width: 100%; max-width: 520px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .stage .meta {
+    display: flex; align-items: center; gap: 8px;
+    font: 500 10px/1 var(--font-body); letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: hsl(var(--muted-foreground));
+  }
+  .stage .meta .dot { width: 6px; height: 6px; border-radius: 50%; background: hsl(var(--primary)); box-shadow: 0 0 6px hsl(var(--primary)); }
+  .stage .meta .name { color: hsl(var(--foreground)); letter-spacing: 0; text-transform: none; font: 700 13px/1 var(--font-display); }
+  .stage .meta .src { color: hsl(var(--foreground) / 0.5); }
+
+  /* ─────────────────────────────────────────────────────────────
+     1. PLAN-TAB SEARCH  — solid co-navy pill (Marketplace screen)
+        Source: ui_kits/app/Screens.jsx · MarketplaceScreen
+     ───────────────────────────────────────────────────────────── */
+  .search-plan {
+    width: 100%; box-sizing: border-box;
+    display: flex; align-items: center; gap: 8px;
+    padding: 12px 14px;
+    background: hsl(var(--co-navy));
+    border: 1px solid hsl(var(--border));
+    border-radius: 999px;
+  }
+  .search-plan .icon { color: hsl(var(--foreground) / 0.5); display: inline-flex; }
+  .search-plan .placeholder {
+    flex: 1; min-width: 0;
+    font: 400 14px/1 var(--font-body);
+    color: hsl(var(--foreground) / 0.55);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .search-plan input {
+    flex: 1; min-width: 0;
+    background: transparent; border: 0; outline: 0;
+    color: hsl(var(--foreground));
+    font: 400 14px/1 var(--font-body);
+  }
+  .search-plan input::placeholder { color: hsl(var(--foreground) / 0.55); }
+  .search-plan .filter-btn {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: hsl(var(--primary)); color: white; border: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+    cursor: pointer; flex-shrink: 0;
+    transition: transform 220ms var(--ease-back-out);
+  }
+  .search-plan .filter-btn:hover { transform: scale(1.06); }
+  .search-plan .filter-btn [data-lucide] { color: white; width: 14px; height: 14px; }
+
+  /* ─────────────────────────────────────────────────────────────
+     2. SEARCH-TAB BAR — dark glass pill over map (Map screen)
+        Source: ui_kits/app/Screens.jsx · MapScreen
+     ───────────────────────────────────────────────────────────── */
+  .search-map {
+    width: 100%; box-sizing: border-box;
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 12px;
+    background: hsl(215 60% 6% / 0.85);
+    backdrop-filter: blur(28px) saturate(160%);
+    -webkit-backdrop-filter: blur(28px) saturate(160%);
+    border-radius: 999px;
+    border: 1px solid hsl(var(--border));
+    box-shadow: 0 22px 50px -15px rgba(0,0,0,0.55);
+  }
+  .search-map .icon { color: hsl(var(--foreground) / 0.7); display: inline-flex; }
+  .search-map .icon [data-lucide] { width: 14px; height: 14px; }
+  .search-map .query {
+    flex: 1; min-width: 0;
+    font: 500 13px/1 var(--font-body);
+    color: hsl(var(--foreground));
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .search-map .count {
+    flex-shrink: 0;
+    padding: 4px 10px; border-radius: 999px;
+    background: hsl(var(--primary)); color: white;
+    font: 700 10px/1 var(--font-body);
+    text-transform: uppercase; letter-spacing: 0.1em;
+    font-variant-numeric: tabular-nums;
+  }
+  /* Empty/idle stage of map-bar — shows when user hasn't typed */
+  .search-map .placeholder-q {
+    flex: 1; font: 400 13px/1 var(--font-body);
+    color: hsl(var(--foreground) / 0.5);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  /* Map-stage backdrop so glass blur is visible */
+  .map-bg {
+    position: relative;
+    padding: 18px;
+    border-radius: 22px;
+    overflow: hidden;
+    background:
+      radial-gradient(60% 80% at 30% 40%, hsl(var(--secondary) / 0.18) 0%, transparent 60%),
+      radial-gradient(40% 60% at 70% 70%, hsl(var(--primary) / 0.10) 0%, transparent 70%),
+      linear-gradient(135deg, hsl(215 40% 12%) 0%, hsl(215 60% 7%) 100%);
+    border: 1px solid hsl(var(--border));
+  }
+  .map-bg::before {
+    content: ''; position: absolute; inset: 0;
+    background-image:
+      linear-gradient(hsl(var(--foreground) / 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--foreground) / 0.04) 1px, transparent 1px);
+    background-size: 28px 28px;
+    pointer-events: none;
+  }
+  .map-bg > * { position: relative; z-index: 1; }
+
+  /* ─────────────────────────────────────────────────────────────
+     3. AI-TAB COMPOSER — dark glass + circular submit (AI Chat)
+        Source: ui_kits/app/Screens.jsx · AIChatScreen
+     ───────────────────────────────────────────────────────────── */
+  .composer-ai {
+    width: 100%; box-sizing: border-box;
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 8px 8px 16px;
+    background: hsl(215 60% 6% / 0.82);
+    backdrop-filter: blur(28px) saturate(160%);
+    -webkit-backdrop-filter: blur(28px) saturate(160%);
+    border-radius: 999px;
+    border: 1px solid hsl(var(--border));
+    box-shadow: 0 22px 50px -15px rgba(0,0,0,0.55);
+  }
+  .composer-ai .placeholder,
+  .composer-ai input {
+    flex: 1; min-width: 0;
+    font: 400 13px/1 var(--font-body);
+    color: hsl(var(--foreground) / 0.55);
+    background: transparent; border: 0; outline: 0;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .composer-ai input { color: hsl(var(--foreground)); }
+  .composer-ai input::placeholder { color: hsl(var(--foreground) / 0.55); }
+  .composer-ai .send {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: hsl(var(--primary)); color: white;
+    border: 0; cursor: pointer; flex-shrink: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+    transition: transform 220ms var(--ease-back-out);
+  }
+  .composer-ai .send:hover { transform: scale(1.06); }
+  .composer-ai .send [data-lucide] { color: white; width: 14px; height: 14px; stroke-width: 2.5; }
+
+  /* Composer + chat backdrop so blur shows */
+  .chat-bg {
+    position: relative;
+    padding: 18px 18px 28px;
+    border-radius: 22px; overflow: hidden;
+    background: hsl(var(--background));
+    border: 1px solid hsl(var(--border));
+  }
+  .chat-bg::before {
+    content: ''; position: absolute; inset: 0;
+    background:
+      radial-gradient(50% 60% at 20% 30%, hsl(var(--primary) / 0.10) 0%, transparent 60%),
+      radial-gradient(50% 60% at 80% 80%, hsl(var(--secondary) / 0.10) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .chat-bg > * { position: relative; z-index: 1; }
+  .ai-bubble {
+    max-width: 80%; padding: 10px 14px; border-radius: 18px 18px 18px 6px;
+    background: hsl(var(--card)); border: 1px solid hsl(var(--border));
+    color: hsl(var(--foreground)); font: 400 13px/1.4 var(--font-body);
+    margin-bottom: 14px;
+  }
+
+  /* ─────────────────────────────────────────────────────────────
+     FORM INPUTS — destination/dates fields (kept from original)
+     ───────────────────────────────────────────────────────────── */
+  .field { display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 0; }
+  .field label {
+    font: 500 10px/1 var(--font-body); letter-spacing: 0.16em;
+    text-transform: uppercase; color: hsl(var(--muted-foreground));
+  }
+  .field .wrap { position: relative; }
+  .field .wrap [data-lucide] {
+    position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+    width: 16px; height: 16px;
+  }
+  .field .wrap input.input { padding-left: 38px; }
+  .pair { display: flex; gap: 14px; width: 100%; max-width: 520px; }
+  .focused {
+    border-color: hsl(var(--ring) / 0.7) !important;
+    box-shadow: 0 0 0 3px hsl(var(--ring) / 0.18);
+  }
+
+  /* spec / source note */
+  .spec {
+    font: 500 11px/1.5 var(--font-body);
+    color: hsl(var(--foreground) / 0.5);
+    max-width: 520px; text-align: left;
+  }
+  .spec b { color: hsl(var(--foreground) / 0.85); font-weight: 600; }
+  .spec code {
+    font: 500 11px/1 ui-monospace, "SF Mono", Menlo, monospace;
+    color: hsl(var(--co-blue-light));
+    background: rgba(0,0,0,0.35); padding: 2px 6px; border-radius: 4px;
+    border: 1px dashed hsl(var(--co-blue) / 0.4);
+  }
+</style>
+</head>
+<body>
+
+  <!-- ─────────────────────────────────────────────────────────────
+       PLAN TAB · solid co-navy pill (Marketplace)
+       ───────────────────────────────────────────────────────────── -->
+  <div class="group">Plan tab · marketplace search</div>
+
+  <div class="stage">
+    <div class="meta">
+      <span class="dot"></span>
+      <span class="name">Plan</span>
+      <span class="src">ui_kits/app/Screens.jsx · MarketplaceScreen</span>
+    </div>
+
+    <!-- idle / placeholder -->
+    <div class="search-plan">
+      <span class="icon"><i data-lucide="search"></i></span>
+      <span class="placeholder">Hikes, hot springs, hidden gems…</span>
+      <button class="filter-btn" aria-label="Filters"><i data-lucide="sliders-horizontal"></i></button>
+    </div>
+
+    <!-- typed -->
+    <div class="search-plan">
+      <span class="icon"><i data-lucide="search"></i></span>
+      <input value="Maroon Bells sunrise" placeholder="Search…" />
+      <button class="filter-btn" aria-label="Filters"><i data-lucide="sliders-horizontal"></i></button>
+    </div>
+
+    <div class="spec">
+      <b>Spec.</b> 12 × 14 padding · <code>hsl(var(--co-navy))</code> solid fill · 1px border ·
+      999px pill · 14px label · 30 × 30 primary filter circle on the right.
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────────────────────────────────
+       SEARCH TAB · dark glass over map (Map screen)
+       ───────────────────────────────────────────────────────────── -->
+  <div class="group">Search tab · map header</div>
+
+  <div class="stage">
+    <div class="meta">
+      <span class="dot" style="background: hsl(var(--secondary)); box-shadow: 0 0 6px hsl(var(--secondary))"></span>
+      <span class="name">Search</span>
+      <span class="src">ui_kits/app/Screens.jsx · MapScreen</span>
+    </div>
+
+    <!-- idle, no query yet -->
+    <div class="map-bg">
+      <div class="search-map" style="margin-bottom: 18px;">
+        <span class="icon"><i data-lucide="search"></i></span>
+        <span class="placeholder-q">Where to next?</span>
+      </div>
+
+      <!-- typed + count -->
+      <div class="search-map">
+        <span class="icon"><i data-lucide="search"></i></span>
+        <span class="query">Aspen, CO · May 22–27</span>
+        <span class="count">32</span>
+      </div>
+    </div>
+
+    <div class="spec">
+      <b>Spec.</b> 10 × 12 padding · <code>hsl(215 60% 6% / 0.85)</code> + 28px blur · 1px border ·
+      drop shadow · trailing result-count pill in primary.
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────────────────────────────────
+       AI TAB · composer (AI Chat)
+       ───────────────────────────────────────────────────────────── -->
+  <div class="group">AI tab · concierge composer</div>
+
+  <div class="stage">
+    <div class="meta">
+      <span class="dot" style="background: hsl(var(--accent)); box-shadow: 0 0 6px hsl(var(--accent))"></span>
+      <span class="name">AI</span>
+      <span class="src">ui_kits/app/Screens.jsx · AIChatScreen</span>
+    </div>
+
+    <div class="chat-bg">
+      <div class="ai-bubble">Welcome — I drafted a 2-day Aspen plan based on your interests. Tap any stop to swap.</div>
+
+      <!-- idle composer -->
+      <div class="composer-ai" style="margin-bottom: 12px;">
+        <span class="placeholder">Ask ACTZ AI…</span>
+        <button class="send" aria-label="Send"><i data-lucide="arrow-up"></i></button>
+      </div>
+
+      <!-- typed -->
+      <div class="composer-ai">
+        <input value="Move the hot springs to Sunday morning" placeholder="Ask ACTZ AI…" />
+        <button class="send" aria-label="Send"><i data-lucide="arrow-up"></i></button>
+      </div>
+    </div>
+
+    <div class="spec">
+      <b>Spec.</b> 8 × (8 / 16) padding · <code>hsl(215 60% 6% / 0.82)</code> + 28px blur ·
+      1px border · drop shadow · 34 × 34 primary submit on the right with <code>arrow-up</code>.
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────────────────────────────────
+       FORM INPUTS — for other contexts (kept for reference)
+       ───────────────────────────────────────────────────────────── -->
+  <div class="group">Inline form inputs</div>
+
+  <div class="pair">
+    <div class="field">
+      <label>Destination</label>
+      <div class="wrap">
+        <i data-lucide="map-pin"></i>
+        <input class="input" placeholder="Aspen, Colorado" />
+      </div>
+    </div>
+    <div class="field">
+      <label>Dates</label>
+      <div class="wrap">
+        <i data-lucide="calendar"></i>
+        <input class="input focused" value="May 22 — May 27" />
+      </div>
+    </div>
+  </div>
+
+<script>lucide.createIcons();</script>
+</body>
+</html>

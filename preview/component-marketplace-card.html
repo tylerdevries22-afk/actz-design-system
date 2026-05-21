@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<link rel="stylesheet" href="../components.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  html { font-size: 16px; }
+  body { margin: 0; padding: 22px 26px; background: hsl(var(--background)); min-height: 100vh; display: flex; gap: 24px; align-items: center; justify-content: center; }
+  [data-lucide] { width: 14px; height: 14px; stroke-width: 2; }
+
+  /* Airbnb-style card: no border, no surrounding fill — image-first */
+  .a-card { width: 220px; display: flex; flex-direction: column; gap: 8px; cursor: pointer; }
+  .a-card .media { position: relative; aspect-ratio: 1 / 1; border-radius: 18px; overflow: hidden; }
+  .a-card .media img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 360ms var(--ease-out-expo); }
+  .a-card:hover .media img { transform: scale(1.03); }
+  .a-card .actions { position: absolute; top: 10px; right: 10px; display: flex; gap: 6px; }
+  .a-card .actions button {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: hsl(215 60% 6% / 0.72);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: white; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+    transition: transform 200ms var(--ease-out-expo), background 200ms;
+  }
+  .a-card .actions button:hover { transform: scale(1.08); background: hsl(var(--primary)); }
+  .a-card .actions button[data-active="true"] { background: hsl(215 60% 6% / 0.72); color: hsl(var(--accent)); }
+  .a-card .actions button[data-active="true"] [data-lucide] { color: hsl(var(--accent)); fill: hsl(var(--accent)); }
+  /* photo carousel dots, airbnb style */
+  .a-card .dots { position: absolute; left: 0; right: 0; bottom: 10px; display: flex; justify-content: center; gap: 5px; }
+  .a-card .dots span { width: 5px; height: 5px; border-radius: 50%; background: rgba(255,255,255,0.5); }
+  .a-card .dots span[data-on="true"] { background: white; }
+
+  /* meta rows below image */
+  .a-card .row1 {
+    display: flex; align-items: center; gap: 8px;
+    font: 600 14px/1.2 var(--font-display); letter-spacing: -0.005em;
+    color: hsl(var(--foreground));
+  }
+  .a-card .row1 .title { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .a-card .row1 .star {
+    display: inline-flex; align-items: center; gap: 3px;
+    color: hsl(var(--foreground));
+    font: 500 13px/1 var(--font-body); font-variant-numeric: tabular-nums;
+  }
+  .a-card .row1 .star [data-lucide] { color: hsl(var(--accent)); fill: hsl(var(--accent)); width: 13px; height: 13px; stroke-width: 2; }
+  .a-card .sub { font: 400 13px/1.3 var(--font-body); color: hsl(var(--foreground) / 0.55); }
+  .a-card .dates { font: 400 13px/1.3 var(--font-body); color: hsl(var(--foreground) / 0.55); }
+  .a-card .price { margin-top: 2px; font: 400 14px/1.2 var(--font-body); color: hsl(var(--foreground)); }
+  .a-card .price b { font-weight: 700; letter-spacing: -0.005em; }
+</style>
+</head>
+<body>
+
+  <article class="a-card">
+    <div class="media">
+      <img src="../assets/imagery/hero-01.webp" alt="">
+      <div class="actions">
+        <button aria-label="Share"><i data-lucide="share"></i></button>
+        <button data-active="true" aria-label="Save"><i data-lucide="star" fill="currentColor"></i></button>
+      </div>
+      <div class="dots"><span data-on="true"></span><span></span><span></span><span></span><span></span></div>
+    </div>
+    <div class="row1">
+      <span class="title">Maroon Bells, CO</span>
+      <span class="star"><i data-lucide="star"></i>4.92</span>
+    </div>
+    <div class="sub">Sunrise hike · Mountain Provider Co.</div>
+    <div class="dates">May 22 – May 27</div>
+    <div class="price"><b>$148</b> night · 5 spots left</div>
+  </article>
+
+  <article class="a-card">
+    <div class="media">
+      <img src="../assets/imagery/hero-02.webp" alt="">
+      <div class="actions">
+        <button aria-label="Share"><i data-lucide="share"></i></button>
+        <button aria-label="Save"><i data-lucide="star"></i></button>
+      </div>
+      <div class="dots"><span></span><span data-on="true"></span><span></span><span></span><span></span></div>
+    </div>
+    <div class="row1">
+      <span class="title">Snowmass, CO</span>
+      <span class="star"><i data-lucide="star"></i>5.00</span>
+    </div>
+    <div class="sub">Backcountry camp · Trailblazer Outfitters</div>
+    <div class="dates">May 23 – May 24</div>
+    <div class="price"><b>$312</b> night · 2 spots left</div>
+  </article>
+
+  <article class="a-card">
+    <div class="media">
+      <img src="../assets/imagery/hero-04.webp" alt="">
+      <div class="actions">
+        <button aria-label="Share"><i data-lucide="share"></i></button>
+        <button data-active="true" aria-label="Save"><i data-lucide="star" fill="currentColor"></i></button>
+      </div>
+      <div class="dots"><span data-on="true"></span><span></span><span></span><span></span></div>
+    </div>
+    <div class="row1">
+      <span class="title">Pacific Sea Caves</span>
+      <span class="star"><i data-lucide="star"></i>4.84</span>
+    </div>
+    <div class="sub">Half-day kayak tour · Coastline Crew</div>
+    <div class="dates">Jun 4 – Jun 4</div>
+    <div class="price"><b>$129</b> · 4 hr</div>
+  </article>
+
+<script>lucide.createIcons();</script>
+</body>
+</html>

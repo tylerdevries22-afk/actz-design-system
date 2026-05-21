@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  html { font-size: 16px; }
+  body { margin: 0; padding: 24px; background: hsl(var(--background)); min-height: 100vh; display: flex; align-items: center; gap: 20px; justify-content: center; }
+  .item { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .item .box { background: hsl(var(--co-blue) / 0.15); border: 1px solid hsl(var(--co-blue) / 0.4); width: 96px; height: 96px; display: flex; align-items: center; justify-content: center; color: hsl(var(--co-blue-light)); font: 700 14px/1 var(--font-display); }
+  .item .lbl { font: 500 10px/1 var(--font-body); letter-spacing: 0.16em; text-transform: uppercase; color: hsl(var(--muted-foreground)); }
+  .item .val { font: 600 11px/1 var(--font-body); color: hsl(var(--foreground)); }
+  .b-s { border-radius: var(--r-s); }
+  .b-m { border-radius: var(--r-m); }
+  .b-l { border-radius: var(--r-l); }
+  .b-p { border-radius: var(--r-pill); }
+  .b-2 { border-radius: 2px; }
+</style>
+</head>
+<body>
+  <div class="item">
+    <div class="box b-2">2px</div>
+    <div class="lbl">— avoid —</div>
+    <div class="val">never use</div>
+  </div>
+  <div class="item">
+    <div class="box b-s">--r-s</div>
+    <div class="lbl">small</div>
+    <div class="val">1.1rem</div>
+  </div>
+  <div class="item">
+    <div class="box b-m">--r-m</div>
+    <div class="lbl">medium · default</div>
+    <div class="val">1.66rem</div>
+  </div>
+  <div class="item">
+    <div class="box b-l">--r-l</div>
+    <div class="lbl">large · hero</div>
+    <div class="val">2.2rem</div>
+  </div>
+  <div class="item">
+    <div class="box b-p">pill</div>
+    <div class="lbl">--r-pill</div>
+    <div class="val">256rem</div>
+  </div>
+</body>
+</html>

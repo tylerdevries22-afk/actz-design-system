@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<link rel="stylesheet" href="../components.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  html { font-size: 16px; }
+  body { margin: 0; padding: 32px 28px; background: hsl(var(--background)); min-height: 100vh; display: flex; flex-direction: column; gap: 22px; align-items: center; justify-content: center; }
+  [data-lucide] { width: 16px; height: 16px; stroke-width: 2; }
+  .mobile-tabbar { width: 460px; }
+  .mobile-tabbar [data-lucide] { width: 20px; height: 20px; }
+  .lbl { font: 500 9px/1 var(--font-body); letter-spacing: 0.2em; text-transform: uppercase; color: hsl(var(--muted-foreground)); }
+</style>
+</head>
+<body>
+  <div class="lbl">Mobile tab-bar · floating pill · gold indicator</div>
+  <div class="mobile-tabbar">
+    <button class="tab"><i data-lucide="home"></i>Home</button>
+    <button class="tab"><i data-lucide="map"></i>Map</button>
+    <button class="tab" data-active="true"><i data-lucide="compass"></i>Explore</button>
+    <button class="tab"><i data-lucide="message-circle"></i>Crew</button>
+    <button class="tab"><i data-lucide="user"></i>Profile</button>
+  </div>
+
+  <div class="lbl" style="margin-top:8px">Sticky top nav · liquid glass</div>
+  <header class="liquid-glass" style="width: 560px; padding: 8px 8px 8px 16px; border-radius: 999px; display: flex; align-items: center; justify-content: space-between;">
+    <div style="display:flex; align-items:center; gap: 10px; padding-left: 4px;">
+      <div style="width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,hsl(var(--primary)),hsl(var(--secondary)))"></div>
+      <span style="font: 700 16px/1 var(--font-brand); letter-spacing: 0.04em; color: hsl(var(--foreground));">ACTZ</span>
+    </div>
+    <nav style="display:flex; gap: 2px;">
+      <a class="btn-ghost btn" style="padding:6px 12px; font-size: 12px;">For Travelers</a>
+      <a class="btn-ghost btn" style="padding:6px 12px; font-size: 12px;">For Providers</a>
+      <a class="btn-ghost btn" style="padding:6px 12px; font-size: 12px;">Partners</a>
+    </nav>
+    <button class="btn btn-hero" style="padding: 0.5rem 1rem; font-size: 12px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style="vertical-align: -2px;"><path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"></path></svg> App Store</button>
+  </header>
+</body>
+<script>lucide.createIcons();</script>
+</html>

@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<link rel="stylesheet" href="../components.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  html { font-size: 16px; }
+  body {
+    margin: 0; padding: 26px 26px 36px; background: hsl(var(--background));
+    min-height: 100vh;
+    display: flex; flex-direction: column; gap: 18px;
+    color: hsl(var(--foreground));
+  }
+  /* group header — separates sections */
+  .group {
+    display: flex; align-items: center; gap: 12px;
+    margin-top: 6px;
+    font: 700 10px/1 var(--font-body);
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: hsl(var(--foreground) / 0.85);
+  }
+  .group::before, .group::after {
+    content: ''; height: 1px; background: hsl(var(--border));
+  }
+  .group::before { width: 14px; }
+  .group::after  { flex: 1; }
+
+  [data-lucide] { width: 11px; height: 11px; stroke-width: 2; flex-shrink: 0; }
+  .row { display: flex; align-items: center; gap: 10px; flex-wrap: nowrap; min-height: 32px; }
+
+  /* ─────────────────────────────────────────────────────────────
+     0. MARKETPLACE CARD TAG — canonical category pill.
+        Mirrors `.trip-card .tag` from ui_kits/marketing/index.html:
+          padding 5px 12px · pill · 700/10px Manrope · uppercase · 0.1em tracking
+          color variants: accent (default/hiking/camping), secondary (water/photo/wellness),
+          primary (tour/concerts). Animation = parent card hover lift (translateY -4px).
+     ───────────────────────────────────────────────────────────── */
+  .mkt-tag {
+    display: inline-block;
+    padding: 5px 12px; border-radius: 999px;
+    background: hsl(var(--accent));
+    color: hsl(var(--accent-foreground));
+    font: 700 10px/1 var(--font-body);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    white-space: nowrap;
+  }
+  .mkt-tag.hiking    { background: hsl(var(--accent));    color: hsl(var(--accent-foreground)); }
+  .mkt-tag.camping   { background: hsl(var(--accent));    color: hsl(var(--accent-foreground)); }
+  .mkt-tag.wellness  { background: hsl(var(--secondary)); color: white; }
+  .mkt-tag.water     { background: hsl(var(--secondary)); color: white; }
+  .mkt-tag.photo     { background: hsl(var(--secondary)); color: white; }
+  .mkt-tag.tour      { background: hsl(var(--primary));   color: white; }
+  .mkt-tag.concerts  { background: hsl(var(--primary));   color: white; }
+
+  /* Mini marketplace card — shows the hover-lift animation in context. */
+  .mkt-mini {
+    position: relative; flex-shrink: 0;
+    width: 132px; aspect-ratio: 4/5;
+    border-radius: var(--r-l);
+    overflow: hidden; cursor: pointer;
+    transition: transform 320ms var(--ease-out-expo),
+                box-shadow 320ms var(--ease-out-expo);
+  }
+  .mkt-mini:hover { transform: translateY(-4px); box-shadow: 0 22px 40px -18px rgba(0,0,0,0.65); }
+  .mkt-mini img   { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .mkt-mini .grad {
+    position: absolute; inset: auto 0 0 0; height: 65%;
+    background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%);
+  }
+  .mkt-mini .info { position: absolute; left: 11px; right: 11px; bottom: 11px; color: white; }
+  .mkt-mini .info .tag-wrap { display: block; margin-bottom: 7px; }
+  .mkt-mini .info h5 { margin: 0; font: 700 13px/1.15 var(--font-display); letter-spacing: -0.015em; text-wrap: balance; }
+  .mkt-mini .info .op { margin-top: 2px; font: 500 10px/1.2 var(--font-body); color: rgba(255,255,255,0.7); }
+  .mkt-mini .price-pin {
+    position: absolute; top: 9px; left: 9px;
+    padding: 4px 9px; border-radius: 999px;
+    background: hsl(215 60% 6% / 0.72);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    color: white; font: 700 10.5px/1 var(--font-body);
+    font-variant-numeric: tabular-nums;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .anim-hint { font: 500 10px/1.4 var(--font-body); letter-spacing: 0.12em; text-transform: uppercase; color: hsl(var(--muted-foreground)); }
+  .anim-hint b { color: hsl(var(--accent)); font-weight: 600; }
+
+  /* ─────────────────────────────────────────────────────────────
+     MARKETPLACE FILTER TABS — horizontal pill scroll filter on dark glass.
+     Three semantic color domains:
+       • .dom-act   — activities / events / experiences   (secondary blue)
+       • .dom-lodge — lodging / dining / accommodations    (accent red)
+       • .dom-trans — transportation / transfers / flights (primary gold)
+     Unselected = white chrome, neutral. Selected = domain-colored ring + glow.
+     ───────────────────────────────────────────────────────────── */
+  .filter-tab {
+    display: inline-flex; align-items: center; gap: 9px;
+    padding: 10px 18px 10px 16px; border-radius: 999px;
+    background: hsl(215 60% 6% / 0.55);
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    border: 1.5px solid rgba(255,255,255,0.18);
+    color: white;
+    font: 500 14px/1 var(--font-body);
+    cursor: pointer;
+    white-space: nowrap;
+    transition:
+      transform 220ms var(--ease-back-out),
+      background 220ms var(--ease-out-expo),
+      border-color 220ms var(--ease-out-expo),
+      box-shadow 240ms var(--ease-out-expo);
+  }
+  .filter-tab [data-lucide] { width: 16px; height: 16px; stroke-width: 1.85; color: rgba(255,255,255,0.92); flex-shrink: 0; }
+  .filter-tab:hover {
+    background: hsl(215 60% 10% / 0.72);
+    border-color: rgba(255,255,255,0.32);
+    transform: translateY(-1px);
+  }
+
+  /* Selected state — domain ring + glow + tinted icon. */
+  .filter-tab[data-on="true"].dom-act {
+    border-color: hsl(var(--secondary));
+    box-shadow: 0 0 0 1px hsl(var(--secondary) / 0.55),
+                0 0 28px -2px hsl(var(--secondary) / 0.55),
+                inset 0 0 24px -8px hsl(var(--secondary) / 0.35);
+  }
+  .filter-tab[data-on="true"].dom-act [data-lucide] { color: hsl(var(--co-blue-light)); }
+
+  .filter-tab[data-on="true"].dom-lodge {
+    border-color: hsl(var(--accent));
+    box-shadow: 0 0 0 1px hsl(var(--accent) / 0.55),
+                0 0 28px -2px hsl(var(--accent) / 0.55),
+                inset 0 0 24px -8px hsl(var(--accent) / 0.35);
+  }
+  .filter-tab[data-on="true"].dom-lodge [data-lucide] { color: hsl(0 80% 75%); }
+
+  .filter-tab[data-on="true"].dom-trans {
+    border-color: hsl(var(--primary));
+    box-shadow: 0 0 0 1px hsl(var(--primary) / 0.55),
+                0 0 28px -2px hsl(var(--primary) / 0.5),
+                inset 0 0 24px -8px hsl(var(--primary) / 0.32);
+  }
+  .filter-tab[data-on="true"].dom-trans [data-lucide] { color: hsl(var(--primary-light)); }
+
+  /* ─────────────────────────────────────────────────────────────
+     ON-PHOTO CARD BADGE — mirrors the "Food Tour" pill on the marketplace
+     activity card: dark glass + domain-tinted icon + white label.
+     Same three domain modifiers.
+     ───────────────────────────────────────────────────────────── */
+  .card-badge {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 7px 13px 7px 11px; border-radius: 999px;
+    background: hsl(215 60% 4% / 0.80);
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    border: 1px solid rgba(255,255,255,0.06);
+    color: white;
+    font: 500 13px/1 var(--font-body);
+    white-space: nowrap;
+  }
+  .card-badge [data-lucide] { width: 14px; height: 14px; stroke-width: 1.85; flex-shrink: 0; }
+  .card-badge.dom-act   [data-lucide] { color: hsl(var(--co-blue-light)); }
+  .card-badge.dom-lodge [data-lucide] { color: hsl(0 80% 75%); }
+  .card-badge.dom-trans [data-lucide] { color: hsl(var(--primary-light)); }
+
+  /* Local layout helpers for the new groups. */
+  .filter-rail { display: flex; flex-wrap: wrap; gap: 10px; }
+  .dom-key {
+    display: inline-flex; align-items: center; gap: 6px;
+    font: 600 9px/1 var(--font-body); letter-spacing: 0.18em; text-transform: uppercase;
+    color: hsl(var(--foreground) / 0.65);
+  }
+  .dom-key .swatch { width: 8px; height: 8px; border-radius: 50%; box-shadow: 0 0 8px currentColor; }
+  .dom-key.act   { color: hsl(var(--co-blue-light)); }
+  .dom-key.lodge { color: hsl(0 80% 75%); }
+  .dom-key.trans { color: hsl(var(--primary-light)); }
+  .dom-key.act   .swatch { background: hsl(var(--secondary)); }
+  .dom-key.lodge .swatch { background: hsl(var(--accent)); }
+  .dom-key.trans .swatch { background: hsl(var(--primary)); }
+
+  .row > .lbl {
+    width: 124px; flex-shrink: 0;
+    font: 600 9px/1.2 var(--font-body); letter-spacing: 0.16em; text-transform: uppercase;
+    color: hsl(var(--muted-foreground));
+  }
+  .row > .items { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+  /* ─────────────────────────────────────────────────────────────
+     1. CARD-PILL — small transparent tag chip
+        (`inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-full border`)
+     ───────────────────────────────────────────────────────────── */
+  .card-pill {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 9px; border-radius: 999px;
+    font: 500 10.5px/1 var(--font-body);
+    background: rgba(255, 255, 255, 0.10);
+    color: rgba(255, 255, 255, 0.78);
+    border: 1px solid rgba(255, 255, 255, 0.20);
+    white-space: nowrap;
+  }
+  .card-pill [data-lucide] { color: rgba(255,255,255,0.85); }
+
+  /* Difficulty tints (from `bg-{green|yellow|red}-500/20`) */
+  .pill-easy { background: rgba(34,197,94,0.20); color: hsl(143 65% 70%); border-color: rgba(34,197,94,0.35); }
+  .pill-easy [data-lucide] { color: hsl(143 65% 70%); }
+  .pill-mod  { background: rgba(234,179,8,0.20); color: hsl(48 90% 70%);  border-color: rgba(234,179,8,0.35); }
+  .pill-mod  [data-lucide] { color: hsl(48 90% 70%); }
+  .pill-hard { background: rgba(239,68,68,0.20); color: hsl(0 80% 75%);   border-color: rgba(239,68,68,0.35); }
+  .pill-hard [data-lucide] { color: hsl(0 80% 75%); }
+
+  /* 2. SOURCE CHIPS (square-corner mini chips: `text-[10px] px-1.5 py-0.5 rounded`) */
+  .src-chip {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 8px; border-radius: 6px;
+    font: 600 10.5px/1 var(--font-body);
+  }
+  .src-blue  { background: rgba(59,130,246,0.30); color: hsl(213 85% 75%); }
+  .src-green { background: rgba(34,197,94,0.30);  color: hsl(143 70% 75%); }
+  .src-amber { background: rgba(217,119,6,0.30);  color: hsl(35 85% 72%);  text-transform: capitalize; }
+  .src-red   { background: rgba(239,68,68,0.25);  color: hsl(0 80% 78%); }
+
+  /* 3. STAT ROW — inline numeric metadata "Moderate · 5.2 mi · +1,247'" */
+  .stat-row { display: inline-flex; align-items: center; gap: 6px; font: 500 11px/1 var(--font-body); color: rgba(255,255,255,0.85); font-variant-numeric: tabular-nums; }
+  .stat-row .sep { color: rgba(255,255,255,0.3); }
+  .diff-dot { display: inline-flex; align-items: center; gap: 4px; }
+  .diff-dot::before { content: ''; width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .diff-dot.easy::before { background: rgb(34,197,94); }
+  .diff-dot.mod::before  { background: rgb(234,179,8); }
+  .diff-dot.hard::before { background: rgb(239,68,68); }
+  .stat-row [data-lucide] { width: 12px; height: 12px; }
+  .stat-row .gain { color: hsl(143 65% 75%); display: inline-flex; align-items: center; gap: 3px; }
+
+  /* 4. SQUARE / CIRCULAR ACTION BADGES — over-photo on cards */
+  .badge-sq { width: 28px; height: 28px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; }
+  .badge-sq [data-lucide] { width: 13px; height: 13px; stroke-width: 2; }
+  .badge-sq.pri { background: hsl(var(--primary));   color: hsl(var(--primary-foreground)); box-shadow: 0 8px 20px hsl(var(--primary) / 0.45); }
+  .badge-sq.sec { background: hsl(var(--secondary)); color: white; box-shadow: 0 8px 20px hsl(var(--secondary) / 0.45); }
+  .badge-sq.acc { background: hsl(var(--accent));    color: white; box-shadow: 0 8px 20px hsl(var(--accent) / 0.45); }
+  .badge-circ { width: 28px; height: 28px; border-radius: 50%; background: white; color: #FF6A2A; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 8px 20px rgba(0,0,0,0.45); }
+  .badge-circ [data-lucide] { width: 13px; height: 13px; fill: currentColor; }
+
+  /* Dark-frosted circular action — heart over photo (mkt-card .actions button) */
+  .badge-glass-circ {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: hsl(215 60% 6% / 0.72);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: white;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .badge-glass-circ [data-lucide] { width: 14px; height: 14px; }
+  .badge-glass-circ.saved { color: hsl(var(--primary)); }
+
+  /* 5. COUNT PILL — dark-frosted with leading icon + tabular-num value */
+  .count-pill {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 4px 9px; border-radius: 999px;
+    background: hsl(215 60% 6% / 0.72);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    color: white; font: 700 10.5px/1 var(--font-body);
+    font-variant-numeric: tabular-nums;
+    box-shadow: 0 6px 16px -4px rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.08);
+    white-space: nowrap;
+  }
+  .count-pill .flame { color: #FF6A2A; }
+  .count-pill .gold  { color: hsl(var(--accent)); fill: hsl(var(--accent)); }
+  .count-pill .red   { color: hsl(0 80% 70%); }
+
+  /* 6. STATUS PILL — uppercase tracked, with optional pulsing dot */
+  .status {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 4px 10px; border-radius: 999px;
+    background: hsl(215 60% 6% / 0.72);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    color: white; font: 700 9px/1 var(--font-body);
+    letter-spacing: 0.12em; text-transform: uppercase;
+    box-shadow: 0 6px 16px -4px rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.06);
+    white-space: nowrap;
+  }
+  .status .dot { width: 6px; height: 6px; border-radius: 50%; background: hsl(var(--accent)); box-shadow: 0 0 6px hsl(var(--accent)); }
+  .status.live .dot   { background: hsl(0 85% 60%);   box-shadow: 0 0 6px hsl(0 85% 60%); animation: pulse 1.6s ease-in-out infinite; }
+  .status.new   { background: hsl(var(--accent)); color: hsl(var(--accent-foreground)); }
+  .status.new .dot { background: hsl(var(--accent-foreground)); box-shadow: none; }
+  .status.sold  { background: hsl(0 70% 38%); color: white; border-color: rgba(255,255,255,0.1); }
+  .status.sold .dot { background: white; box-shadow: none; }
+  @keyframes pulse { 50% { transform: scale(1.4); opacity: 0.6; } }
+
+  /* 7. HERO BADGE — split pill: colored label + note (marketing hero) */
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 4px 14px 4px 4px; border-radius: 999px;
+    backdrop-filter: blur(40px) saturate(140%); -webkit-backdrop-filter: blur(40px) saturate(140%);
+    background: rgba(255,255,255,0.04);
+    border: 1px solid hsl(var(--border));
+  }
+  .hero-badge .pill {
+    background: hsl(var(--primary)); padding: 4px 12px; border-radius: 999px;
+    font: 700 10px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.1em;
+    color: hsl(var(--primary-foreground));
+  }
+  .hero-badge .pill.accent  { background: hsl(var(--accent));  color: hsl(var(--accent-foreground)); }
+  .hero-badge .pill.outline { background: transparent; color: hsl(var(--foreground)); box-shadow: inset 0 0 0 1px hsl(var(--foreground) / 0.5); }
+  .hero-badge .note { font: 500 13px/1 var(--font-body); color: hsl(var(--foreground) / 0.9); white-space: nowrap; }
+
+  /* 8. PRICE PILL — photo overlay, dark glass, "$148 · 1 day" */
+  .price-pill {
+    display: inline-flex; align-items: center;
+    padding: 6px 14px; border-radius: 999px;
+    background: hsl(215 60% 6% / 0.72);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    color: white; font: 700 13px/1 var(--font-body);
+    font-variant-numeric: tabular-nums;
+    border: 1px solid rgba(255,255,255,0.08);
+    white-space: nowrap;
+  }
+  /* trip-cost variant — accent yellow, uppercase tracked */
+  .price-pill.split {
+    padding: 6px 12px; background: hsl(var(--accent)); color: hsl(var(--accent-foreground));
+    font: 700 10px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.1em;
+    border: 0; backdrop-filter: none;
+  }
+
+  /* 9. PHOTO CATEGORY OVERLAY — uppercase tracked white on dark glass */
+  .cat-overlay {
+    padding: 4px 10px; border-radius: 999px;
+    background: hsl(215 60% 6% / 0.72);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    color: white; font: 700 9px/1 var(--font-body);
+    letter-spacing: 0.1em; text-transform: uppercase;
+  }
+
+  /* 10. MAP PRICE PIN — bordered pill with drop shadow */
+  .map-pin {
+    padding: 6px 12px; border-radius: 999px;
+    color: white; font: 700 12px/1 var(--font-body); font-variant-numeric: tabular-nums;
+    border: 2px solid hsl(var(--background));
+    box-shadow: 0 8px 20px -2px rgba(0,0,0,0.5);
+    white-space: nowrap;
+  }
+  .map-pin.pri { background: hsl(var(--primary));   color: white; }
+  .map-pin.sec { background: hsl(var(--secondary)); color: white; }
+  .map-pin.acc { background: hsl(var(--accent));    color: hsl(var(--accent-foreground)); }
+  .map-pin.cluster { background: hsl(215 60% 6% / 0.92); backdrop-filter: blur(20px); }
+
+  /* 11. SMALL RESULT-COUNT PILL — primary, inside search bar */
+  .count-num {
+    display: inline-flex; align-items: center;
+    padding: 4px 10px; border-radius: 999px;
+    background: hsl(var(--primary)); color: white;
+    font: 700 10px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.1em;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .count-num.alt { background: hsl(var(--accent)); color: hsl(var(--accent-foreground)); }
+  .count-num.ghost { background: rgba(255,255,255,0.08); color: hsl(var(--foreground) / 0.85); }
+
+  /* 12. INLINE BADGE — "Most popular" inside a row title */
+  .inline-tag {
+    display: inline-flex; align-items: center;
+    padding: 3px 8px; border-radius: 999px;
+    background: hsl(var(--primary)); color: hsl(var(--primary-foreground));
+    font: 700 9px/1 var(--font-body); text-transform: uppercase; letter-spacing: 0.12em;
+  }
+  .inline-tag.accent { background: hsl(var(--accent)); color: hsl(var(--accent-foreground)); }
+  .inline-tag.muted  { background: rgba(255,255,255,0.1); color: hsl(var(--foreground) / 0.85); }
+
+  /* 13. OUTLINE SUGGESTION CHIP — AI suggestion below assistant bubble */
+  .sugg-chip {
+    padding: 6px 12px; border-radius: 999px;
+    background: transparent; border: 1px solid hsl(var(--secondary) / 0.5);
+    color: hsl(var(--co-blue-light)); font: 500 11px/1 var(--font-body);
+    cursor: pointer;
+  }
+
+  /* 14. TIMELINE BITS — time eyebrow + confirmed/pending status text */
+  .time-eyebrow {
+    font: 600 10px/1 var(--font-body); letter-spacing: 0.08em; text-transform: uppercase;
+    color: hsl(var(--accent));
+  }
+  .timeline-state {
+    font: 500 9px/1 var(--font-body); letter-spacing: 0.1em; text-transform: uppercase;
+    display: inline-flex; align-items: center; gap: 4px;
+  }
+  .timeline-state.confirmed { color: hsl(var(--co-blue-light)); }
+  .timeline-state.pending   { color: hsl(var(--muted-foreground)); }
+
+  /* 15. COMPLETION PILL — onboarding "All set" with circle checkmark */
+  .completion-pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 14px 6px 6px; border-radius: 999px;
+    background: hsl(215 60% 6% / 0.6);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border: 1px solid hsl(var(--border));
+    color: hsl(var(--foreground)); font: 600 12px/1 var(--font-body);
+  }
+  .completion-pill .dot-icon {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: hsl(var(--primary)); color: hsl(var(--primary-foreground));
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .completion-pill .dot-icon svg { width: 12px; height: 12px; }
+
+  /* 16. ONBOARDING INTEREST CHIP — large multi-select chip */
+  .interest-chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 10px 14px; border-radius: 999px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid hsl(var(--border));
+    color: hsl(var(--foreground)); font: 500 13px/1 var(--font-body);
+    cursor: pointer;
+  }
+  .interest-chip[data-on="true"] {
+    background: hsl(var(--primary)); border-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+  }
+  .interest-chip [data-lucide] { width: 13px; height: 13px; }
+
+  /* 17. CREW AVATAR STACK — circles overlapping with negative margin */
+  .avatar-stack { display: inline-flex; }
+  .avatar-stack > span {
+    width: 22px; height: 22px; border-radius: 50%;
+    border: 2px solid hsl(var(--background));
+    margin-left: -8px;
+  }
+  .avatar-stack > span:first-child { margin-left: 0; }
+
+  /* 18. DISCOUNT / SAVINGS TAG — accent square-edge */
+  .savings-tag {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 7px; border-radius: 4px;
+    background: hsl(var(--accent)); color: hsl(var(--accent-foreground));
+    font: 700 10px/1 var(--font-body); letter-spacing: 0.04em;
+  }
+  .savings-tag.red { background: hsl(var(--primary)); color: hsl(var(--primary-foreground)); }
+
+  /* 19. RATING INLINE — star + number, tabular */
+  .rating-inline {
+    display: inline-flex; align-items: center; gap: 3px;
+    font: 600 11px/1 var(--font-body); font-variant-numeric: tabular-nums;
+    color: hsl(var(--foreground));
+  }
+  .rating-inline [data-lucide] { color: hsl(var(--accent)); fill: hsl(var(--accent)); width: 11px; height: 11px; }
+  .rating-inline .count { color: hsl(var(--foreground) / 0.5); font-weight: 400; margin-left: 1px; }
+
+  /* 20. AMENITY PILL — neutral, with icon (no color tint) */
+  .amenity {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 4px 9px; border-radius: 999px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid hsl(var(--border));
+    color: hsl(var(--foreground) / 0.85);
+    font: 500 10.5px/1 var(--font-body);
+  }
+  .amenity [data-lucide] { color: hsl(var(--co-blue-light)); }
+
+  /* tightening adjustments */
+  .items.tight { gap: 6px; }
+</style>
+</head>
+<body>
+
+  <!-- ─────────────────────────────────────────────────────────────
+       MARKETPLACE CARD TAG — canonical category badge.
+       Identical styling to `.trip-card .tag` on the marketing
+       marketplace rail. Animation = parent card hover lift.
+       ───────────────────────────────────────────────────────────── -->
+  <div class="group">Marketplace card tags</div>
+
+  <div class="row">
+    <span class="lbl">.mkt-tag</span>
+    <span class="items">
+      <span class="mkt-tag hiking">Hiking</span>
+      <span class="mkt-tag wellness">Wellness</span>
+      <span class="mkt-tag camping">Camping</span>
+      <span class="mkt-tag tour">Tour</span>
+      <span class="mkt-tag water">Water</span>
+      <span class="mkt-tag photo">Photo</span>
+      <span class="mkt-tag concerts">Concerts</span>
+    </span>
+  </div>
+
+  <div class="row" style="align-items: stretch; min-height: 0;">
+    <span class="lbl" style="align-self: flex-start; padding-top: 6px;">In context</span>
+    <span class="items" style="flex-wrap: wrap;">
+      <div class="mkt-mini">
+        <img src="../assets/imagery/hero-02.webp" alt="">
+        <span class="price-pin">$148</span>
+        <div class="grad"></div>
+        <div class="info">
+          <span class="tag-wrap"><span class="mkt-tag hiking">Hiking</span></span>
+          <h5>Maroon Bells Sunrise</h5>
+          <div class="op">Mountain Provider Co.</div>
+        </div>
+      </div>
+      <div class="mkt-mini">
+        <img src="../assets/imagery/hero-06.webp" alt="">
+        <span class="price-pin">$89</span>
+        <div class="grad"></div>
+        <div class="info">
+          <span class="tag-wrap"><span class="mkt-tag wellness">Wellness</span></span>
+          <h5>Glenwood Hot Springs</h5>
+          <div class="op">Aspen Wellness</div>
+        </div>
+      </div>
+      <div class="mkt-mini">
+        <img src="../assets/imagery/hero-05.webp" alt="">
+        <span class="price-pin">$312</span>
+        <div class="grad"></div>
+        <div class="info">
+          <span class="tag-wrap"><span class="mkt-tag camping">Camping</span></span>
+          <h5>Snowmass Backcountry</h5>
+          <div class="op">Trailblazer Outfitters</div>
+        </div>
+      </div>
+      <div class="mkt-mini">
+        <img src="../assets/imagery/hero-03.webp" alt="">
+        <span class="price-pin">$245</span>
+        <div class="grad"></div>
+        <div class="info">
+          <span class="tag-wrap"><span class="mkt-tag tour">Tour</span></span>
+          <h5>Sunrise Balloon</h5>
+          <div class="op">Sky-High Tours</div>
+        </div>
+      </div>
+      <div class="mkt-mini">
+        <img src="../assets/imagery/hero-04.webp" alt="">
+        <span class="price-pin">$129</span>
+        <div class="grad"></div>
+        <div class="info">
+          <span class="tag-wrap"><span class="mkt-tag water">Water</span></span>
+          <h5>Sea Cave Kayak</h5>
+          <div class="op">Coastline Crew</div>
+        </div>
+      </div>
+    </span>
+  </div>
+
+  <div class="row">
+    <span class="lbl">Animation</span>
+    <span class="items">
+      <span class="anim-hint">Hover any card · <b>translateY(–4px)</b> · 320ms · ease-out-expo</span>
+    </span>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       MARKETPLACE FILTER TABS — domain-coded pill rail
+       ─────────────────────────────────────────────────────────── -->
+  <div class="group">Marketplace filter tabs</div>
+
+  <div class="row">
+    <span class="lbl">Domain key</span>
+    <span class="items">
+      <span class="dom-key act"><span class="swatch"></span>Activities</span>
+      <span class="dom-key lodge"><span class="swatch"></span>Lodging · dining</span>
+      <span class="dom-key trans"><span class="swatch"></span>Transportation</span>
+    </span>
+  </div>
+
+  <div class="row" style="align-items: stretch; min-height: 0;">
+    <span class="lbl" style="align-self: flex-start; padding-top: 14px;">Activities</span>
+    <span class="items" style="flex: 1; flex-wrap: wrap;">
+      <button class="filter-tab dom-act" data-on="true"><i data-lucide="triangle"></i>Activities</button>
+      <button class="filter-tab dom-act"><i data-lucide="ticket"></i>Events</button>
+      <button class="filter-tab dom-act"><i data-lucide="compass"></i>Experiences</button>
+      <button class="filter-tab dom-act"><i data-lucide="gem"></i>Gems</button>
+      <button class="filter-tab dom-act"><i data-lucide="cable-car"></i>Ski</button>
+      <button class="filter-tab dom-act"><i data-lucide="tree-pine"></i>Trails</button>
+      <button class="filter-tab dom-act"><i data-lucide="mountain"></i>Hiking</button>
+      <button class="filter-tab dom-act"><i data-lucide="tent"></i>Camping</button>
+      <button class="filter-tab dom-act"><i data-lucide="camera"></i>Photo</button>
+      <button class="filter-tab dom-act"><i data-lucide="music"></i>Concerts</button>
+      <button class="filter-tab dom-act"><i data-lucide="waves"></i>Water</button>
+      <button class="filter-tab dom-act"><i data-lucide="bike"></i>Cycling</button>
+      <button class="filter-tab dom-act"><i data-lucide="hand-heart"></i>Wellness</button>
+      <button class="filter-tab dom-act"><i data-lucide="utensils"></i>Food Tour</button>
+    </span>
+  </div>
+
+  <div class="row" style="align-items: stretch; min-height: 0;">
+    <span class="lbl" style="align-self: flex-start; padding-top: 14px;">Lodging · dining</span>
+    <span class="items" style="flex: 1; flex-wrap: wrap;">
+      <button class="filter-tab dom-lodge" data-on="true"><i data-lucide="hotel"></i>Lodge</button>
+      <button class="filter-tab dom-lodge"><i data-lucide="bed-double"></i>Hotel</button>
+      <button class="filter-tab dom-lodge"><i data-lucide="house"></i>Cabin</button>
+      <button class="filter-tab dom-lodge"><i data-lucide="tent-tree"></i>Glamping</button>
+      <button class="filter-tab dom-lodge" data-on="true"><i data-lucide="utensils-crossed"></i>Restaurant</button>
+      <button class="filter-tab dom-lodge"><i data-lucide="coffee"></i>Cafe</button>
+      <button class="filter-tab dom-lodge"><i data-lucide="wine"></i>Bar</button>
+      <button class="filter-tab dom-lodge"><i data-lucide="chef-hat"></i>Tasting</button>
+    </span>
+  </div>
+
+  <div class="row" style="align-items: stretch; min-height: 0;">
+    <span class="lbl" style="align-self: flex-start; padding-top: 14px;">Transportation</span>
+    <span class="items" style="flex: 1; flex-wrap: wrap;">
+      <button class="filter-tab dom-trans" data-on="true"><i data-lucide="plane"></i>Flights</button>
+      <button class="filter-tab dom-trans"><i data-lucide="bus"></i>Shuttle</button>
+      <button class="filter-tab dom-trans"><i data-lucide="car-front"></i>Transfer</button>
+      <button class="filter-tab dom-trans"><i data-lucide="car"></i>Rental</button>
+      <button class="filter-tab dom-trans"><i data-lucide="ship"></i>Ferry</button>
+      <button class="filter-tab dom-trans"><i data-lucide="train-front"></i>Train</button>
+    </span>
+  </div>
+
+  <div class="row">
+    <span class="lbl">States</span>
+    <span class="items">
+      <button class="filter-tab dom-act"><i data-lucide="compass"></i>Neutral</button>
+      <button class="filter-tab dom-act" data-on="true"><i data-lucide="compass"></i>Selected · blue</button>
+      <button class="filter-tab dom-lodge" data-on="true"><i data-lucide="utensils-crossed"></i>Selected · red</button>
+      <button class="filter-tab dom-trans" data-on="true"><i data-lucide="plane"></i>Selected · gold</button>
+    </span>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       ON-PHOTO CARD BADGES — domain-tinted icon + white label
+       ─────────────────────────────────────────────────────────── -->
+  <div class="group">Card badges · on-photo</div>
+
+  <div class="row">
+    <span class="lbl">Activities · blue</span>
+    <span class="items">
+      <span class="card-badge dom-act"><i data-lucide="utensils"></i>Food Tour</span>
+      <span class="card-badge dom-act"><i data-lucide="mountain"></i>Hiking</span>
+      <span class="card-badge dom-act"><i data-lucide="tent"></i>Camping</span>
+      <span class="card-badge dom-act"><i data-lucide="music"></i>Concert</span>
+      <span class="card-badge dom-act"><i data-lucide="camera"></i>Photo tour</span>
+      <span class="card-badge dom-act"><i data-lucide="waves"></i>Kayak</span>
+      <span class="card-badge dom-act"><i data-lucide="cable-car"></i>Ski day</span>
+    </span>
+  </div>
+
+  <div class="row">
+    <span class="lbl">Lodging · red</span>
+    <span class="items">
+      <span class="card-badge dom-lodge"><i data-lucide="hotel"></i>Lodge</span>
+      <span class="card-badge dom-lodge"><i data-lucide="bed-double"></i>Hotel</span>
+      <span class="card-badge dom-lodge"><i data-lucide="house"></i>Cabin</span>
+      <span class="card-badge dom-lodge"><i data-lucide="utensils-crossed"></i>Restaurant</span>
+      <span class="card-badge dom-lodge"><i data-lucide="coffee"></i>Cafe</span>
+      <span class="card-badge dom-lodge"><i data-lucide="wine"></i>Tasting</span>
+    </span>
+  </div>
+
+  <div class="row">
+    <span class="lbl">Transport · gold</span>
+    <span class="items">
+      <span class="card-badge dom-trans"><i data-lucide="plane"></i>Flight</span>
+      <span class="card-badge dom-trans"><i data-lucide="bus"></i>Shuttle</span>
+      <span class="card-badge dom-trans"><i data-lucide="car-front"></i>Transfer</span>
+      <span class="card-badge dom-trans"><i data-lucide="car"></i>Rental car</span>
+      <span class="card-badge dom-trans"><i data-lucide="ship"></i>Ferry</span>
+      <span class="card-badge dom-trans"><i data-lucide="train-front"></i>Train</span>
+    </span>
+  </div>
+
+  <!-- ─────────────────────────────────────────────────────────────
+       OVER-PHOTO CHROME — what sits on top of card media
+       ───────────────────────────────────────────────────────────── -->
+  <div class="group">Over-photo chrome</div>
+
+  <div class="row">
+    <span class="lbl">Action badges</span>
+    <span class="items">
+      <span class="badge-sq pri" title="Favorite"><i data-lucide="heart" fill="currentColor"></i></span>
+      <span class="badge-sq sec" title="Crew"><i data-lucide="users"></i></span>
+      <span class="badge-sq acc" title="Booked"><i data-lucide="ticket"></i></span>
+      <span class="badge-circ" title="Streak"><i data-lucide="flame"></i></span>
+      <span class="badge-glass-circ" title="Save"><i data-lucide="heart"></i></span>
+      <span class="badge-glass-circ saved" title="Saved"><i data-lucide="heart" fill="currentColor"></i></span>
+      <span class="badge-glass-circ" title="Share"><i data-lucide="share"></i></span>
+      <span class="badge-glass-circ" title="More"><i data-lucide="more-horizontal"></i></span>
+    </span>
+  </div>
+
+  <div class="row">
+    <span class="lbl">Price pill</span>
+    <span class="items">
+      <span class="price-pill">$148 · 1 day</span>
+      <span class="price-pill">$89 · 3 hr</span>
+      <span class="price-pill">$312 · 2 nights</span>
+      <span class="price-pill">$245 · 1 hr</span>
+      <span class="price-pill split">$1,640 · split 4</span>
+      <span class="price-pill split" style="background: hsl(var(--primary)); color: hsl(var(--primary-foreground));">From $89</span>
+    </span>
+  </div>
+
+  <div class="row">
+    <span class="lbl">Category overlay</span>
+    <span class="items">
+      <span class="cat-overlay">Hiking</span>
+      <span class="cat-overlay">Wellness</span>
+      <span class="cat-overlay">Photo</span>
+      <span class="cat-overlay">Concerts</span>
+      <span class="cat-overlay">Trails</span>
+    </span>
+  </div>
+
+  <div class="row">
+    <span class="lbl">Status pills</span>
+    <span class="items">
+      <span class="status"><span class="dot"></span>Booked</span>
+      <span class="status live"><span class="dot"></span>Live now</span>
+      <span class="status new"><span class="dot"></span>New</span>
+      <span class="status sold"><span class="dot"></span>Sold out</span>
+      <span class="status"><span class="dot" style="background: hsl(var(--co-blue-light)); box-shadow: 0 0 6px hsl(var(--co-blue-light))"></span>Verified</span>
+      <span class="status"><span class="dot" style="background: hsl(143 65% 60%); box-shadow: 0 0 6px hsl(143 65% 60%)"></span>Available</span>
+    </span>
+  </div>
+
+  <div class="row">
+    <span class="lbl">Count pills</span>
+    <span class="items">
+      <span class="count-pill"><i data-lucide="flame" class="flame" fill="currentColor"></i>12 day streak</span>
+      <span class="count-pill"><i data-lucide="star" class="gold"></i>4.9</span>
+      <span class="count-pill"><i data-lucide="heart" class="red" fill="currentColor"></i>247</span>
+      <span class="count-pill"><i data-lucide="message-circle" style="color: hsl(var(--co-blue-light))"></i>24</span>
+      <span class="count-pill"><i data-lucide="users"></i>4 going</span>
+      <span class="count-pill"><i data-lucide="eye"></i>1.2k</span>
+    </span>
+  </div>
+
+  <!-- ─────────────────────────────────────────────────────────────
+       MAP + SEARCH CHROME
+       ───────────────────────────────────────────────────────────── -->
+  <div class="group">Map · Search chrome</div>
+
+  <div class="row">
+    <span class="lbl">Map price pins</span>
+    <span class="items">
+      <span class="map-pin pri">$148</span>
+      <span class="map-pin sec">$89</span>
+      <span class="map-pin acc">$312</span>
+      <span class="map-pin pri">$245</span>
+      <span class="map-pin cluster">12 trips</span>
+      <span class="map-pin cluster" style="display:inline-flex; align-items:center; gap:5px"><i data-lucide="layers" style="width:10px;height:10px"></i>5 clusters</span>
+    </span>
+  </div>
+
+  <div class="row">
+    <span class="lbl">Result counts</span>
+    <span class="items">
+      <span class="count-num">32</span>
+      <span class="count-num">128 stays</span>
+      <span class="count-num alt">12 new</span>
+      <span class="count-num ghost">All 48</span>
+    </span>
+  </div>
+
+  <!-- ─────────────────────────────────────────────────────────────
+       HERO + SECTION LABELS
+       ───────────────────────────────────────────────────────────── -->
+  <div class="group">Hero · Section labels</div>
+
+  <div class="row">
+    <span class="lbl">Hero badge</span>
+    <span class="items">
+      <span class="hero-badge">
+        <span class="pill">New</span>
+        <span class="note">Travel intentionally.</span>
+      </span>
+      <span class="hero-badge">
+        <span class="pill accent">v2.0</span>
+        <span class="note">Crew planning is here.</span>
+      </span>
+      <span class="hero-badge">
+        <span class="pill outline">Beta</span>
+        <span class="note">AI concierge open access.</span>
+      </span>
+    </span>
+  </div>
+
+  <div class="row">
+    <span class="lbl">Inline tag</span>
+    <span class="items">
+      <span class="inline-tag">Most popular</span>
+      <span class="inline-tag accent">Recommended</span>
+      <span class="inline-tag muted">Free</span>
+      <span class="inline-tag" style="background: hsl(0 70% 45%); color: white;">Last 2 spots</span>
+    </span>
+  </div>
+
+  <div class="row">
+    <span class="lbl">Savings tag</span>
+    <span class="items">
+      <span class="savings-tag">SAVE $40</span>
+      <span class="savings-tag red">−20%</span>
+      <span class="savings-tag" style="background: hsl(var(--co-blue-light)); color: hsl(var(--background))">EARLY BIRD</span>
+    </span>
+  </div>
+
+  <!-- ─────────────────────────────────────────────────────────────
+       TAGS + CATEGORIES
+       ───────────────────────────────────────────────────────────── -->
+  <div class="group">Tags · Categories</div>
+
+  <div class="row">
+    <span class="lbl">Card-pill tag</span>
+    <span class="items">
+      <span class="card-pill"><i data-lucide="tag"></i>Hiking</span>
+      <span class="card-pill"><i data-lucide="tag"></i>Wellness</span>
+      <span class="card-pill"><i data-lucide="tag"></i>Photo</span>
+      <span class="card-pill"><i data-lucide="tag"></i>Hidden Gems</span>
+      <span class="card-pill"><i data-lucide="tag"></i>Rock · Pop</span>
+      <span class="card-pill" style="color: rgba(255,255,255,0.5); border-style: dashed">+3 More</span>
+    </span>
+  </div>
+
+  <div class="row">
+    <span class="lbl">.genre-pill</span>
+    <span class="items">
+      <button class="genre-pill"><i data-lucide="tent"></i>Camping</button>
+      <button class="genre-pill"><i data-lucide="mountain"></i>Hiking</button>
+      <button class="genre-pill"><i data-lucide="snowflake"></i>Winter</button>
+      <button class="genre-pill"><i data-lucide="ticket"></i>Concerts</button>
+      <button class="genre-pill" style="background: hsl(var(--primary) / 0.18); border-color: hsl(var(--primary) / 0.6); color: hsl(var(--foreground))"><i data-lucide="check"></i>Selected</button>
+    </span>
+  </div>
+
+  <div class="row">
+    <span class="lbl">Interest chip</span>
+    <span class="items">
+      <span class="interest-chip" data-on="true"><i data-lucide="check"></i>Hiking</span>
+      <span class="interest-chip"><i data-lucide="camera"></i>Photo Tours</span>
+      <span class="interest-chip"><i data-lucide="utensils"></i>Food</span>
+      <span class="interest-chip" data-on="true"><i data-lucide="check"></i>Wellness</span>
+      <span class="interest-chip"><i data-lucide="music"></i>Concerts</span>
+    </span>
+  </div>
+
+  <div class="row">
+    <span class="lbl">.btn-chip</span>
+    <span class="items">
+      <button class="btn btn-chip" data-active="true">Hiking</button>
+      <button class="btn btn-chip">Wellness</button>
+      <button class="btn btn-chip">Photography</button>
+      <button class="btn btn-chip">Concerts</button>
+      <button class="btn btn-chip">All →</button>
+    </span>
+  </div>
+
+  <div class="row">
+    <span class="lbl">Suggestion chip</span>
+    <span class="items">
+      <button class="sugg-chip">Open poll · Hot springs time</button>
+      <button class="sugg-chip">Show map</button>
+      <button class="sugg-chip">Swap photo tour</button>
+      <button class="sugg-chip">Add to itinerary</button>
+    </span>
+  </div>
+
+  <!-- ─────────────────────────────────────────────────────────────
+       TRAIL / DETAIL MICRO-DATA
+       ───────────────────────────────────────────────────────────── -->
+  <div class="group">Trail · Detail micro-data</div>
+
+  <div class="row">
+    <span class="lbl">Difficulty</span>
+    <span class="items">
+      <span class="card-pill pill-easy"><i data-lucide="circle-dot"></i>Easy</span>
+      <span class="card-pill pill-mod"><i data-lucide="circle-dot"></i>Moderate</span>
+      <span class="card-pill pill-hard"><i data-lucide="circle-dot"></i>Hard</span>
+      <span class="card-pill pill-hard"><i data-lucide="alert-triangle"></i>Expert only</span>
+    </span>
+  </div>
+
+  <div class="row">
+    <span class="lbl">Stat row</span>
+    <span class="items">
+      <span class="stat-row">
+        <span class="diff-dot mod">Moderate</span><span class="sep">·</span>
+        <span><i data-lucide="route"></i> 5.2 mi</span><span class="sep">·</span>
+        <span class="gain"><i data-lucide="trending-up"></i>+1,247'</span><span class="sep">·</span>
+        <span><i data-lucide="mountain"></i> 9,800' – 12,500'</span>
+      </span>
+    </span>
+  </div>
+
+  <div class="row">
+    <span class="lbl">Activity tags</span>
+    <span class="items">
+      <span class="card-pill"><i data-lucide="footprints"></i>Hiking</span>
+      <span class="card-pill"><i data-lucide="bike"></i>Biking</span>
+      <span class="card-pill"><i data-lucide="dog"></i>Dogs (Leashed)</span>
+      <span class="card-pill"><i data-lucide="snowflake"></i>XC Skiing</span>
+      <span class="card-pill"><i data-lucide="route"></i>Loop</span>
+      <span class="card-pill"><i data-lucide="layers"></i>Dirt</span>
+      <span class="card-pill"><i data-lucide="truck"></i>OHV Access</span>
+    </span>
+  </div>
+
+  <div class="row">
+    <span class="lbl">Source chip</span>
+    <span class="items">
+      <span class="src-chip src-blue">12 runs</span>
+      <span class="src-chip src-green">8 lifts</span>
+      <span class="src-chip src-amber">campground</span>
+      <span class="src-chip src-green">98 sites</span>
+      <span class="src-chip src-blue">RIDB</span>
+      <span class="src-chip src-amber">CoTrex</span>
+      <span class="src-chip src-red">closed</span>
+    </span>
+  </div>
+
+  <div class="row">
+    <span class="lbl">Warnings</span>
+    <span class="items">
+      <span class="card-pill pill-hard"><i data-lucide="bath"></i>No Bathroom</span>
+      <span class="card-pill pill-hard"><i data-lucide="droplets"></i>No Water</span>
+      <span class="card-pill pill-mod"><i data-lucide="alert-triangle"></i>Avalanche risk</span>
+      <span class="card-pill pill-mod"><i data-lucide="cloud-rain"></i>Storms 3pm</span>
+      <span class="card-pill pill-easy"><i data-lucide="signal"></i>Cell service</span>
+    </span>
+  </div>
+
+  <div class="row">
+    <span class="lbl">Amenities</span>
+    <span class="items">
+      <span class="amenity"><i data-lucide="wifi"></i>Wifi</span>
+      <span class="amenity"><i data-lucide="utensils"></i>Meals</span>
+      <span class="amenity"><i data-lucide="parking-circle"></i>Parking</span>
+      <span class="amenity"><i data-lucide="car"></i>Shuttle</span>
+      <span class="amenity"><i data-lucide="accessibility"></i>ADA</span>
+      <span class="amenity"><i data-lucide="snowflake"></i>Air-con</span>
+    </span>
+  </div>
+
+  <!-- ─────────────────────────────────────────────────────────────
+       ITINERARY + CREW
+       ───────────────────────────────────────────────────────────── -->
+  <div class="group">Itinerary · Crew</div>
+
+  <div class="row">
+    <span class="lbl">Time eyebrow</span>
+    <span class="items tight">
+      <span class="time-eyebrow">08:30 AM</span>
+      <span class="time-eyebrow" style="color: hsl(var(--co-blue-light))">11:15 AM</span>
+      <span class="time-eyebrow" style="color: hsl(var(--primary))">2:00 PM</span>
+      <span class="time-eyebrow" style="color: hsl(var(--muted-foreground))">Tomorrow</span>
+    </span>
+  </div>
+
+  <div class="row">
+    <span class="lbl">Timeline state</span>
+    <span class="items">
+      <span class="timeline-state confirmed">● Confirmed</span>
+      <span class="timeline-state pending">○ Pending</span>
+      <span class="timeline-state" style="color: hsl(var(--primary))">◆ Hold</span>
+      <span class="timeline-state" style="color: hsl(143 65% 65%)">✓ Paid</span>
+      <span class="timeline-state" style="color: hsl(0 80% 70%)">✕ Canceled</span>
+    </span>
+  </div>
+
+  <div class="row">
+    <span class="lbl">Crew avatars</span>
+    <span class="items">
+      <span class="avatar-stack">
+        <span style="background: linear-gradient(135deg, hsl(230 70% 55%), hsl(344 70% 50%))"></span>
+        <span style="background: linear-gradient(135deg, hsl(260 70% 55%), hsl(348 70% 50%))"></span>
+        <span style="background: linear-gradient(135deg, hsl(290 70% 55%), hsl(352 70% 50%))"></span>
+        <span style="background: linear-gradient(135deg, hsl(320 70% 55%), hsl(356 70% 50%))"></span>
+      </span>
+      <span class="count-pill"><i data-lucide="users"></i>4 in crew</span>
+      <span class="price-pill split">$1,640 · split 4</span>
+    </span>
+  </div>
+
+  <div class="row">
+    <span class="lbl">Completion</span>
+    <span class="items">
+      <span class="completion-pill">
+        <span class="dot-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </span>
+        All set. Welcome to ACTZ.
+      </span>
+      <span class="completion-pill">
+        <span class="dot-icon" style="background: hsl(var(--accent)); color: hsl(var(--accent-foreground))">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </span>
+        Step 4 of 6
+      </span>
+    </span>
+  </div>
+
+  <div class="row">
+    <span class="lbl">Rating inline</span>
+    <span class="items">
+      <span class="rating-inline"><i data-lucide="star" fill="currentColor"></i>4.9<span class="count">(247)</span></span>
+      <span class="rating-inline"><i data-lucide="star" fill="currentColor"></i>4.7<span class="count">(1.2k)</span></span>
+      <span class="rating-inline"><i data-lucide="star" fill="currentColor"></i>5.0<span class="count">(New)</span></span>
+    </span>
+  </div>
+
+<script>lucide.createIcons();</script>
+</body>
+</html>

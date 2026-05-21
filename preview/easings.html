@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  html { font-size: 16px; }
+  body { margin: 0; padding: 32px 24px; background: hsl(var(--background)); min-height: 100vh; display: flex; flex-direction: column; gap: 12px; justify-content: center; }
+  .row { display: grid; grid-template-columns: 140px 1fr 230px; gap: 18px; align-items: center; }
+  .name { font: 700 12px/1.1 var(--font-display); color: hsl(var(--foreground)); }
+  .name span { display: block; font: 500 9px/1.4 var(--font-body); letter-spacing: 0.12em; text-transform: uppercase; color: hsl(var(--muted-foreground)); margin-top: 4px; }
+  .track { position: relative; height: 28px; background: hsl(var(--co-navy)); border-radius: 14px; border: 1px solid hsl(var(--border)); overflow: hidden; cursor: pointer; }
+  .dot { position: absolute; top: 4px; width: 20px; height: 20px; border-radius: 50%; background: hsl(var(--co-gold)); box-shadow: 0 0 12px hsl(var(--co-gold) / 0.6); left: 4px; }
+  .track:hover .dot { animation: slide 1.4s var(--ease-out-expo) forwards; }
+  .e2 .track:hover .dot { animation-timing-function: var(--ease-back-out); }
+  .e3 .track:hover .dot { animation-timing-function: var(--ease-in-out-expo); }
+  .e4 .track:hover .dot { animation-timing-function: var(--ease-in-out-cubic); }
+  @keyframes slide { from { left: 4px; } to { left: calc(100% - 24px); } }
+  .meta { font: 500 10px/1.3 var(--font-body); color: hsl(var(--foreground) / 0.6); font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body>
+  <div class="row e1">
+    <div class="name">out-expo<span>workhorse · entrances</span></div>
+    <div class="track"><div class="dot"></div></div>
+    <div class="meta">cubic-bezier(0.19, 1, 0.22, 1)</div>
+  </div>
+  <div class="row e2">
+    <div class="name">back-out<span>buttons · land</span></div>
+    <div class="track"><div class="dot"></div></div>
+    <div class="meta">cubic-bezier(0.175, 0.885, 0.32, 1.275)</div>
+  </div>
+  <div class="row e3">
+    <div class="name">in-out-expo<span>parallax · pages</span></div>
+    <div class="track"><div class="dot"></div></div>
+    <div class="meta">cubic-bezier(0.696, 0.001, 0.304, 0.995)</div>
+  </div>
+  <div class="row e4">
+    <div class="name">in-out-cubic<span>scale · zoom</span></div>
+    <div class="track"><div class="dot"></div></div>
+    <div class="meta">cubic-bezier(0.65, 0, 0.35, 1)</div>
+  </div>
+</body>
+</html>

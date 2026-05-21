@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>ACTZ · Traveler app kit</title>
+<link rel="icon" href="../../assets/brand/favicon.svg">
+<link rel="stylesheet" href="../../colors_and_type.css">
+<link rel="stylesheet" href="../../components.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+  body { margin: 0; background: hsl(var(--background)); min-height: 100vh; padding: 64px 32px 80px; }
+  .header { max-width: 1320px; margin: 0 auto 56px; text-align: center; }
+  .header .eyebrow { font: 600 11px/1 var(--font-body); letter-spacing: 0.24em; text-transform: uppercase; color: hsl(var(--accent)); margin-bottom: 14px; display: inline-flex; align-items: center; gap: 12px; }
+  .header .eyebrow::before, .header .eyebrow::after { content: ''; width: 28px; height: 1px; background: hsl(var(--accent)); }
+  .header h1 { margin: 0 auto; max-width: 22ch; font: 700 clamp(34px, 4.4vw, 56px)/1.05 var(--font-display); letter-spacing: -0.03em; color: hsl(var(--foreground)); text-wrap: balance; }
+  .header p  { margin: 16px auto 0; max-width: 56ch; font: 400 16px/1.55 var(--font-body); color: hsl(var(--foreground) / 0.75); }
+  .device-row { display: flex; gap: 32px; flex-wrap: wrap; justify-content: center; align-items: flex-start; }
+  .device-slot { display: flex; flex-direction: column; align-items: center; gap: 18px; }
+  .device-slot .label { font: 600 11px/1 var(--font-body); letter-spacing: 0.2em; text-transform: uppercase; color: hsl(var(--muted-foreground)); }
+  .device-scale { transform: scale(0.72); transform-origin: top center; margin-bottom: -245px; /* compensate for scale */ }
+</style>
+</head>
+<body>
+
+<div class="header" data-screen-label="00 Header">
+  <div class="eyebrow">Traveler app · iOS</div>
+  <h1>One screen. One trip. Every category.</h1>
+  <p>The ACTZ mobile app — a hi-fi recreation of the marketplace, itinerary, AI concierge, and map views. Dark frosted glass, gold active-indicator, Airbnb-style detail flow.</p>
+</div>
+
+<div class="device-row" id="device-row"></div>
+
+<script type="text/babel" src="ios-frame.jsx"></script>
+<script type="text/babel" src="Data.jsx"></script>
+<script type="text/babel" src="Screens.jsx"></script>
+<script type="text/babel">
+  const { IOSDevice } = window;
+
+  function DeviceCard({ label, screenId, children }) {
+    return (
+      <div className="device-slot" data-screen-label={screenId}>
+        <div className="device-scale">
+          <IOSDevice width={402} height={874} dark={true}>
+            {children}
+          </IOSDevice>
+        </div>
+        <div className="label">{label}</div>
+      </div>
+    );
+  }
+
+  function App() {
+    return (
+      <React.Fragment>
+        <DeviceCard label="Marketplace · home" screenId="01 Marketplace">
+          <MarketplaceScreen />
+        </DeviceCard>
+        <DeviceCard label="Map · airbnb-style" screenId="02 Map">
+          <MapScreen />
+        </DeviceCard>
+        <DeviceCard label="Trip · itinerary" screenId="03 Trip">
+          <TripScreen />
+        </DeviceCard>
+        <DeviceCard label="ACTZ AI · concierge" screenId="04 AI chat">
+          <AIChatScreen />
+        </DeviceCard>
+      </React.Fragment>
+    );
+  }
+
+  ReactDOM.createRoot(document.getElementById('device-row')).render(<App />);
+</script>
+</body>
+</html>

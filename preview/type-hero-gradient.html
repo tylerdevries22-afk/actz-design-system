@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<link rel="stylesheet" href="../components.css">
+<style>
+  html { font-size: 16px; }
+  body { margin: 0; padding: 36px 32px; background: hsl(var(--background)); min-height: 100vh; display: flex; flex-direction: column; gap: 24px; align-items: center; justify-content: center; }
+  .specimen { text-align: center; }
+  .line { font: 800 56px/1 var(--font-display); letter-spacing: -0.035em; color: hsl(var(--foreground)); }
+  .accent { font-style: italic; padding-right: 0.18em; margin-right: -0.08em; }
+  /* Flag-gradient — gold → red → blue across the word */
+  .flag {
+    background: linear-gradient(95deg,
+      hsl(var(--co-gold))    0%,
+      hsl(var(--co-red))     50%,
+      hsl(var(--co-blue-light)) 80%,
+      hsl(var(--co-blue))   100%);
+    -webkit-background-clip: text;
+            background-clip: text;
+    -webkit-text-fill-color: transparent;
+            color: transparent;
+  }
+  /* Warm-gold gradient — gold → red */
+  .warm {
+    background: linear-gradient(110deg, hsl(var(--co-gold)) 0%, hsl(var(--co-red)) 100%);
+    -webkit-background-clip: text;
+            background-clip: text;
+    -webkit-text-fill-color: transparent;
+            color: transparent;
+  }
+  .caption { font: 600 10px/1 var(--font-body); letter-spacing: 0.2em; text-transform: uppercase; color: hsl(var(--muted-foreground)); margin-top: 12px; }
+  .swatches { display: inline-flex; gap: 4px; margin-top: 8px; }
+  .swatches i { display: inline-block; width: 18px; height: 18px; border-radius: 4px; }
+</style>
+</head>
+<body>
+  <div class="specimen">
+    <div class="line">Built for <span class="accent flag">action</span> seekers.</div>
+    <div class="caption">Flag gradient · gold → red → blue</div>
+    <div class="swatches">
+      <i style="background: hsl(var(--co-gold))"></i>
+      <i style="background: hsl(var(--co-red))"></i>
+      <i style="background: hsl(var(--co-blue))"></i>
+    </div>
+  </div>
+
+  <div class="specimen">
+    <div class="line">Powered by <span class="accent warm">active</span> providers.</div>
+    <div class="caption">Warm gradient · gold → red</div>
+  </div>
+</body>
+</html>
