@@ -247,7 +247,7 @@ h2.big{font:800 clamp(2rem,3.6vw,3.5rem)/1.05 var(--font-display);letter-spacing
 <section class="slide" id="s1">
   <div class="glow"></div>
   ${clip('home-hero', { cls: 'fill', label: 'LIVE · actz.org' })}
-  <div style="position:absolute;inset:0;z-index:2;background:linear-gradient(105deg,hsl(var(--co-navy-deep)) 30%,hsl(var(--co-navy-deep)/.72) 55%,hsl(var(--co-navy-deep)/.35))"></div>
+  <div style="position:absolute;inset:0;z-index:2;background:linear-gradient(105deg,hsl(var(--co-navy-deep)) 22%,hsl(var(--co-navy-deep)/.45) 48%,hsl(var(--co-navy-deep)/.05))"></div>
   <div class="inner">
     <div class="cover-brand"><img class="logo" src="${logo}" alt="ACTZ"><span class="wordmark">ACTZ</span></div>
     <div style="margin-top:2.4rem"><span class="kicker">Founding Partner · Colorado Small Towns</span></div>
