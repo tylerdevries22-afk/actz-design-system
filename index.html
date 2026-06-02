@@ -1157,6 +1157,9 @@ let claudeLastOrig   = null;   // current file content (for next apply)
 let claudeUndoSnap   = null;   // pre-edit snapshot (for undo)
 let claudeLastDiff   = null;
 let diffExpanded     = false;
+let claudeImages     = [];     // [{media_type, data, name, url}] attached references
+let claudeSelection  = null;   // picked component context
+let pickerActive     = false;  // element-picker mode
 
 // ── connection helpers ─────────────────────────────────────────
 function isConnected() { return !!(claudeApiKey && dirHandle); }
@@ -1305,7 +1308,177 @@ async function callClaude(system, userMsg) {
   });
   const data = await r.json();
   if (data.error) throw new Error(data.error.message);
-  return data.content[0].text;
+  return (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('') || '';
+}
+
+// ════════════════════════════════════════════════════════════════
+// SMART EDIT — base64-stripping, image refs, component picker, patches
+// ════════════════════════════════════════════════════════════════
+
+// Replace inlined base64 assets with short placeholders so big files
+// (e.g. the 13MB Georgetown deck) fit in context. Restore after editing.
+const ASSET_RE = /data:[\w.+\/-]+;base64,[A-Za-z0-9+\/=]+/g;
+function stripBlobs(src) {
+  const map = [];
+  const out = src.replace(ASSET_RE, m => { const t = '⟦ASSET_' + map.length + '⟧'; map.push(m); return t; });
+  return { out, map };
+}
+function restoreBlobs(s, map) {
+  return s.replace(/⟦ASSET_(\d+)⟧/g, (m, i) => (map[+i] !== undefined ? map[+i] : m));
+}
+
+// ── image attachments ──────────────────────────────────────────
+function fileToImage(file) {
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => { const s = String(r.result); const mt = (s.match(/^data:([^;]+);base64,/) || [])[1] || file.type || 'image/png';
+      resolve({ media_type: mt, data: s.replace(/^data:[^;]+;base64,/, ''), name: file.name, url: s }); };
+    r.onerror = reject; r.readAsDataURL(file);
+  });
+}
+async function addImages(files) {
+  const allow = ['image/png', 'image/jpeg', 'image/webp', 'image/gif'];
+  for (const f of [...files]) {
+    if (!allow.includes(f.type)) { showErrorBanner('Unsupported image: ' + (f.type || f.name), false); continue; }
+    if (f.size > 5 * 1024 * 1024) { showErrorBanner('Image over 5MB: ' + f.name, false); continue; }
+    if (claudeImages.length >= 4) { showErrorBanner('Max 4 images per edit', false); break; }
+    try { claudeImages.push(await fileToImage(f)); } catch (e) { showErrorBanner('Could not read image: ' + e.message, false); }
+  }
+  renderAttachments();
+}
+function removeImage(i) { claudeImages.splice(i, 1); renderAttachments(); }
+function renderAttachments() {
+  const w = document.getElementById('se-thumbs'); if (!w) return;
+  w.innerHTML = claudeImages.map((im, i) =>
+    `<span class="se-thumb"><img src="${im.url}" alt=""><button title="Remove" onclick="removeImage(${i})">×</button></span>`).join('');
+}
+
+// ── component picker (same-origin preview iframe) ───────────────
+let _pickerCleanup = null;
+function togglePicker() {
+  const iframe = document.getElementById('ds-iframe');
+  let doc = null;
+  try { doc = iframe && (iframe.contentDocument || (iframe.contentWindow && iframe.contentWindow.document)); } catch (e) { doc = null; }
+  if (!doc || !doc.body) { showErrorBanner('Open a component preview first, then select an element.', false); return; }
+  if (pickerActive) { stopPicker(); return; }
+  pickerActive = true;
+  const btn = document.getElementById('se-pick-btn'); if (btn) btn.classList.add('active');
+  const ov = doc.createElement('div'); ov.id = '__actz_pick_ov';
+  ov.style.cssText = 'position:fixed;z-index:2147483647;pointer-events:none;border:2px solid #fbbf24;background:rgba(251,191,36,.12);box-shadow:0 0 0 1px rgba(0,0,0,.45);border-radius:6px;transition:left .04s,top .04s,width .04s,height .04s';
+  const lab = doc.createElement('div');
+  lab.style.cssText = 'position:fixed;z-index:2147483647;pointer-events:none;font:600 11px/1.3 Manrope,system-ui,sans-serif;color:#0b1a2c;background:#fbbf24;padding:3px 7px;border-radius:5px;white-space:nowrap;max-width:60vw;overflow:hidden;text-overflow:ellipsis';
+  doc.body.appendChild(ov); doc.body.appendChild(lab);
+  const onMove = (e) => { const el = e.target; if (!el || el === ov || el === lab) return; const r = el.getBoundingClientRect();
+    ov.style.left = r.left + 'px'; ov.style.top = r.top + 'px'; ov.style.width = r.width + 'px'; ov.style.height = r.height + 'px';
+    lab.textContent = descEl(el); lab.style.left = r.left + 'px'; lab.style.top = Math.max(0, r.top - 22) + 'px'; };
+  const onClick = (e) => { e.preventDefault(); e.stopPropagation(); const el = e.target; if (el && el !== ov && el !== lab) captureSelection(el, doc); stopPicker(); };
+  const onKey = (e) => { if (e.key === 'Escape') stopPicker(); };
+  doc.addEventListener('mousemove', onMove, true);
+  doc.addEventListener('click', onClick, true);
+  doc.addEventListener('keydown', onKey, true);
+  _pickerCleanup = () => { try { doc.removeEventListener('mousemove', onMove, true); doc.removeEventListener('click', onClick, true); doc.removeEventListener('keydown', onKey, true); ov.remove(); lab.remove(); } catch (_) {} };
+}
+function stopPicker() { pickerActive = false; const btn = document.getElementById('se-pick-btn'); if (btn) btn.classList.remove('active'); if (_pickerCleanup) { _pickerCleanup(); _pickerCleanup = null; } }
+function descEl(el) { let s = el.tagName.toLowerCase(); if (el.id) s += '#' + el.id; if (el.classList && el.classList.length) s += '.' + [...el.classList].slice(0, 2).join('.'); return s; }
+function cssPath(el) {
+  if (el.id) return '#' + el.id;
+  const parts = [];
+  while (el && el.nodeType === 1 && el.tagName !== 'BODY' && el.tagName !== 'HTML') {
+    if (el.id) { parts.unshift('#' + el.id); break; }
+    let s = el.tagName.toLowerCase();
+    s += [...(el.classList || [])].slice(0, 2).map(c => '.' + c).join('');
+    const par = el.parentElement;
+    if (par) { const sib = [...par.children].filter(c => c.tagName === el.tagName); if (sib.length > 1) s += ':nth-of-type(' + (sib.indexOf(el) + 1) + ')'; }
+    parts.unshift(s); el = par;
+  }
+  return parts.join(' > ');
+}
+function nearestId(el) { let p = el; while (p && p.nodeType === 1) { if (p.id) return p.id; p = p.parentElement; } return null; }
+function captureSelection(el, doc) {
+  const cs = (doc.defaultView || window).getComputedStyle(el); const g = k => cs.getPropertyValue(k);
+  const sec = el.closest && (el.closest('section') || el.closest('[id]'));
+  const overMedia = !!(sec && sec.querySelector && sec.querySelector('video, img'));
+  let mediaNote = '';
+  if (el.tagName === 'VIDEO' || el.tagName === 'IMG') {
+    mediaNote = 'Target IS a <' + el.tagName.toLowerCase() + '> (captured media). Any UI visible inside it (e.g. a search bar) is part of the recording/image, NOT editable DOM — adjust the media element or an overlay (opacity/scrim/object-position) instead.';
+  } else if (overMedia) {
+    mediaNote = 'This element sits over a captured <video>/<img>. UI seen here may be part of that recording, not the DOM. Editable nodes are the media element and overlay <div>s (e.g. lower a scrim opacity to bring the recording forward).';
+  }
+  claudeSelection = {
+    selector: cssPath(el), anchorId: nearestId(el), tag: el.tagName.toLowerCase(),
+    openingTag: (el.outerHTML || '').split('>')[0].slice(0, 240) + '>',
+    styles: {
+      position: g('position'), zIndex: g('z-index'), opacity: g('opacity'), display: g('display'),
+      background: (g('background-image') !== 'none' ? g('background-image') : g('background-color')).slice(0, 120),
+      color: g('color'), transform: g('transform'), width: g('width'), height: g('height'), fontSize: g('font-size')
+    },
+    mediaNote
+  };
+  renderSelectionChip();
+}
+function clearSelection() { claudeSelection = null; renderSelectionChip(); }
+function renderSelectionChip() {
+  const w = document.getElementById('se-chip'); if (!w) return;
+  if (!claudeSelection) { w.innerHTML = ''; w.classList.add('hidden'); return; }
+  w.classList.remove('hidden');
+  w.innerHTML = '<span class="se-chip-dot">⌖</span><code>' + claudeSelection.selector + '</code>' +
+    (claudeSelection.mediaNote ? '<span class="se-chip-media" title="' + claudeSelection.mediaNote.replace(/"/g, '&quot;') + '">media</span>' : '') +
+    '<button onclick="clearSelection()" title="Clear selection">×</button>';
+}
+function selectionContextText() {
+  if (!claudeSelection) return '';
+  const s = claudeSelection;
+  return '\n\nThe user SELECTED this element — focus the edit here:\n' +
+    '- selector: ' + s.selector + '\n' +
+    (s.anchorId ? '- nearest id (find it in source): #' + s.anchorId + '\n' : '') +
+    '- opening tag: ' + s.openingTag + '\n' +
+    '- key computed styles: ' + JSON.stringify(s.styles) + '\n' +
+    (s.mediaNote ? '- NOTE: ' + s.mediaNote + '\n' : '');
+}
+
+// ── patch parse + apply ─────────────────────────────────────────
+function parseEdits(text) {
+  let t = (text || '').trim().replace(/^```[a-z]*\n?/i, '').replace(/\n?```$/, '').trim();
+  let obj = null;
+  try { obj = JSON.parse(t); } catch (e) { const m = t.match(/\{[\s\S]*\}/); if (m) { try { obj = JSON.parse(m[0]); } catch (_) {} } }
+  if (!obj || !Array.isArray(obj.edits)) throw new Error('Claude did not return a valid edit set. Try rephrasing or selecting the element.');
+  return obj;
+}
+function applyEdits(src, edits) {
+  let out = src;
+  for (let i = 0; i < edits.length; i++) {
+    const e = edits[i]; const oldS = e.old, nw = e.new;
+    if (oldS === undefined || nw === undefined) throw new Error('Edit ' + (i + 1) + ' is missing "old"/"new".');
+    if (oldS === '') { out = nw + out; continue; } // prepend convention
+    const idx = out.indexOf(oldS);
+    if (idx === -1) throw new Error('Could not locate edit ' + (i + 1) + ' — select the element or add more context.');
+    if (out.indexOf(oldS, idx + oldS.length) !== -1) throw new Error('Edit ' + (i + 1) + ' is ambiguous (multiple matches) — select the element or add more context.');
+    out = out.slice(0, idx) + nw + out.slice(idx + oldS.length);
+  }
+  return out;
+}
+function ensureSmartEditCss() {
+  if (document.getElementById('se-css')) return;
+  const s = document.createElement('style'); s.id = 'se-css';
+  s.textContent =
+    '.se-row{display:flex;align-items:center;gap:8px;margin:0 0 8px;flex-wrap:wrap}' +
+    '.se-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 11px;border-radius:999px;border:1px solid #d9d6cb;background:#fff;color:#1a1a1a;font:600 12px/1 Manrope,system-ui,sans-serif;cursor:pointer;transition:all .15s}' +
+    '.se-btn:hover{border-color:#bbb;background:#faf9f5}' +
+    '.se-btn.active{background:#fbbf24;border-color:#fbbf24;color:#0b1a2c}' +
+    '.se-thumbs{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 8px}' +
+    '.se-thumbs:empty{margin:0}' +
+    '.se-thumb{position:relative;display:inline-block}' +
+    '.se-thumb img{width:46px;height:46px;object-fit:cover;border-radius:8px;border:1px solid #d9d6cb;display:block}' +
+    '.se-thumb button{position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;border:none;background:#1a1a1a;color:#fff;font:700 11px/1 sans-serif;cursor:pointer}' +
+    '.se-chip{display:flex;align-items:center;gap:7px;margin:0 0 8px;padding:7px 10px;border-radius:10px;background:#0b1a2c;color:#f2f5f8}' +
+    '.se-chip.hidden{display:none}' +
+    '.se-chip code{font:600 11px/1.2 ui-monospace,monospace;color:#fbbf24;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:220px}' +
+    '.se-chip-dot{color:#fbbf24}' +
+    '.se-chip-media{font:700 9px/1 Manrope,system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#0b1a2c;background:#fbbf24;padding:2px 6px;border-radius:999px;cursor:help}' +
+    '.se-chip button{margin-left:auto;width:18px;height:18px;border-radius:50%;border:none;background:rgba(255,255,255,.15);color:#fff;cursor:pointer}' +
+    '.se-warn{margin:0 0 8px;padding:8px 10px;border-radius:8px;background:#fff7e6;border:1px solid #f5d99b;color:#7a5b12;font:500 11.5px/1.4 Manrope,system-ui,sans-serif}' +
+    '.prompt-textarea.se-drop{outline:2px dashed #fbbf24;outline-offset:2px}';
+  document.head.appendChild(s);
 }
 
 // ── Edit file map ──────────────────────────────────────────────
@@ -1331,6 +1504,8 @@ const EDIT_FILES = {
 function renderClaudeBody() {
   const body = document.getElementById('claude-body');
   if (!body) return;
+  ensureSmartEditCss();
+  if (pickerActive) stopPicker();
 
   if (!isConnected()) {
     body.innerHTML = `
@@ -1379,9 +1554,17 @@ function renderClaudeBody() {
       <div class="code-viewer" id="code-viewer">Loading…</div>
     </div>
     <div>
+      <div id="se-warn" class="se-warn" style="display:none"></div>
+      <div class="se-row">
+        <button class="se-btn" id="se-pick-btn" onclick="togglePicker()" title="Click an element in the preview to give Claude exact context">⌖ Select element</button>
+        <button class="se-btn" onclick="document.getElementById('se-file').click()" title="Attach reference images">＋ Image</button>
+        <input type="file" id="se-file" accept="image/png,image/jpeg,image/webp,image/gif" multiple style="display:none" onchange="addImages(this.files); this.value='';">
+      </div>
+      <div class="se-chip hidden" id="se-chip"></div>
+      <div class="se-thumbs" id="se-thumbs"></div>
       <div class="prompt-label">Describe your changes</div>
       <textarea class="prompt-textarea" id="claude-prompt"
-        placeholder="e.g. Make the headline larger and add a gradient…"></textarea>
+        placeholder="e.g. lower the cover scrim so the search bar reads · drop or paste an image"></textarea>
     </div>
     <div class="claude-actions">
       <button class="apply-btn" id="apply-btn" onclick="applyEdit()">
@@ -1396,6 +1579,25 @@ function renderClaudeBody() {
     <div id="diff-area" class="hidden"></div>`;
 
   loadSourceFile();
+  wireSmartEdit();
+}
+
+function wireSmartEdit() {
+  renderAttachments();
+  renderSelectionChip();
+  const ta = document.getElementById('claude-prompt');
+  if (ta) {
+    ta.addEventListener('paste', e => {
+      const imgs = [...((e.clipboardData && e.clipboardData.items) || [])].filter(i => i.type && i.type.indexOf('image/') === 0);
+      if (imgs.length) { e.preventDefault(); addImages(imgs.map(i => i.getAsFile()).filter(Boolean)); }
+    });
+    ta.addEventListener('dragover', e => { e.preventDefault(); ta.classList.add('se-drop'); });
+    ta.addEventListener('dragleave', () => ta.classList.remove('se-drop'));
+    ta.addEventListener('drop', e => { e.preventDefault(); ta.classList.remove('se-drop'); if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) addImages(e.dataTransfer.files); });
+  }
+  const warn = document.getElementById('se-warn');
+  const gen = claudeActiveFile && /one-pagers\/georgetown-pitch-deck\.html$/.test(claudeActiveFile.path);
+  if (warn && gen) { warn.style.display = 'block'; warn.innerHTML = '⚠ Generated file — edits here are overwritten when the deck is rebuilt. For lasting changes edit <code>decks/source/</code> &amp; regenerate; quick tweaks here are fine.'; }
 }
 
 async function loadSourceFile() {
@@ -1404,8 +1606,9 @@ async function loadSourceFile() {
   viewer.textContent = 'Loading…';
   try {
     const content = await fsReadFile(claudeActiveFile.path);
-    viewer.textContent = content;
     claudeLastOrig = content;
+    const { out: stripped } = stripBlobs(content);
+    viewer.textContent = stripped.length > 200000 ? stripped.slice(0, 200000) + '\n…(truncated)…' : stripped;
   } catch (e) {
     viewer.textContent = 'Could not read file: ' + e.message;
   }
@@ -1417,6 +1620,9 @@ function switchEditFile(fJson) {
   claudeUndoSnap   = null;
   claudeLastDiff   = null;
   diffExpanded     = false;
+  stopPicker();
+  claudeSelection  = null;
+  claudeImages     = [];
   renderClaudeBody();
 }
 
@@ -1438,8 +1644,9 @@ async function applyEdit() {
   if (!applyBtn) return;
 
   const prompt = promptEl ? promptEl.value.trim() : '';
-  if (!prompt) { if (promptEl) promptEl.focus(); return; }
+  if (!prompt && claudeImages.length === 0) { if (promptEl) promptEl.focus(); return; }
   if (!claudeActiveFile) return;
+  if (pickerActive) stopPicker();
 
   applyBtn.disabled = true;
   applyBtn.classList.add('loading');
@@ -1473,27 +1680,35 @@ async function applyEdit() {
   const ext  = claudeActiveFile.path.split('.').pop();
   const lang = { html: 'HTML', jsx: 'JSX/React', js: 'JavaScript', css: 'CSS' }[ext] || 'code';
 
+  // Strip inlined base64 so even the 13MB deck fits in context.
+  const { out: stripped, map } = stripBlobs(original);
+
   const system = `You are an expert frontend developer maintaining the ACTZ design system.
 ACTZ is dark, cinematic, Colorado-flag palette: gold (--primary/CTAs), blue (--secondary), red (--accent) on deep navy.
 Fonts: Manrope (UI), Ethnocentric (brand). Glass-morphism surfaces, pill buttons, expo easing.
 File: ${claudeActiveFile.path} (${lang}).
-Return ONLY the complete modified file — no markdown fences, no explanation.`;
+Large base64 assets are replaced by placeholders like ⟦ASSET_3⟧ — NEVER modify, remove, or reference placeholders.
+Return ONLY strict JSON (no markdown, no prose): {"edits":[{"old":"<verbatim unique substring of the file>","new":"<replacement>"}],"note":"<short summary>"}.
+Each "old" MUST be copied exactly from the file and be UNIQUE (include enough surrounding text to disambiguate). Make the smallest change that satisfies the request. Any attached images are visual references for the change.`;
 
-  const userMsg = `File content:\n\`\`\`\n${original}\n\`\`\`\n\nRequest: ${prompt}\n\nReturn the complete updated file.`;
+  const textPart = `Current file (base64 assets stripped):\n\`\`\`\n${stripped}\n\`\`\`${selectionContextText()}\n\nRequest: ${prompt || '(use the attached image as the reference)'}\n\nReturn ONLY the JSON edit set.`;
+  const content = [];
+  for (const im of claudeImages) content.push({ type: 'image', source: { type: 'base64', media_type: im.media_type, data: im.data } });
+  content.push({ type: 'text', text: textPart });
 
   try {
-    let modified = await callClaude(system, userMsg);
-    modified = modified.replace(/^```[^\n]*\n?/, '').replace(/\n?```\s*$/, '');
+    const raw = await callClaude(system, content);
+    const parsed = parseEdits(raw);
+    const strippedAfter = applyEdits(stripped, parsed.edits);
+    const finalOut = restoreBlobs(strippedAfter, map);
 
     // Save pre-edit snapshot for undo, then advance current state
     claudeUndoSnap = original;
-    const { ops, linesAdded, linesRemoved } = makeDiff(original, modified);
+    const { ops, linesAdded, linesRemoved } = makeDiff(stripped, strippedAfter); // diff small/readable text
     claudeLastDiff = ops;
 
-    await fsWriteFile(claudeActiveFile.path, modified);
-
-    // Advance current content so next apply uses the updated file
-    claudeLastOrig = modified;
+    await fsWriteFile(claudeActiveFile.path, finalOut);
+    claudeLastOrig = finalOut;
 
     showDiff(linesAdded, linesRemoved, ops);
     const undoBtnFresh = document.getElementById('undo-btn');
@@ -1506,9 +1721,12 @@ Return ONLY the complete modified file — no markdown fences, no explanation.`;
       setTimeout(() => { iframe.src = base + '?t=' + Date.now(); }, 100);
     }
 
-    // Refresh code viewer to show new content
+    // Refresh code viewer (stripped → readable, no megabytes of base64)
     const viewer = document.getElementById('code-viewer');
-    if (viewer) viewer.textContent = modified;
+    if (viewer) viewer.textContent = strippedAfter.length > 200000 ? strippedAfter.slice(0, 200000) + '\n…(truncated)…' : strippedAfter;
+
+    // clear one-shot image attachments
+    claudeImages = []; renderAttachments();
 
     const applyBtnFresh = document.getElementById('apply-btn');
     if (applyBtnFresh) {

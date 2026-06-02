@@ -65,6 +65,7 @@ const chip = (txt, kind) => `<span class="pill ${kind}"><i></i>${txt}</span>`;
 
 let html = `<!DOCTYPE html>
 <html lang="en">
+<!-- actz:generated source=decks/source/build-georgetown-deck.mjs · edit the generator, not this file -->
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>ACTZ × Georgetown — Founding Partner Proposal</title>

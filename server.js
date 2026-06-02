@@ -295,6 +295,37 @@ function makeDiff(original, modified) {
   };
 }
 
+// ─── smart-edit helpers (blob strip + scoped patches) ───────────
+const ASSET_RE = /data:[\w.+\/-]+;base64,[A-Za-z0-9+\/=]+/g;
+function stripBlobs(src) {
+  const map = [];
+  const out = src.replace(ASSET_RE, m => { const t = '⟦ASSET_' + map.length + '⟧'; map.push(m); return t; });
+  return { out, map };
+}
+function restoreBlobs(s, map) {
+  return s.replace(/⟦ASSET_(\d+)⟧/g, (m, i) => (map[+i] !== undefined ? map[+i] : m));
+}
+function parseEdits(text) {
+  let t = (text || '').trim().replace(/^```[a-z]*\n?/i, '').replace(/\n?```$/, '').trim();
+  let obj = null;
+  try { obj = JSON.parse(t); } catch (e) { const m = t.match(/\{[\s\S]*\}/); if (m) { try { obj = JSON.parse(m[0]); } catch (_) {} } }
+  if (!obj || !Array.isArray(obj.edits)) throw new Error('Model did not return a valid edit set.');
+  return obj;
+}
+function applyEdits(src, edits) {
+  let out = src;
+  for (let i = 0; i < edits.length; i++) {
+    const oldS = edits[i].old, nw = edits[i].new;
+    if (oldS === undefined || nw === undefined) throw new Error('Edit ' + (i + 1) + ' missing old/new.');
+    if (oldS === '') { out = nw + out; continue; }
+    const idx = out.indexOf(oldS);
+    if (idx === -1) throw new Error('Could not locate edit ' + (i + 1) + ' in the file.');
+    if (out.indexOf(oldS, idx + oldS.length) !== -1) throw new Error('Edit ' + (i + 1) + ' is ambiguous (multiple matches).');
+    out = out.slice(0, idx) + nw + out.slice(idx + oldS.length);
+  }
+  return out;
+}
+
 function callClaude(system, userMsg) {
   return new Promise((resolve, reject) => {
     const body = JSON.stringify({
@@ -316,7 +347,7 @@ function callClaude(system, userMsg) {
         try {
           const data = JSON.parse(Buffer.concat(chunks).toString());
           if (data.error) reject(new Error(data.error.message));
-          else resolve(data.content[0].text);
+          else resolve((data.content || []).filter(b => b.type === 'text').map(b => b.text).join(''));
         } catch (e) { reject(e); }
       });
     });
@@ -332,8 +363,9 @@ async function handleEdit(req, res) {
   try { body = await readBody(req); }
   catch (e) { return send(res, 400, { error: e.message }); }
 
-  const { filePath, prompt, context } = body;
-  if (!filePath || !prompt) return send(res, 400, { error: 'filePath and prompt required' });
+  const { filePath, prompt, context, selection } = body;
+  const images = Array.isArray(body.images) ? body.images.slice(0, 4) : [];
+  if (!filePath || (!prompt && images.length === 0)) return send(res, 400, { error: 'filePath and prompt (or an image) required' });
 
   const abs = safePath(filePath);
   if (!abs) return send(res, 403, { error: 'Path outside project root' });
@@ -344,20 +376,38 @@ async function handleEdit(req, res) {
 
   const ext  = path.extname(filePath);
   const lang = { '.html': 'HTML', '.jsx': 'JSX/React', '.js': 'JavaScript', '.css': 'CSS' }[ext] || 'code';
+  const { out: stripped, map } = stripBlobs(original);
+
+  const selText = selection ? (
+    '\n\nThe user SELECTED this element — focus the edit here:\n' +
+    '- selector: ' + (selection.selector || '') + '\n' +
+    (selection.anchorId ? '- nearest id (find it in source): #' + selection.anchorId + '\n' : '') +
+    (selection.openingTag ? '- opening tag: ' + selection.openingTag + '\n' : '') +
+    (selection.styles ? '- key computed styles: ' + JSON.stringify(selection.styles) + '\n' : '') +
+    (selection.mediaNote ? '- NOTE: ' + selection.mediaNote + '\n' : '')
+  ) : '';
 
   const system = `You are an expert frontend developer maintaining the ACTZ design system.
 ACTZ: dark cinematic UI, Colorado-flag palette (gold #fbbf24, blue #3b82f6, red #e11d48), Manrope + Ethnocentric fonts, glass-morphism, pill buttons.
-File: ${filePath} (${lang}). Return ONLY the complete modified file — no markdown fences.`;
+File: ${filePath} (${lang}).
+Large base64 assets are replaced by placeholders like ⟦ASSET_3⟧ — NEVER modify, remove, or reference placeholders.
+Return ONLY strict JSON (no markdown, no prose): {"edits":[{"old":"<verbatim unique substring of the file>","new":"<replacement>"}],"note":"<short summary>"}.
+Each "old" MUST be copied exactly from the file and be UNIQUE (include enough surrounding text). Make the smallest change that satisfies the request. Attached images are visual references.`;
 
-  const userMsg = `${context ? `Context:\n${context}\n\n` : ''}Current file:\n\`\`\`\n${original}\n\`\`\`\nRequest: ${prompt}\nReturn the complete updated file.`;
+  const textPart = `${context ? 'Context:\n' + context + '\n\n' : ''}Current file (base64 assets stripped):\n\`\`\`\n${stripped}\n\`\`\`${selText}\n\nRequest: ${prompt || '(use the attached image as the reference)'}\n\nReturn ONLY the JSON edit set.`;
+  const content = [];
+  for (const im of images) { if (im && im.media_type && im.data) content.push({ type: 'image', source: { type: 'base64', media_type: im.media_type, data: im.data } }); }
+  content.push({ type: 'text', text: textPart });
 
   try {
-    let modified = await callClaude(system, userMsg);
-    modified = modified.replace(/^```[^\n]*\n?/, '').replace(/\n?```\s*$/, '');
-    const { ops, linesAdded, linesRemoved } = makeDiff(original, modified);
-    fs.writeFileSync(abs, modified, 'utf-8');
-    console.log(`  ✓ edited ${filePath} (+${linesAdded} -${linesRemoved})`);
-    send(res, 200, { success: true, ops, linesAdded, linesRemoved, original });
+    const raw = await callClaude(system, content);
+    const parsed = parseEdits(raw);
+    const strippedAfter = applyEdits(stripped, parsed.edits);
+    const finalOut = restoreBlobs(strippedAfter, map);
+    const { ops, linesAdded, linesRemoved } = makeDiff(stripped, strippedAfter);
+    fs.writeFileSync(abs, finalOut, 'utf-8');
+    console.log(`  ✓ edited ${filePath} (+${linesAdded} -${linesRemoved})${parsed.note ? ' — ' + parsed.note : ''}`);
+    send(res, 200, { success: true, ops, linesAdded, linesRemoved, note: parsed.note || '' });
   } catch (e) {
     console.error('  ✗ Claude error:', e.message);
     send(res, 500, { error: e.message });
