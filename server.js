@@ -263,6 +263,34 @@ function handleGetAssets(req, res, query) {
   send(res, 200, { files });
 }
 
+// ─── route: POST /api/claude — same-origin Anthropic proxy ──────
+// Browsers in some networks fail the direct api.anthropic.com call (SSL/CORS).
+// Proxying through this local server (Node TLS, same-origin) is reliable.
+function anthropicCall(apiKey, payload) {
+  return new Promise((resolve, reject) => {
+    const body = JSON.stringify(payload);
+    const r = https.request({
+      hostname: 'api.anthropic.com', path: '/v1/messages', method: 'POST',
+      headers: { 'content-type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'content-length': Buffer.byteLength(body) },
+    }, res => { const ch = []; res.on('data', c => ch.push(c)); res.on('end', () => { try { resolve({ status: res.statusCode, data: JSON.parse(Buffer.concat(ch).toString()) }); } catch (e) { reject(e); } }); });
+    r.on('error', reject); r.write(body); r.end();
+  });
+}
+async function handleClaudeProxy(req, res) {
+  let body; try { body = await readBody(req); } catch (e) { return send(res, 400, { error: e.message }); }
+  const apiKey = body.apiKey || API_KEY;
+  if (!apiKey) return send(res, 400, { error: 'No API key provided.' });
+  if (body.content === undefined || body.content === null) return send(res, 400, { error: 'content required' });
+  const payload = { model: body.model || MODEL, max_tokens: body.max_tokens || 16000, messages: [{ role: 'user', content: body.content }] };
+  if (body.system) payload.system = body.system;
+  try {
+    const { status, data } = await anthropicCall(apiKey, payload);
+    if (data && data.error) return send(res, status && status >= 400 ? status : 400, { error: data.error.message || data.error.type || 'Anthropic error' });
+    const text = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('');
+    send(res, 200, { text });
+  } catch (e) { send(res, 502, { error: 'Upstream error reaching Anthropic: ' + e.message }); }
+}
+
 // ─── route: GET /api/screenshot — headless-Chrome capture of a preview ──
 function findChrome() {
   if (process.env.CHROME_PATH && fs.existsSync(process.env.CHROME_PATH)) return process.env.CHROME_PATH;
@@ -497,7 +525,9 @@ const server = http.createServer(async (req, res) => {
   }
 
   // API routes
+  if (route === '/favicon.ico') { res.writeHead(204); return res.end(); }
   if (route === '/api/health')    return send(res, 200, { ok: true });
+  if (route === '/api/claude'  && method === 'POST') return handleClaudeProxy(req, res);
   if (route === '/api/nav'     && method === 'GET')  return handleGetNav(req, res);
   if (route === '/api/nav/label' && method === 'POST') return handlePostNavLabel(req, res);
   if (route === '/api/assets'  && method === 'GET')  return handleGetAssets(req, res, query);

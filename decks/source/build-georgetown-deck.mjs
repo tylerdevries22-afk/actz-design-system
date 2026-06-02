@@ -14,8 +14,11 @@ const b64 = (p) => fs.readFileSync(p).toString('base64');
 const uri = (p, m) => `data:${m};base64,${b64(p)}`;
 
 const tokensCss = read(`${DS}/colors_and_type.css`)
-  // strip the Google Fonts @import (we keep it once, added in <head> for online; harmless offline)
-  .replace(/@import url\([^)]*\);/g, '');
+  // strip the Google Fonts @import (we add it once in <head>)
+  .replace(/@import url\([^)]*\);/g, '')
+  // drop the relative-URL @font-face blocks — Ethnocentric is inlined as base64 below,
+  // and the relative path 404s when the deck is served from /one-pagers/.
+  .replace(/@font-face\s*\{[^}]*\}/g, '');
 const compCss = read(`${DS}/components.css`);
 const ethno = b64(`${DS}/fonts/Ethnocentric-Regular.ttf`);
 const logo = uri('decks/source/ACTZ_logo.png', 'image/png');
