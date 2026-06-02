@@ -1,0 +1,15 @@
+# Maestro flow — native Capacitor pass of the business-as-hero demo. Maestro supports Capacitor.
+# Run: maestro test capture/flows/georgetown.yaml
+appId: org.actz.app   # set to your Capacitor bundle id / applicationId
+---
+- launchApp: { clearState: true }
+- startRecording: native-georgetown
+# Intercept: the Hub + AI trip-builder (Live)
+- openLink: "org.actz.app://town/georgetown"   # or navigate via UI if no deep link
+- assertVisible: "Georgetown"
+- tapOn: { id: "town-ai-builder" }
+- inputText: "Plan my Georgetown weekend"
+- tapOn: { id: "chat-send" }
+- assertVisible: "Georgetown Loop Railroad"
+- swipe: { direction: UP }   # scroll the rails
+- stopRecording

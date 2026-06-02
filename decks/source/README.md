@@ -30,6 +30,7 @@ that points at the sibling `one-pagers/ACTZ_Georgetown_Pitch.pptx`).
 | `raw/` | **original screen recordings** (`*.webm`) + full-page stills (`*.png`) straight from the capture, before ffmpeg post-processing |
 | `docs/` | pitch narrative + specs + run report — `PITCH_SCRIPT.md`, `DECK_BUILD_PROMPT.md`, `PRD.md`, `DECISIONS.md`, `REPORT.md` |
 | `reference/` | `REFERENCE_ACTZ_Georgetown_Pitch.html` (the premium visual target) + `ACTZ_Georgetown_Pitch.reference-replica.html` (the earlier slot-replica build) |
+| `agent-kit/` | the complete original build kit from `~/Desktop/files/actz-deck-agent` — `AGENT_PROMPT.md`, kit `CLAUDE.md` + `README.md`, `PRD.md`, `DECISIONS.md`, `REPORT.md`, `phases/RUNBOOK.md`, `pitch/` specs, `capture/` (Puppeteer recorder, `targets.json`, ffmpeg post, native pass, `flows/georgetown.yaml`), `embed/clip.html`, the `build-deck.mjs` / `build-premium-deck.mjs` generators, `.env.example`. (Secrets, `node_modules`, and already-saved media are excluded.) |
 
 Also alongside in the repo:
 - `../../one-pagers/georgetown-pitch-deck.html` — the live, self-contained deck (videos base64-inlined)

@@ -1,0 +1,42 @@
+{
+  "_comment": "Capture map aligned to docs/plans/georgetown-walkthrough-script.md. Real routes; fill selectors with actz-may data-testids. Snippets <=8s. Roadmap beats are capturable:false — DESCRIBE them, never record as Live.",
+  "_prereqs": ["GOOGLE_PLACES_API_KEY set (Eat&Drink/Shop/Transport rails)", "town-Explore Redis blob warmed for 'Georgetown'", "Stripe in TEST mode", "georgetown-colorado.org before/after shots require OPEN-EGRESS host (not CI)"],
+  "viewports": { "desktop": { "width": 1440, "height": 900, "dsf": 2 }, "mobile": { "preset": "iPhone 13" } },
+  "suites": {
+    "homepage": {
+      "narrative": "shared (§0 cold-open background)",
+      "snippets": [
+        { "name": "home-hero", "route": "/", "viewport": "desktop", "state": "Live", "capturable": true, "actions": [ { "wait": 2200 }, { "scrollTo": 700 }, { "wait": 1500 }, { "scrollTo": 1500 }, { "wait": 1500 } ], "maxSeconds": 8 }
+      ]
+    },
+    "intercept": {
+      "narrative": "I-70 Traveler (§1)",
+      "requiresAuth": false,
+      "snippets": [
+        { "name": "hub-landing",     "route": "/town/georgetown", "viewport": "desktop",  "state": "Live", "capturable": true, "_selfCorrected": "viewport mobile->desktop: Chrome screencast wrote 0-byte webm at sub-desktop viewports; desktop records fine. object-fit:cover frames it in the deck.", "actions": [ { "wait": 2600 }, { "scrollTo": 420 }, { "wait": 2400 }, { "scrollTo": 120 }, { "wait": 1600 } ], "maxSeconds": 8 },
+        { "name": "ai-trip-builder", "route": "/town/georgetown", "viewport": "desktop",  "state": "Live", "capturable": true, "_selfCorrected": "live DOM has no #town-ai-builder/#chat-input; the real control is a button with text 'Plan my georgetown trip' (clicked by text). viewport mobile->desktop for screencast.", "actions": [ { "click": "text=Plan my georgetown trip" }, { "wait": 3800 } ], "maxSeconds": 8 },
+        { "name": "rails-scroll",    "route": "/town/georgetown", "viewport": "desktop", "state": "Live", "capturable": true, "actions": [ { "wait": 1200 }, { "scrollTo": 900 }, { "wait": 1200 }, { "scrollTo": 1700 }, { "wait": 1200 } ], "maxSeconds": 8 },
+        { "name": "geo-push-mock",   "route": "/town/georgetown", "viewport": "mobile",  "state": "Roadmap", "capturable": false, "note": "Geo/interest push TARGETING is Roadmap. Do not record as Live — use a clearly-labeled mock overlay or a primed-device clip." }
+      ]
+    },
+    "toolkit": {
+      "narrative": "Main-St Business — PROTAGONIST (§2)",
+      "requiresAuth": true,
+      "snippets": [
+        { "name": "provider-getbooked", "route": "/provider",          "viewport": "desktop", "state": "Live", "capturable": true, "actions": [ { "wait": 1500 }, { "scrollTo": 400 }, { "wait": 1300 } ], "maxSeconds": 8 },
+        { "name": "provider-stripe",    "route": "/provider/payments", "viewport": "desktop", "state": "Live (Stripe TEST)", "capturable": true, "actions": [ { "wait": 1600 } ], "maxSeconds": 7, "warn": "TEST mode only — never record real card data" },
+        { "name": "provider-notify",    "route": "/provider/notify",   "viewport": "desktop", "state": "Live infra", "capturable": true, "actions": [ { "type": ["#notify-body","Fresh pastries on 6th — 10% off this hour"] }, { "wait": 1400 } ], "maxSeconds": 8 },
+        { "name": "events-ticketing",   "route": null, "state": "Roadmap", "capturable": false, "note": "Native events + pre-sale ticketing + waivers + scheduling = Phase 2 Roadmap. Describe as founding-partner co-design." },
+        { "name": "attendee-crm",       "route": null, "state": "Roadmap", "capturable": false, "note": "Per-business attendee CRM = Phase 3 Roadmap. Describe only." }
+      ]
+    },
+    "proof": {
+      "narrative": "Town / Council (§3)",
+      "requiresAuth": true,
+      "snippets": [
+        { "name": "town-dashboard", "route": "/town-dashboard/georgetown", "viewport": "desktop", "state": "Live (Summit)", "capturable": true, "actions": [ { "wait": 1700 }, { "scrollTo": 500 }, { "wait": 1400 }, { "scrollTo": 1100 }, { "wait": 1200 } ], "maxSeconds": 8 },
+        { "name": "realtime-journey", "route": null, "state": "Roadmap (Tier-3)", "capturable": false, "note": "Real-time + visitor-journey mapping = year-2 Destination Partner. Describe as the upgrade." }
+      ]
+    }
+  }
+}

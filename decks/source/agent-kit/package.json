@@ -1,0 +1,18 @@
+{
+  "name": "actz-deck-agent",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "description": "Autonomous agent kit: capture ACTZ app UI with Puppeteer (+one native pass) and assemble the Georgetown pitch deck (HTML + Figma).",
+  "scripts": {
+    "setup": "npm i",
+    "capture:web": "node capture/record-web.mjs",
+    "capture:native": "bash capture/record-native.sh",
+    "post": "bash capture/post.sh ./raw ./clips"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "pptxgenjs": "^4.0.1",
+    "puppeteer": "^23.0.0"
+  }
+}
