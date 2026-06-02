@@ -1350,7 +1350,36 @@ function removeImage(i) { claudeImages.splice(i, 1); renderAttachments(); }
 function renderAttachments() {
   const w = document.getElementById('se-thumbs'); if (!w) return;
   w.innerHTML = claudeImages.map((im, i) =>
-    `<span class="se-thumb"><img src="${im.url}" alt=""><button title="Remove" onclick="removeImage(${i})">×</button></span>`).join('');
+    `<span class="se-thumb">${im.kind === 'shot' ? '<span class="se-thumb-tag">shot</span>' : ''}<img src="${im.url}" alt=""><button title="Remove" onclick="removeImage(${i})">×</button></span>`).join('');
+}
+
+// Capture the current preview (headless Chrome via /api/screenshot) and attach it as context.
+async function shotPreview() {
+  const iframe = document.getElementById('ds-iframe');
+  if (!iframe) { showErrorBanner('Open a component preview first, then screenshot.', false); return; }
+  if (claudeImages.length >= 4) { showErrorBanner('Max 4 images — remove one first.', false); return; }
+  const btn = document.getElementById('se-shot-btn'); const label = btn ? btn.innerHTML : '';
+  if (btn) { btn.disabled = true; btn.textContent = '📷 Capturing…'; }
+  try {
+    const src = iframe.getAttribute('src') || iframe.src || '';
+    const pathPart = src.replace(/^https?:\/\/[^/]+\//, '').split('?')[0].split('#')[0];
+    if (!pathPart) throw new Error('No preview loaded');
+    let hash = '';
+    try { hash = (iframe.contentWindow && iframe.contentWindow.location.hash) || ''; } catch (_) {}
+    const rect = iframe.getBoundingClientRect();
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const w = Math.round((rect.width || 1280) * dpr), h = Math.round((rect.height || 800) * dpr);
+    const q = new URLSearchParams({ path: pathPart, w: String(w), h: String(h), hash });
+    const r = await fetch('/api/screenshot?' + q.toString());
+    const d = await r.json();
+    if (!r.ok || d.error) throw new Error(d.error || ('HTTP ' + r.status));
+    claudeImages.push({ media_type: d.media_type, data: d.data, name: 'preview.png', kind: 'shot', url: 'data:' + d.media_type + ';base64,' + d.data });
+    renderAttachments();
+  } catch (e) {
+    showErrorBanner('Screenshot failed: ' + e.message, false);
+  } finally {
+    if (btn) { btn.disabled = false; btn.innerHTML = label || '📷 Screenshot'; }
+  }
 }
 
 // ── component picker (same-origin preview iframe) ───────────────
@@ -1470,6 +1499,7 @@ function ensureSmartEditCss() {
     '.se-thumb{position:relative;display:inline-block}' +
     '.se-thumb img{width:46px;height:46px;object-fit:cover;border-radius:8px;border:1px solid #d9d6cb;display:block}' +
     '.se-thumb button{position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;border:none;background:#1a1a1a;color:#fff;font:700 11px/1 sans-serif;cursor:pointer}' +
+    '.se-thumb-tag{position:absolute;left:-4px;bottom:-4px;z-index:1;font:700 8px/1 Manrope,system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#0b1a2c;background:#fbbf24;padding:2px 4px;border-radius:5px}' +
     '.se-chip{display:flex;align-items:center;gap:7px;margin:0 0 8px;padding:7px 10px;border-radius:10px;background:#0b1a2c;color:#f2f5f8}' +
     '.se-chip.hidden{display:none}' +
     '.se-chip code{font:600 11px/1.2 ui-monospace,monospace;color:#fbbf24;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:220px}' +
@@ -1557,6 +1587,7 @@ function renderClaudeBody() {
       <div id="se-warn" class="se-warn" style="display:none"></div>
       <div class="se-row">
         <button class="se-btn" id="se-pick-btn" onclick="togglePicker()" title="Click an element in the preview to give Claude exact context">⌖ Select element</button>
+        <button class="se-btn" id="se-shot-btn" onclick="shotPreview()" title="Capture the current preview as visual context for Claude">📷 Screenshot</button>
         <button class="se-btn" onclick="document.getElementById('se-file').click()" title="Attach reference images">＋ Image</button>
         <input type="file" id="se-file" accept="image/png,image/jpeg,image/webp,image/gif" multiple style="display:none" onchange="addImages(this.files); this.value='';">
       </div>

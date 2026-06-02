@@ -13,6 +13,8 @@ const https = require('https');
 const fs    = require('fs');
 const path  = require('path');
 const url   = require('url');
+const os    = require('os');
+const { execFile } = require('child_process');
 
 const ROOT       = __dirname;
 const PORT       = 4321;
@@ -261,6 +263,55 @@ function handleGetAssets(req, res, query) {
   send(res, 200, { files });
 }
 
+// ─── route: GET /api/screenshot — headless-Chrome capture of a preview ──
+function findChrome() {
+  if (process.env.CHROME_PATH && fs.existsSync(process.env.CHROME_PATH)) return process.env.CHROME_PATH;
+  const cands = [
+    '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+    '/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary',
+    '/Applications/Chromium.app/Contents/MacOS/Chromium',
+    '/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge',
+    '/usr/bin/google-chrome', '/usr/bin/google-chrome-stable',
+    '/usr/bin/chromium', '/usr/bin/chromium-browser',
+    'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
+    'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
+  ];
+  for (const p of cands) { try { if (fs.existsSync(p)) return p; } catch (_) {} }
+  return null;
+}
+
+function handleScreenshot(req, res, query) {
+  const rel = (query.path || '').split('?')[0].split('#')[0];
+  const abs = safePath(rel);
+  if (!abs || !fs.existsSync(abs)) return send(res, 404, { error: 'Preview not found: ' + rel });
+  const chrome = findChrome();
+  if (!chrome) return send(res, 503, { error: 'No Chrome found. Set CHROME_PATH to your Chrome/Chromium binary and restart the server.' });
+
+  const w = Math.min(Math.max(parseInt(query.w, 10) || 1280, 320), 2560);
+  const h = Math.min(Math.max(parseInt(query.h, 10) || 800, 240), 2000);
+  const hashRaw = (query.hash || '').replace(/[^\w#-]/g, '');
+  const hash = hashRaw ? (hashRaw[0] === '#' ? hashRaw : '#' + hashRaw) : '';
+  const targetUrl = `http://127.0.0.1:${PORT}/${rel}${hash}`;
+  const tmp = path.join(os.tmpdir(), 'actz-shot-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8) + '.png');
+
+  const args = [
+    '--headless=new', '--disable-gpu', '--hide-scrollbars', '--no-sandbox',
+    '--force-color-profile=srgb', '--autoplay-policy=no-user-gesture-required',
+    `--window-size=${w},${h}`, '--virtual-time-budget=2000',
+    `--screenshot=${tmp}`, targetUrl,
+  ];
+  execFile(chrome, args, { timeout: 25000 }, (err) => {
+    fs.readFile(tmp, (rerr, data) => {
+      try { fs.unlinkSync(tmp); } catch (_) {}
+      if (rerr || !data || !data.length) {
+        return send(res, 500, { error: 'Screenshot failed: ' + ((err && err.message) || (rerr && rerr.message) || 'no image produced') });
+      }
+      console.log(`  ✓ screenshot ${rel} (${w}×${h}, ${Math.round(data.length / 1024)}KB)`);
+      send(res, 200, { data: data.toString('base64'), media_type: 'image/png', w, h });
+    });
+  });
+}
+
 // ─── route: POST /api/edit (requires API key) ───────────────────
 
 function makeDiff(original, modified) {
@@ -450,6 +501,7 @@ const server = http.createServer(async (req, res) => {
   if (route === '/api/nav'     && method === 'GET')  return handleGetNav(req, res);
   if (route === '/api/nav/label' && method === 'POST') return handlePostNavLabel(req, res);
   if (route === '/api/assets'  && method === 'GET')  return handleGetAssets(req, res, query);
+  if (route === '/api/screenshot' && method === 'GET') return handleScreenshot(req, res, query);
   if (route === '/api/edit'    && method === 'POST') return handleEdit(req, res);
   if (route === '/api/undo'    && method === 'POST') return handleUndo(req, res);
 
