@@ -1,0 +1,1846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ACTZ · Design System</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; background: #f5f4f0; color: #1a1a18; font-size: 13px; }
+
+/* ── Top bar ───────────────────────────────────────── */
+.topbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  height: 46px;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid #e5e4e0;
+  display: flex; align-items: center; gap: 6px; padding: 0 14px;
+}
+.topbar-logo {
+  display: flex; align-items: center; gap: 7px;
+  font-size: 13px; font-weight: 600; color: #1a1a18;
+  padding: 5px 8px; border-radius: 8px;
+  cursor: default; user-select: none;
+}
+.topbar-logo svg { color: #888; }
+.tab-divider { width: 1px; height: 20px; background: #e5e4e0; margin: 0 2px; }
+.tab-btn {
+  display: flex; align-items: center; gap: 6px;
+  padding: 5px 12px; border-radius: 8px;
+  border: none; background: transparent;
+  font: 500 12.5px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #666; cursor: pointer;
+  transition: background 120ms, color 120ms;
+}
+.tab-btn:hover { background: #f0efe9; color: #1a1a18; }
+.tab-btn.active { background: #ebebeb; color: #1a1a18; font-weight: 600; }
+.tab-btn svg { opacity: 0.7; }
+.tab-btn.active svg { opacity: 1; }
+.topbar-gap { flex: 1; }
+.share-btn {
+  padding: 6px 16px; border-radius: 8px;
+  border: none; background: #1a1a18; color: #fff;
+  font: 600 12.5px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  cursor: pointer; letter-spacing: -0.01em;
+  transition: background 120ms;
+}
+.share-btn:hover { background: #333; }
+
+/* ── Layout ────────────────────────────────────────── */
+.layout {
+  position: fixed; top: 46px; left: 0; right: 0; bottom: 0;
+  display: flex;
+}
+
+/* ── Sidebar ───────────────────────────────────────── */
+.sidebar {
+  width: 310px; min-width: 250px; max-width: 380px;
+  flex-shrink: 0;
+  background: #fff;
+  border-right: 1px solid #e5e4e0;
+  overflow-y: auto; overflow-x: hidden;
+  display: flex; flex-direction: column;
+}
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-thumb { background: #ddd; border-radius: 2px; }
+
+/* ── DS nav ────────────────────────────────────────── */
+.ds-nav { padding: 16px 0 24px; }
+
+.nav-group { margin-bottom: 22px; }
+.nav-group-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 16px 8px;
+  cursor: pointer; user-select: none;
+}
+.nav-group-label {
+  font: 400 11.5px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #999; letter-spacing: 0.01em;
+}
+.nav-group-chevron {
+  color: #ccc;
+  transition: transform 200ms;
+  line-height: 0;
+}
+.nav-group-chevron.open { transform: none; }
+.nav-group-chevron:not(.open) { transform: rotate(-90deg); }
+
+.nav-items-wrap {
+  padding: 0 12px;
+  overflow: hidden;
+}
+.nav-items-card {
+  background: #fff;
+  border: 1px solid #e8e7e2;
+  border-radius: 11px;
+  overflow: hidden;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px;
+  cursor: pointer;
+  border-bottom: 1px solid #f2f1ed;
+  transition: background 90ms;
+  user-select: none;
+}
+.nav-item:last-child { border-bottom: none; }
+.nav-item:hover { background: #f7f6f2; }
+.nav-item.active {
+  background: #e8f0fe;
+  border-color: #d0e2fd;
+}
+.nav-item-chevron {
+  color: #bbb; flex-shrink: 0; line-height: 0;
+  transition: transform 160ms;
+}
+.nav-item.active .nav-item-chevron { color: #4e80ee; transform: rotate(90deg); }
+.nav-item-label {
+  flex: 1; min-width: 0;
+  font: 500 13px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #1a1a18; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.nav-item.active .nav-item-label { color: #1a56c4; }
+.nav-item-status { flex-shrink: 0; line-height: 0; }
+.dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.dot-blue   { background: #4e80ee; box-shadow: 0 0 0 2px rgba(78,128,238,.15); }
+.dot-orange { background: #f97316; box-shadow: 0 0 0 2px rgba(249,115,22,.15); }
+.check-svg  { color: #c8c7c2; }
+
+/* ── Main content ──────────────────────────────────── */
+.main {
+  flex: 1; display: flex; flex-direction: column;
+  overflow: hidden; background: #f5f4f0;
+}
+
+/* iframe */
+.preview-pane {
+  flex: 1; display: flex; flex-direction: column;
+  position: relative;
+}
+.preview-topbar {
+  height: 38px; flex-shrink: 0;
+  background: #fff; border-bottom: 1px solid #e8e7e2;
+  display: flex; align-items: center; gap: 10px; padding: 0 14px;
+  font: 400 11.5px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #999;
+}
+.preview-topbar-url {
+  display: flex; align-items: center; gap: 6px;
+  background: #f5f4f0; border: 1px solid #e5e4e0;
+  border-radius: 6px; padding: 4px 10px;
+  font: 400 11px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #666; flex: 1; max-width: 480px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.preview-open-btn {
+  display: flex; align-items: center; gap: 5px;
+  padding: 4px 10px; border-radius: 6px;
+  border: 1px solid #e5e4e0; background: #fff;
+  font: 500 11.5px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #555; cursor: pointer; text-decoration: none;
+  transition: background 100ms;
+}
+.preview-open-btn:hover { background: #f0efe9; }
+.preview-iframe {
+  flex: 1; width: 100%; border: none;
+  background: #fff;
+}
+.preview-empty {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 12px;
+  color: #bbb;
+}
+.preview-empty svg { color: #ddd; }
+.preview-empty p { font: 400 13px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+
+/* ── Design Files view ─────────────────────────────── */
+.files-view { flex: 1; display: flex; height: 100%; }
+
+.files-browser {
+  flex: 1; display: flex; flex-direction: column;
+  overflow: hidden;
+}
+.files-breadcrumb {
+  height: 42px; flex-shrink: 0;
+  display: flex; align-items: center; gap: 2px;
+  padding: 0 14px;
+  border-bottom: 1px solid #e8e7e2;
+  background: #fff;
+}
+.bc-nav-btn {
+  width: 26px; height: 26px;
+  display: flex; align-items: center; justify-content: center;
+  border: 1px solid #e5e4e0; border-radius: 6px;
+  background: #fff; cursor: pointer; color: #666;
+  transition: background 100ms;
+}
+.bc-nav-btn:hover { background: #f0efe9; }
+.bc-sep { color: #ccc; margin: 0 2px; font-size: 12px; }
+.bc-crumb {
+  padding: 3px 7px; border-radius: 5px;
+  border: none; background: none;
+  font: 400 12px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #666; cursor: pointer;
+  transition: background 100ms, color 100ms;
+}
+.bc-crumb:hover { background: #f0efe9; color: #1a1a18; }
+.bc-crumb.current { color: #1a1a18; font-weight: 500; cursor: default; }
+.bc-crumb.current:hover { background: none; }
+
+.files-list-area { flex: 1; overflow-y: auto; padding: 14px 0; }
+.files-list-area::-webkit-scrollbar { width: 4px; }
+.files-list-area::-webkit-scrollbar-thumb { background: #ddd; border-radius: 2px; }
+
+.fs-section-header {
+  font: 600 10px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: #aaa; padding: 8px 16px 5px;
+}
+.fs-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 9px 16px; cursor: pointer;
+  transition: background 90ms;
+}
+.fs-row:hover { background: #f7f6f2; }
+.fs-row.active { background: #e8f0fe; }
+.fs-icon {
+  width: 34px; height: 34px; flex-shrink: 0;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px;
+}
+.fs-icon-html   { background: #fdf0e6; }
+.fs-icon-jsx    { background: #eef2ff; }
+.fs-icon-md     { background: #f0f0ee; }
+.fs-icon-css    { background: #e8fdf0; }
+.fs-icon-folder { background: #fff8e1; }
+.fs-info { flex: 1; min-width: 0; }
+.fs-name { font: 500 13px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #1a1a18; }
+.fs-type { font: 400 11px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #999; margin-top: 1px; }
+.fs-date { font: 400 11px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #bbb; flex-shrink: 0; }
+
+.files-detail {
+  width: 440px; flex-shrink: 0;
+  background: #f9f8f5; border-left: 1px solid #e5e4e0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 28px;
+  gap: 16px;
+}
+.files-detail-empty {
+  font: 400 13px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #bbb;
+}
+.detail-thumb {
+  width: 100%; max-width: 380px;
+  border-radius: 10px; overflow: hidden;
+  border: 1px solid #e5e4e0;
+  background: #fff;
+  aspect-ratio: 16/10; position: relative;
+}
+.detail-thumb iframe {
+  position: absolute; top: 0; left: 0;
+  width: 200%; height: 200%;
+  border: none;
+  transform: scale(0.5); transform-origin: 0 0;
+  pointer-events: none;
+}
+.detail-open {
+  display: flex; align-items: center; gap: 6px;
+  padding: 8px 18px; border-radius: 8px;
+  border: 1px solid #e5e4e0; background: #fff;
+  font: 500 13px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #1a1a18; text-decoration: none; cursor: pointer;
+  transition: background 100ms;
+}
+.detail-open:hover { background: #f0efe9; }
+.detail-name { font: 600 15px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #1a1a18; }
+.detail-meta { font: 400 12px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #999; text-align: center; line-height: 1.6; }
+
+/* ── Utilities ─────────────────────────────────────── */
+.hidden { display: none !important; }
+
+/* ── Connect button ────────────────────────────────── */
+.connect-btn {
+  display: flex; align-items: center; gap: 7px;
+  padding: 6px 14px; border-radius: 8px;
+  border: 1px solid #e5e4e0; background: #fff; color: #1a1a18;
+  font: 600 12.5px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  cursor: pointer; transition: all 150ms; white-space: nowrap;
+}
+.connect-btn:hover { background: #f0efe9; border-color: #ccc; }
+.connect-btn.connected { background: #1a1a18; border-color: #1a1a18; color: #fff; }
+.connect-btn.connected:hover { background: #333; }
+.conn-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: #22c55e; flex-shrink: 0;
+  box-shadow: 0 0 0 2.5px rgba(34,197,94,.22);
+}
+
+/* ── Connect modal ──────────────────────────────────── */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 1000;
+  background: rgba(0,0,0,0.28);
+  backdrop-filter: blur(5px);
+  display: flex; align-items: center; justify-content: center;
+}
+.modal {
+  background: #fff; border-radius: 16px;
+  width: 440px; max-width: calc(100vw - 40px);
+  box-shadow: 0 24px 64px -14px rgba(0,0,0,0.38);
+  overflow: hidden;
+}
+.modal-header {
+  display: flex; align-items: center;
+  padding: 20px 22px 16px;
+  border-bottom: 1px solid #f0efe9;
+}
+.modal-title { font: 600 15.5px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #1a1a18; flex: 1; }
+.modal-close {
+  width: 28px; height: 28px; border-radius: 7px;
+  border: none; background: #f0efe9; color: #666;
+  font-size: 13px; cursor: pointer; line-height: 1;
+  transition: background 100ms;
+}
+.modal-close:hover { background: #e8e7e2; }
+.modal-body { padding: 22px; display: flex; flex-direction: column; gap: 20px; }
+.modal-step { display: flex; gap: 14px; align-items: flex-start; }
+.modal-step-num {
+  width: 24px; height: 24px; border-radius: 50%; flex-shrink: 0;
+  background: #1a1a18; color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font: 700 11px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  margin-top: 1px;
+}
+.modal-step-num.done { background: #22c55e; }
+.modal-step-content { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+.modal-step-label { font: 600 13.5px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #1a1a18; }
+.modal-step-sub { font: 400 12px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #999; margin-top: -4px; }
+.modal-link-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 14px; border-radius: 8px;
+  background: #f5f4f0; border: 1px solid #e5e4e0;
+  font: 500 12.5px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #1a1a18; text-decoration: none; cursor: pointer;
+  transition: background 100ms; width: fit-content;
+}
+.modal-link-btn:hover { background: #e8e7e2; }
+.modal-api-input {
+  width: 100%; padding: 10px 13px; border-radius: 9px;
+  border: 1px solid #e5e4e0;
+  font: 400 12.5px 'SFMono-Regular', 'Menlo', 'Monaco', monospace;
+  color: #1a1a18; outline: none; background: #fafaf8;
+  transition: border-color 150ms;
+}
+.modal-api-input:focus { border-color: #999; background: #fff; }
+.modal-hint { font: 400 11px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #bbb; line-height: 1.5; }
+.modal-folder-btn {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 14px; border-radius: 8px;
+  border: 1px solid #e5e4e0; background: #fff;
+  font: 500 12.5px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #1a1a18; cursor: pointer; width: fit-content;
+  transition: background 100ms;
+}
+.modal-folder-btn:hover { background: #f5f4f0; }
+.modal-dir-status {
+  font: 500 12px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #bbb; min-height: 16px;
+}
+.modal-footer {
+  display: flex; gap: 10px; justify-content: flex-end;
+  padding: 16px 22px; border-top: 1px solid #f0efe9;
+}
+.modal-cancel {
+  padding: 8px 18px; border-radius: 8px;
+  border: 1px solid #e5e4e0; background: #fff;
+  font: 500 13px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #666; cursor: pointer; transition: background 100ms;
+}
+.modal-cancel:hover { background: #f5f4f0; }
+.modal-connect {
+  padding: 8px 22px; border-radius: 8px;
+  border: none; background: #1a1a18; color: #fff;
+  font: 600 13px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  cursor: pointer; transition: background 100ms;
+}
+.modal-connect:hover:not(:disabled) { background: #333; }
+.modal-connect:disabled { opacity: 0.32; cursor: not-allowed; }
+
+/* ── Claude panel ──────────────────────────────────── */
+
+.claude-panel {
+  width: 340px; flex-shrink: 0;
+  background: #fff;
+  border-left: 1px solid #e5e4e0;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+  transition: width 220ms cubic-bezier(0.4,0,0.2,1);
+}
+.claude-panel.collapsed { width: 0; border-left: none; }
+
+.claude-panel-header {
+  height: 42px; flex-shrink: 0;
+  display: flex; align-items: center; gap: 8px;
+  padding: 0 14px;
+  border-bottom: 1px solid #e8e7e2;
+  background: #fafaf8;
+}
+.claude-panel-title {
+  font: 600 12.5px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #1a1a18; flex: 1;
+}
+.claude-panel-status {
+  font: 400 11px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #aaa;
+  display: flex; align-items: center; gap: 5px;
+}
+.status-dot { width: 6px; height: 6px; border-radius: 50%; background: #ccc; }
+.status-dot.live { background: #22c55e; box-shadow: 0 0 0 2px rgba(34,197,94,.2); }
+.status-dot.err  { background: #ef4444; }
+.reconfigure-btn {
+  width: 26px; height: 26px; border-radius: 6px;
+  border: 1px solid #e5e4e0; background: transparent;
+  color: #999; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: all 120ms;
+}
+.reconfigure-btn:hover { background: #f0efe9; border-color: #ccc; color: #555; }
+.claude-error-banner {
+  padding: 10px 12px; border-radius: 8px;
+  background: #fff5f5; border: 1px solid #fecaca;
+  font: 400 12px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #991b1b; line-height: 1.5;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.reconfigure-link {
+  align-self: flex-start; padding: 4px 10px; border-radius: 6px;
+  border: 1px solid #fca5a5; background: #fff;
+  font: 500 11.5px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #b91c1c; cursor: pointer; transition: all 120ms;
+}
+.reconfigure-link:hover { background: #fef2f2; border-color: #ef4444; }
+
+.claude-body { flex: 1; display: flex; flex-direction: column; overflow: hidden; padding: 14px; gap: 12px; }
+
+/* file tabs */
+.file-tabs { display: flex; gap: 4px; flex-wrap: wrap; }
+.file-tab {
+  padding: 4px 10px; border-radius: 6px;
+  border: 1px solid #e5e4e0; background: #fff;
+  font: 500 11px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #666; cursor: pointer;
+  transition: all 100ms;
+  white-space: nowrap;
+}
+.file-tab:hover { border-color: #bbb; color: #1a1a18; }
+.file-tab.active { background: #1a1a18; border-color: #1a1a18; color: #fff; }
+.file-tab-label {
+  font: 600 10px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: #bbb; margin-bottom: 4px;
+}
+
+/* code viewer */
+.code-viewer {
+  flex: 1; min-height: 0;
+  background: #f8f8f6; border: 1px solid #e8e7e2; border-radius: 8px;
+  overflow: auto; padding: 10px 12px;
+  font: 400 10.5px/1.6 'SFMono-Regular', 'Monaco', 'Menlo', 'Courier New', monospace;
+  color: #333;
+  white-space: pre;
+  max-height: 200px;
+}
+.code-viewer::-webkit-scrollbar { width: 4px; height: 4px; }
+.code-viewer::-webkit-scrollbar-thumb { background: #ddd; border-radius: 2px; }
+
+/* prompt area */
+.prompt-label {
+  font: 600 10px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: #bbb; margin-bottom: 4px;
+}
+.prompt-textarea {
+  width: 100%; height: 80px; padding: 10px 12px;
+  border: 1px solid #e5e4e0; border-radius: 8px;
+  background: #fff;
+  font: 400 13px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #1a1a18; resize: none; outline: none;
+  transition: border-color 150ms;
+}
+.prompt-textarea:focus { border-color: #aaa; }
+.prompt-textarea::placeholder { color: #bbb; }
+
+/* apply + undo buttons */
+.claude-actions { display: flex; gap: 8px; }
+.apply-btn {
+  flex: 1; padding: 9px 14px; border-radius: 8px;
+  border: none; background: #1a1a18; color: #fff;
+  font: 600 12.5px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  cursor: pointer; transition: background 120ms;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.apply-btn:hover:not(:disabled) { background: #333; }
+.apply-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.apply-btn.loading { background: #444; }
+.undo-btn {
+  padding: 9px 12px; border-radius: 8px;
+  border: 1px solid #e5e4e0; background: #fff;
+  font: 500 12px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #666; cursor: pointer; transition: all 120ms;
+}
+.undo-btn:hover { background: #f0efe9; border-color: #bbb; color: #1a1a18; }
+
+/* diff view */
+.diff-summary {
+  display: flex; align-items: center; gap: 8px;
+  font: 500 11.5px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #666;
+}
+.diff-add  { color: #16a34a; font-weight: 600; }
+.diff-rem  { color: #dc2626; font-weight: 600; }
+.diff-toggle {
+  margin-left: auto; padding: 2px 8px; border-radius: 4px;
+  border: 1px solid #e5e4e0; background: #fff;
+  font: 500 10.5px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #777; cursor: pointer;
+}
+.diff-viewer {
+  background: #f8f8f6; border: 1px solid #e8e7e2; border-radius: 8px;
+  overflow: auto; max-height: 180px;
+  font: 400 10px/1.55 'SFMono-Regular', 'Monaco', 'Menlo', monospace;
+}
+.diff-viewer::-webkit-scrollbar { width: 4px; }
+.diff-viewer::-webkit-scrollbar-thumb { background: #ddd; border-radius: 2px; }
+.diff-line { padding: 0 10px; white-space: pre; }
+.diff-line.add { background: #f0fdf4; color: #15803d; }
+.diff-line.rem { background: #fef2f2; color: #b91c1c; }
+
+/* no-server notice */
+.no-server-notice {
+  padding: 10px 12px; border-radius: 8px;
+  background: #fef9ee; border: 1px solid #fde68a;
+  font: 400 11.5px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #92400e; line-height: 1.5;
+}
+.no-server-notice code {
+  font-family: 'SFMono-Regular','Menlo','Courier New',monospace;
+  font-size: 10.5px; background: rgba(0,0,0,0.06);
+  padding: 1px 5px; border-radius: 4px;
+}
+.no-select-notice {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 8px;
+  color: #ccc; text-align: center; padding: 20px;
+}
+.no-select-notice p { font: 400 12px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; line-height: 1.5; }
+
+/* ── New-file modal ── */
+#new-file-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.45); display: flex; align-items: center; justify-content: center; z-index: 999; }
+#new-file-modal.hidden { display: none; }
+.nf-card { background: #fff; border-radius: 12px; padding: 24px; width: 420px; box-shadow: 0 12px 40px rgba(0,0,0,0.18); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+.nf-card h3 { margin: 0 0 4px; font-size: 14px; font-weight: 600; color: #1a1a18; }
+.nf-card .nf-sub { font-size: 11px; color: #888; margin: 0 0 16px; }
+.nf-filename { font-size: 11px; background: #f5f4f0; border: 1px solid #e5e4e0; border-radius: 6px; padding: 6px 10px; color: #555; margin-bottom: 16px; word-break: break-all; }
+.nf-row { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
+.nf-row label { font-size: 11px; font-weight: 500; color: #555; }
+.nf-row input, .nf-row select { border: 1px solid #e5e4e0; border-radius: 7px; padding: 7px 10px; font-size: 12.5px; color: #1a1a18; outline: none; width: 100%; box-sizing: border-box; }
+.nf-row input:focus, .nf-row select:focus { border-color: #4e80ee; box-shadow: 0 0 0 2px rgba(78,128,238,0.15); }
+.nf-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; }
+.nf-btn-skip { padding: 7px 16px; border-radius: 7px; border: 1px solid #e5e4e0; background: #fff; font-size: 12.5px; cursor: pointer; color: #666; }
+.nf-btn-skip:hover { background: #f5f4f0; }
+.nf-btn-add { padding: 7px 18px; border-radius: 7px; border: none; background: #1a1a18; color: #fff; font-size: 12.5px; font-weight: 500; cursor: pointer; }
+.nf-btn-add:hover { background: #333; }
+</style>
+</head>
+<body>
+
+<!-- ─── TOP BAR ──────────────────────────────────────────────── -->
+<header class="topbar">
+  <div class="topbar-logo">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+    Design System
+  </div>
+  <div class="tab-divider"></div>
+  <button class="tab-btn active" id="tab-ds" onclick="switchTab('ds')">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+    Design System
+  </button>
+  <button class="tab-btn" id="tab-df" onclick="switchTab('df')">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+    Design Files
+  </button>
+  <div class="topbar-gap"></div>
+  <button class="connect-btn" id="connect-claude-btn" onclick="handleConnectClick()">
+    Connect Claude
+  </button>
+  <button class="share-btn">Share</button>
+</header>
+
+<!-- ─── LAYOUT ───────────────────────────────────────────────── -->
+<div class="layout">
+
+  <!-- Left sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <!-- rendered by JS -->
+  </aside>
+
+  <!-- Main area -->
+  <div class="main" id="main">
+    <!-- rendered by JS -->
+  </div>
+
+  <!-- Claude edit panel -->
+  <div class="claude-panel collapsed" id="claude-panel">
+    <div class="claude-panel-header">
+      <span class="claude-panel-title">✦ Edit with Claude</span>
+      <button class="reconfigure-btn" onclick="openConnectModal()" title="Reconfigure Claude connection">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+      </button>
+    </div>
+    <div class="claude-body" id="claude-body">
+      <!-- filled by JS -->
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// DATA  (seeded from /api/nav on load; array kept for compat)
+// ═══════════════════════════════════════════════════════════════
+
+let NAV_GROUPS = [
+  {
+    label: 'UI Kit — Marketing',
+    open: true,
+    items: [
+      { label: 'UI Kit · Marketing landing', url: 'ui_kits/marketing/index.html', status: 'blue',
+        sub: 'Hero → partners → benefits → trips rail → value pair → CTA → footer' },
+    ]
+  },
+  {
+    label: 'UI Kit — Onboarding',
+    open: true,
+    items: [
+      { label: 'UI Kit · Onboarding flow', url: 'ui_kits/onboarding/index.html', status: 'blue',
+        sub: '8-screen personalization flow' },
+    ]
+  },
+  {
+    label: 'UI Kit — App',
+    open: true,
+    items: [
+      { label: 'UI Kit · Traveler app', url: 'ui_kits/app/index.html', status: 'orange',
+        sub: 'Marketplace · itinerary · AI concierge · map views' },
+    ]
+  },
+  {
+    label: 'Type',
+    open: true,
+    items: [
+      { label: 'Type · Brand + UI',      url: 'preview/type-pairing.html',       status: 'check' },
+      { label: 'Type · Hero gradient',   url: 'preview/type-hero-gradient.html', status: 'blue'  },
+      { label: 'Type · Scale',           url: 'preview/type-scale.html',         status: 'check' },
+    ]
+  },
+  {
+    label: 'Colors',
+    open: true,
+    items: [
+      { label: 'Colors · Flag palette',  url: 'preview/colors-flag.html',      status: 'check'  },
+      { label: 'Colors · Semantic',      url: 'preview/colors-semantic.html',  status: 'orange' },
+      { label: 'Colors · Surfaces',      url: 'preview/colors-surfaces.html',  status: 'check'  },
+      { label: 'Colors · Text + ring',   url: 'preview/colors-text-ring.html', status: 'check'  },
+    ]
+  },
+  {
+    label: 'Spacing',
+    open: true,
+    items: [
+      { label: 'Spacing · Easings',         url: 'preview/easings.html',        status: 'check'  },
+      { label: 'Spacing · Radii',            url: 'preview/radii.html',          status: 'check'  },
+      { label: 'Spacing · Scale',            url: 'preview/spacing.html',        status: 'check'  },
+      { label: 'Spacing · Shadows & glows',  url: 'preview/shadows-glows.html',  status: 'orange' },
+    ]
+  },
+  {
+    label: 'Components',
+    open: true,
+    items: [
+      { label: 'Components · Buttons',           url: 'preview/buttons.html',                   status: 'blue'  },
+      { label: 'Components · Glass surfaces',    url: 'preview/glass-surfaces.html',             status: 'check' },
+      { label: 'Components · Inputs + search',   url: 'preview/component-inputs.html',           status: 'blue'  },
+      { label: 'Components · Marketplace card',  url: 'preview/component-marketplace-card.html', status: 'check' },
+      { label: 'Components · Navigation',        url: 'preview/component-nav.html',              status: 'blue'  },
+      { label: 'Components · Pills + badges',    url: 'preview/pills-badges.html',               status: 'blue'  },
+    ]
+  },
+  {
+    label: 'Brand',
+    open: true,
+    items: [
+      { label: 'Brand · Imagery',           url: 'preview/brand-imagery.html',       status: 'check'  },
+      { label: 'Brand · Logo lockups',      url: 'preview/brand-logo.html',          status: 'check'  },
+      { label: 'Brand · Partner strip',     url: 'preview/brand-partners.html',      status: 'orange' },
+      { label: 'Georgetown · One-pager',    url: 'one-pagers/georgetown.html',        status: 'blue'   },
+      { label: 'Onboarding · Research audit', url: 'one-pagers/onboarding-audit.html', status: 'blue' },
+    ]
+  },
+];
+
+// File system tree
+const FS_ROOT = {
+  name: 'project', type: 'folder',
+  children: [
+    {
+      name: 'ui_kits', type: 'folder',
+      children: [
+        {
+          name: 'marketing', type: 'folder',
+          pages: [
+            { name: 'index.html', type: 'html', url: 'ui_kits/marketing/index.html', modified: '3 days ago', size: '12.4 KB' },
+          ],
+          docs: [
+            { name: 'README.md', type: 'md', modified: '3 days ago', size: '2.1 KB' },
+          ],
+        },
+        {
+          name: 'onboarding', type: 'folder',
+          pages: [
+            { name: 'index.html', type: 'html', url: 'ui_kits/onboarding/index.html', modified: 'just now', size: '8.2 KB' },
+          ],
+          components: [
+            { name: 'Onboarding.jsx', type: 'jsx', modified: 'just now', size: '22.1 KB' },
+            { name: 'Data.jsx',       type: 'jsx', modified: 'just now', size: '9.8 KB' },
+            { name: 'ios-frame.jsx',  type: 'jsx', modified: '3 days ago', size: '5.4 KB' },
+          ],
+        },
+        {
+          name: 'app', type: 'folder',
+          pages: [
+            { name: 'index.html', type: 'html', url: 'ui_kits/app/index.html', modified: '3 days ago', size: '3.7 KB' },
+          ],
+          components: [
+            { name: 'Screens.jsx',   type: 'jsx', modified: '3 days ago', size: '18.3 KB' },
+            { name: 'Data.jsx',      type: 'jsx', modified: '3 days ago', size: '4.2 KB' },
+            { name: 'ios-frame.jsx', type: 'jsx', modified: '3 days ago', size: '5.4 KB' },
+          ],
+          docs: [
+            { name: 'README.md', type: 'md', modified: '3 days ago', size: '1.8 KB' },
+          ],
+        },
+      ]
+    },
+    {
+      name: 'preview', type: 'folder',
+      pages: [
+        { name: 'type-pairing.html',              type: 'html', url: 'preview/type-pairing.html',              modified: '3 days ago', size: '4.1 KB' },
+        { name: 'type-hero-gradient.html',         type: 'html', url: 'preview/type-hero-gradient.html',         modified: '3 days ago', size: '3.8 KB' },
+        { name: 'type-scale.html',                 type: 'html', url: 'preview/type-scale.html',                 modified: '3 days ago', size: '4.5 KB' },
+        { name: 'colors-flag.html',                type: 'html', url: 'preview/colors-flag.html',                modified: '3 days ago', size: '3.2 KB' },
+        { name: 'colors-semantic.html',            type: 'html', url: 'preview/colors-semantic.html',            modified: '3 days ago', size: '3.4 KB' },
+        { name: 'colors-surfaces.html',            type: 'html', url: 'preview/colors-surfaces.html',            modified: '3 days ago', size: '3.1 KB' },
+        { name: 'colors-text-ring.html',           type: 'html', url: 'preview/colors-text-ring.html',           modified: '3 days ago', size: '2.9 KB' },
+        { name: 'easings.html',                    type: 'html', url: 'preview/easings.html',                    modified: '3 days ago', size: '3.6 KB' },
+        { name: 'radii.html',                      type: 'html', url: 'preview/radii.html',                      modified: '3 days ago', size: '2.8 KB' },
+        { name: 'spacing.html',                    type: 'html', url: 'preview/spacing.html',                    modified: '3 days ago', size: '3.0 KB' },
+        { name: 'shadows-glows.html',              type: 'html', url: 'preview/shadows-glows.html',              modified: '3 days ago', size: '3.3 KB' },
+        { name: 'buttons.html',                    type: 'html', url: 'preview/buttons.html',                    modified: '3 days ago', size: '5.2 KB' },
+        { name: 'glass-surfaces.html',             type: 'html', url: 'preview/glass-surfaces.html',             modified: '3 days ago', size: '4.8 KB' },
+        { name: 'component-inputs.html',           type: 'html', url: 'preview/component-inputs.html',           modified: '3 days ago', size: '4.1 KB' },
+        { name: 'component-marketplace-card.html', type: 'html', url: 'preview/component-marketplace-card.html', modified: '3 days ago', size: '5.6 KB' },
+        { name: 'component-nav.html',              type: 'html', url: 'preview/component-nav.html',              modified: '3 days ago', size: '4.3 KB' },
+        { name: 'pills-badges.html',               type: 'html', url: 'preview/pills-badges.html',               modified: '3 days ago', size: '3.7 KB' },
+        { name: 'brand-imagery.html',              type: 'html', url: 'preview/brand-imagery.html',              modified: '3 days ago', size: '3.5 KB' },
+        { name: 'brand-logo.html',                 type: 'html', url: 'preview/brand-logo.html',                 modified: '3 days ago', size: '4.0 KB' },
+        { name: 'brand-partners.html',             type: 'html', url: 'preview/brand-partners.html',             modified: '3 days ago', size: '3.2 KB' },
+      ]
+    },
+    {
+      name: 'one-pagers', type: 'folder',
+      pages: [
+        { name: 'georgetown.html',        type: 'html', url: 'one-pagers/georgetown.html',        modified: '3 days ago', size: '8.4 KB' },
+        { name: 'onboarding-audit.html',  type: 'html', url: 'one-pagers/onboarding-audit.html',  modified: '3 days ago', size: '6.1 KB' },
+      ]
+    },
+    {
+      name: 'chats', type: 'folder',
+      docs: [
+        { name: 'chat1.md', type: 'md', modified: '3 days ago', size: '4.2 KB' },
+        { name: 'chat2.md', type: 'md', modified: '3 days ago', size: '3.8 KB' },
+      ]
+    },
+    { name: 'README.md',       type: 'md',  modified: '3 days ago', size: '12.3 KB' },
+    { name: 'AGENT_HANDOFF.md',type: 'md',  modified: '3 days ago', size: '3.2 KB' },
+    { name: 'SKILL.md',        type: 'md',  modified: '3 days ago', size: '1.4 KB' },
+    { name: 'colors_and_type.css', type: 'css', modified: '3 days ago', size: '6.8 KB' },
+    { name: 'components.css',      type: 'css', modified: '3 days ago', size: '14.2 KB' },
+  ]
+};
+
+// ═══════════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════════
+
+let currentTab  = 'ds';
+let activeItem  = null;   // { gi, ii }
+let fsPath      = ['project'];
+let selectedFsFile = null;
+
+// ═══════════════════════════════════════════════════════════════
+// TAB SWITCHING
+// ═══════════════════════════════════════════════════════════════
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.getElementById('tab-ds').classList.toggle('active', tab === 'ds');
+  document.getElementById('tab-df').classList.toggle('active', tab === 'df');
+  renderAll();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER ORCHESTRATION
+// ═══════════════════════════════════════════════════════════════
+
+function renderAll() {
+  if (currentTab === 'ds') {
+    renderDsSidebar();
+    renderDsMain();
+  } else {
+    renderDfSidebar();
+    renderDfMain();
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// DESIGN SYSTEM — SIDEBAR
+// ═══════════════════════════════════════════════════════════════
+
+function renderDsSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  sidebar.innerHTML = `<div class="ds-nav">${NAV_GROUPS.map((g, gi) => renderGroup(g, gi)).join('')}</div>`;
+}
+
+function renderGroup(g, gi) {
+  const chevronSvg = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>`;
+  const itemsSvg = `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>`;
+
+  return `
+    <div class="nav-group" id="group-${gi}">
+      <div class="nav-group-header" onclick="toggleGroup(${gi})">
+        <span class="nav-group-label">${g.label}</span>
+        <span class="nav-group-chevron ${g.open ? 'open' : ''}" id="gchev-${gi}">${chevronSvg}</span>
+      </div>
+      <div class="nav-items-wrap" id="gitems-${gi}" ${g.open ? '' : 'style="display:none"'}>
+        <div class="nav-items-card">
+          ${g.items.map((item, ii) => `
+            <div class="nav-item ${activeItem && activeItem.gi===gi && activeItem.ii===ii ? 'active' : ''}"
+                 id="navitem-${gi}-${ii}"
+                 onclick="selectItem(${gi},${ii})">
+              <span class="nav-item-chevron">${itemsSvg}</span>
+              <span class="nav-item-label">${item.label}</span>
+              <span class="nav-item-status">${statusIcon(item.status)}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </div>`;
+}
+
+function statusIcon(s) {
+  if (s === 'blue')   return `<span class="dot dot-blue"></span>`;
+  if (s === 'orange') return `<span class="dot dot-orange"></span>`;
+  return `<svg class="check-svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+}
+
+function toggleGroup(gi) {
+  NAV_GROUPS[gi].open = !NAV_GROUPS[gi].open;
+  const wrap  = document.getElementById(`gitems-${gi}`);
+  const chev  = document.getElementById(`gchev-${gi}`);
+  wrap.style.display = NAV_GROUPS[gi].open ? '' : 'none';
+  chev.classList.toggle('open', NAV_GROUPS[gi].open);
+}
+
+function selectItem(gi, ii) {
+  // Deactivate old
+  if (activeItem) {
+    const el = document.getElementById(`navitem-${activeItem.gi}-${activeItem.ii}`);
+    if (el) el.classList.remove('active');
+  }
+  activeItem = { gi, ii };
+  const el = document.getElementById(`navitem-${gi}-${ii}`);
+  if (el) el.classList.add('active');
+
+  const item = NAV_GROUPS[gi].items[ii];
+  renderPreview(item.url, item.label);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// DESIGN SYSTEM — MAIN (iframe preview)
+// ═══════════════════════════════════════════════════════════════
+
+function renderDsMain() {
+  const main = document.getElementById('main');
+  if (!activeItem) {
+    main.innerHTML = `
+      <div class="preview-pane">
+        <div class="preview-empty">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          <p>Select a component from the sidebar to preview</p>
+        </div>
+      </div>`;
+    return;
+  }
+  const item = NAV_GROUPS[activeItem.gi].items[activeItem.ii];
+  renderPreview(item.url, item.label);
+}
+
+function renderPreview(url, label) {
+  const main = document.getElementById('main');
+  main.innerHTML = `
+    <div class="preview-pane">
+      <div class="preview-topbar">
+        <div class="preview-topbar-url">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          localhost:4321/${url}
+        </div>
+        <a href="${url}" target="_blank" class="preview-open-btn">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          Open
+        </a>
+      </div>
+      <iframe class="preview-iframe" id="ds-iframe" src="${url}?t=${Date.now()}" title="${label}"></iframe>
+    </div>`;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// DESIGN FILES — SIDEBAR (file browser)
+// ═══════════════════════════════════════════════════════════════
+
+function renderDfSidebar() {
+  // In Design Files tab, sidebar shows the DS nav as context
+  // Main area shows the file browser split panel
+  const sidebar = document.getElementById('sidebar');
+  sidebar.innerHTML = `<div class="ds-nav">${NAV_GROUPS.map((g, gi) => renderGroup(g, gi)).join('')}</div>`;
+}
+
+function renderDfMain() {
+  const main = document.getElementById('main');
+  main.innerHTML = `
+    <div class="files-view">
+      <div class="files-browser">
+        <div class="files-breadcrumb" id="files-breadcrumb"></div>
+        <div class="files-list-area" id="files-list-area"></div>
+      </div>
+      <div class="files-detail" id="files-detail">
+        <div class="files-detail-empty">Select a file to preview</div>
+      </div>
+    </div>`;
+  renderFsBreadcrumb();
+  renderFsFileList();
+}
+
+function renderFsBreadcrumb() {
+  const el = document.getElementById('files-breadcrumb');
+  if (!el) return;
+  const upSvg = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>`;
+  const refSvg = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.17"/></svg>`;
+
+  const crumbs = fsPath.map((name, i) => {
+    const isLast = i === fsPath.length - 1;
+    return (i > 0 ? '<span class="bc-sep">›</span>' : '') +
+      `<button class="bc-crumb ${isLast ? 'current' : ''}" onclick="fsNavigateTo(${i})">${name}</button>`;
+  }).join('');
+
+  el.innerHTML = `
+    <button class="bc-nav-btn" onclick="fsNavigateUp()" title="Up directory">${upSvg}</button>
+    <button class="bc-nav-btn" onclick="renderFsFileList()" title="Refresh" style="margin-right:6px">${refSvg}</button>
+    ${crumbs}`;
+}
+
+function renderFsFileList() {
+  const el = document.getElementById('files-list-area');
+  if (!el) return;
+
+  const node = getFsNode();
+  if (!node) { el.innerHTML = '<div style="padding:20px;color:#bbb;font-size:12px">Folder not found.</div>'; return; }
+
+  let html = '';
+
+  // Folders first
+  const folders = (node.children || []).filter(c => c.type === 'folder');
+  if (folders.length) {
+    html += `<div class="fs-section-header">Folders</div>`;
+    html += folders.map(f => fsFolderRow(f)).join('');
+  }
+
+  // Pages
+  const pages = node.pages || [];
+  if (pages.length) {
+    html += `<div class="fs-section-header">Pages</div>`;
+    html += pages.map(f => fsFileRow(f)).join('');
+  }
+
+  // Components
+  const comps = node.components || [];
+  if (comps.length) {
+    html += `<div class="fs-section-header">Components</div>`;
+    html += comps.map(f => fsFileRow(f)).join('');
+  }
+
+  // Root-level files (flat children that aren't folders)
+  if (!folders.length && !pages.length && !comps.length) {
+    const files = (node.children || []).filter(c => c.type !== 'folder');
+    const grouped = {};
+    files.forEach(f => {
+      const g = f.type === 'html' ? 'Pages' : f.type === 'jsx' ? 'Components' : f.type === 'css' ? 'Stylesheets' : 'Documents';
+      (grouped[g] = grouped[g] || []).push(f);
+    });
+    for (const [grp, items] of Object.entries(grouped)) {
+      html += `<div class="fs-section-header">${grp}</div>`;
+      html += items.map(f => fsFileRow(f)).join('');
+    }
+  }
+
+  // Docs
+  const docs = node.docs || [];
+  if (docs.length) {
+    html += `<div class="fs-section-header">Documents</div>`;
+    html += docs.map(f => fsFileRow(f)).join('');
+  }
+
+  // Root-level mixed children
+  if (node === FS_ROOT) {
+    const rootFiles = (node.children || []).filter(c => c.type !== 'folder');
+    if (rootFiles.length) {
+      html += `<div class="fs-section-header">Files</div>`;
+      html += rootFiles.map(f => fsFileRow(f)).join('');
+    }
+  }
+
+  el.innerHTML = html || '<div style="padding:20px;color:#bbb;font-size:12px">Empty folder.</div>';
+}
+
+function fsFolderRow(f) {
+  return `<div class="fs-row" onclick="fsNavigateInto('${f.name}')">
+    <div class="fs-icon fs-icon-folder">📁</div>
+    <div class="fs-info">
+      <div class="fs-name">${f.name}</div>
+      <div class="fs-type">Folder</div>
+    </div>
+  </div>`;
+}
+
+function fsFileRow(f) {
+  const iconClass = { html: 'fs-icon-html', jsx: 'fs-icon-jsx', md: 'fs-icon-md', css: 'fs-icon-css' }[f.type] || 'fs-icon-md';
+  const iconEmoji = { html: '📄', jsx: '⬡', md: '📝', css: '🎨' }[f.type] || '📄';
+  const typeName  = { html: 'HTML page', jsx: 'Component', md: 'Document', css: 'Stylesheet' }[f.type] || 'File';
+  const key = btoa(f.name + (f.url || '')).replace(/=/g,'');
+  return `<div class="fs-row" id="fsrow-${key}" onclick="fsSelectFile(${JSON.stringify(JSON.stringify(f))})">
+    <div class="fs-icon ${iconClass}">${iconEmoji}</div>
+    <div class="fs-info">
+      <div class="fs-name">${f.name}</div>
+      <div class="fs-type">${typeName}</div>
+    </div>
+    <div class="fs-date">${f.modified || ''}</div>
+  </div>`;
+}
+
+function fsSelectFile(fJson) {
+  const f = JSON.parse(fJson);
+  selectedFsFile = f;
+
+  // Update active rows
+  document.querySelectorAll('.fs-row').forEach(r => r.classList.remove('active'));
+
+  const detail = document.getElementById('files-detail');
+  if (!detail) return;
+
+  if (f.url) {
+    detail.innerHTML = `
+      <div class="detail-thumb">
+        <iframe src="${f.url}" scrolling="no" tabindex="-1"></iframe>
+      </div>
+      <a href="${f.url}" target="_blank" class="detail-open">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Open
+      </a>
+      <div class="detail-name">${f.name}</div>
+      <div class="detail-meta">HTML page<br>Modified ${f.modified} &middot; ${f.size} &middot; HTML</div>`;
+  } else {
+    const typeName = { jsx: 'Component', md: 'Document', css: 'Stylesheet' }[f.type] || 'File';
+    detail.innerHTML = `
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ddd" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+      <div class="detail-name">${f.name}</div>
+      <div class="detail-meta">${typeName}<br>Modified ${f.modified} &middot; ${f.size}</div>`;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// FILE SYSTEM NAVIGATION
+// ═══════════════════════════════════════════════════════════════
+
+function getFsNode() {
+  let node = FS_ROOT;
+  for (let i = 1; i < fsPath.length; i++) {
+    const next = (node.children || []).find(c => c.name === fsPath[i] && c.type === 'folder');
+    if (!next) return null;
+    node = next;
+  }
+  return node;
+}
+
+function fsNavigateInto(name) {
+  fsPath.push(name);
+  selectedFsFile = null;
+  const detail = document.getElementById('files-detail');
+  if (detail) detail.innerHTML = '<div class="files-detail-empty">Select a file to preview</div>';
+  renderFsBreadcrumb();
+  renderFsFileList();
+}
+
+function fsNavigateTo(idx) {
+  fsPath = fsPath.slice(0, idx + 1);
+  selectedFsFile = null;
+  const detail = document.getElementById('files-detail');
+  if (detail) detail.innerHTML = '<div class="files-detail-empty">Select a file to preview</div>';
+  renderFsBreadcrumb();
+  renderFsFileList();
+}
+
+function fsNavigateUp() {
+  if (fsPath.length > 1) fsNavigateTo(fsPath.length - 2);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// CLAUDE PANEL
+// ═══════════════════════════════════════════════════════════════
+
+// ════════════════════════════════════════════════════════════════
+// CONNECT CLAUDE  –  browser-native (File System Access + direct API)
+// ════════════════════════════════════════════════════════════════
+
+const STORAGE_KEY  = 'actz_anthropic_key';
+const CLAUDE_MODEL = 'claude-sonnet-4-6';
+
+let claudeApiKey     = localStorage.getItem(STORAGE_KEY) || null;
+let dirHandle        = null;    // FileSystemDirectoryHandle
+let claudePanelOpen  = false;
+let claudeActiveFile = null;
+let claudeLastOrig   = null;   // current file content (for next apply)
+let claudeUndoSnap   = null;   // pre-edit snapshot (for undo)
+let claudeLastDiff   = null;
+let diffExpanded     = false;
+
+// ── connection helpers ─────────────────────────────────────────
+function isConnected() { return !!(claudeApiKey && dirHandle); }
+
+function updateConnectBtn() {
+  const btn = document.getElementById('connect-claude-btn');
+  if (!btn) return;
+  if (isConnected()) {
+    btn.className = 'connect-btn connected';
+    btn.innerHTML = '<span class=\"conn-dot\"></span> Claude';
+  } else {
+    btn.className = 'connect-btn';
+    btn.textContent = 'Connect Claude';
+  }
+}
+
+function handleConnectClick() {
+  if (isConnected()) {
+    // Toggle panel
+    claudePanelOpen = !claudePanelOpen;
+    document.getElementById('claude-panel').classList.toggle('collapsed', !claudePanelOpen);
+    if (claudePanelOpen) renderClaudeBody();
+  } else {
+    openConnectModal();
+  }
+}
+
+// ── modal ──────────────────────────────────────────────────────
+function openConnectModal() {
+  const modal = document.getElementById('connect-modal');
+  if (!modal) return;
+  modal.classList.remove('hidden');
+  const inp = document.getElementById('modal-api-key');
+  if (inp) {
+    inp.value = claudeApiKey || '';
+    // Focus + select so user can paste a replacement key immediately
+    setTimeout(() => { inp.focus(); if (inp.value) inp.select(); }, 80);
+  }
+  updateModalSteps();
+}
+
+function closeConnectModal() {
+  const modal = document.getElementById('connect-modal');
+  if (modal) modal.classList.add('hidden');
+}
+
+function markStep1() {
+  const n = document.getElementById('step1-num');
+  if (n) { n.classList.add('done'); n.textContent = '✓'; }
+}
+
+function onApiKeyInput() {
+  const inp = document.getElementById('modal-api-key');
+  claudeApiKey = inp && inp.value.trim() ? inp.value.trim() : null;
+  if (claudeApiKey) localStorage.setItem(STORAGE_KEY, claudeApiKey);
+  else localStorage.removeItem(STORAGE_KEY);
+  updateModalSteps();
+}
+
+function updateModalSteps() {
+  const n2    = document.getElementById('step2-num');
+  const n3    = document.getElementById('step3-num');
+  const ds    = document.getElementById('modal-dir-status');
+  const btn   = document.getElementById('modal-connect-btn');
+  const title = document.getElementById('modal-title');
+
+  const reconfiguring = !!(claudeApiKey || dirHandle);
+  if (title) title.textContent = reconfiguring ? 'Reconfigure Claude' : 'Connect to Claude';
+  if (btn) {
+    btn.disabled = !(claudeApiKey && dirHandle);
+    btn.textContent = reconfiguring ? 'Save & Reconnect' : 'Connect';
+  }
+
+  if (n2) {
+    if (claudeApiKey) { n2.classList.add('done'); n2.textContent = '✓'; }
+    else { n2.classList.remove('done'); n2.textContent = '2'; }
+  }
+  if (n3) {
+    if (dirHandle) { n3.classList.add('done'); n3.textContent = '✓'; }
+    else { n3.classList.remove('done'); n3.textContent = '3'; }
+  }
+  if (ds) {
+    ds.textContent = dirHandle ? '✓ ' + dirHandle.name : '';
+    ds.style.color = dirHandle ? '#16a34a' : '#bbb';
+  }
+}
+
+async function grantFolderAccess() {
+  try {
+    dirHandle = await window.showDirectoryPicker({ mode: 'readwrite', id: 'actz-ds' });
+    updateModalSteps();
+  } catch (e) {
+    if (e.name !== 'AbortError') alert('Folder access failed: ' + e.message);
+  }
+}
+
+function finishConnect() {
+  if (!claudeApiKey) { document.getElementById('modal-api-key').focus(); return; }
+  if (!dirHandle)    { alert('Please select the project folder first.'); return; }
+  closeConnectModal();
+  updateConnectBtn();
+  // Auto-open panel
+  claudePanelOpen = true;
+  document.getElementById('claude-panel').classList.remove('collapsed');
+  claudeActiveFile = null;
+  renderClaudeBody();
+}
+
+// ── File System Access ─────────────────────────────────────────
+async function fsReadFile(rel) {
+  if (!dirHandle) throw new Error('No folder access');
+  const parts = rel.split('/');
+  let cur = dirHandle;
+  for (let i = 0; i < parts.length - 1; i++) cur = await cur.getDirectoryHandle(parts[i]);
+  const fh = await cur.getFileHandle(parts[parts.length - 1]);
+  return (await fh.getFile()).text();
+}
+
+async function fsWriteFile(rel, content) {
+  if (!dirHandle) throw new Error('No folder access');
+  const parts = rel.split('/');
+  let cur = dirHandle;
+  for (let i = 0; i < parts.length - 1; i++) cur = await cur.getDirectoryHandle(parts[i]);
+  const fh = await cur.getFileHandle(parts[parts.length - 1]);
+  const w  = await fh.createWritable();
+  await w.write(content);
+  await w.close();
+}
+
+// ── Anthropic API ──────────────────────────────────────────────
+async function callClaude(system, userMsg) {
+  if (!claudeApiKey) throw new Error('No API key — click Connect Claude');
+  const r = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+      'x-api-key': claudeApiKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true',
+    },
+    body: JSON.stringify({
+      model: CLAUDE_MODEL, max_tokens: 16000,
+      system,
+      messages: [{ role: 'user', content: userMsg }],
+    }),
+  });
+  const data = await r.json();
+  if (data.error) throw new Error(data.error.message);
+  return data.content[0].text;
+}
+
+// ── Edit file map ──────────────────────────────────────────────
+const EDIT_FILES = {
+  'ui_kits/marketing/index.html': [
+    { label: 'index.html', path: 'ui_kits/marketing/index.html' },
+  ],
+  'ui_kits/onboarding/index.html': [
+    { label: 'Onboarding.jsx', path: 'ui_kits/onboarding/Onboarding.jsx' },
+    { label: 'Data.jsx',       path: 'ui_kits/onboarding/Data.jsx' },
+    { label: 'index.html',     path: 'ui_kits/onboarding/index.html' },
+    { label: 'ios-frame.jsx',  path: 'ui_kits/onboarding/ios-frame.jsx' },
+  ],
+  'ui_kits/app/index.html': [
+    { label: 'Screens.jsx',   path: 'ui_kits/app/Screens.jsx' },
+    { label: 'Data.jsx',      path: 'ui_kits/app/Data.jsx' },
+    { label: 'index.html',    path: 'ui_kits/app/index.html' },
+    { label: 'ios-frame.jsx', path: 'ui_kits/app/ios-frame.jsx' },
+  ],
+};
+
+// ── Render Claude panel body ───────────────────────────────────
+function renderClaudeBody() {
+  const body = document.getElementById('claude-body');
+  if (!body) return;
+
+  if (!isConnected()) {
+    body.innerHTML = `
+      <div class="no-select-notice">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ddd" stroke-width="1.5"
+             stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+        <p>Click <strong>Connect Claude</strong> in the top bar to get started.</p>
+      </div>`;
+    return;
+  }
+
+  if (!activeItem) {
+    body.innerHTML = `
+      <div class="no-select-notice">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ddd" stroke-width="1.5"
+             stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
+        </svg>
+        <p>Select a component from the left sidebar to start editing.</p>
+      </div>`;
+    return;
+  }
+
+  const item     = NAV_GROUPS[activeItem.gi].items[activeItem.ii];
+  const fileList = EDIT_FILES[item.url] || [{ label: item.url.split('/').pop(), path: item.url }];
+  if (!claudeActiveFile || !fileList.find(f => f.path === claudeActiveFile.path)) {
+    claudeActiveFile = fileList[0];
+  }
+
+  body.innerHTML = `
+    <div>
+      <div class="file-tab-label">Edit file</div>
+      <div class="file-tabs">
+        ${fileList.map(f => `
+          <button class="file-tab ${f.path === claudeActiveFile.path ? 'active' : ''}"
+                  onclick="switchEditFile(${JSON.stringify(JSON.stringify(f))})">
+            ${f.label}
+          </button>`).join('')}
+      </div>
+    </div>
+    <div>
+      <div class="file-tab-label">Source — ${claudeActiveFile.label}</div>
+      <div class="code-viewer" id="code-viewer">Loading…</div>
+    </div>
+    <div>
+      <div class="prompt-label">Describe your changes</div>
+      <textarea class="prompt-textarea" id="claude-prompt"
+        placeholder="e.g. Make the headline larger and add a gradient…"></textarea>
+    </div>
+    <div class="claude-actions">
+      <button class="apply-btn" id="apply-btn" onclick="applyEdit()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m5 12 5 5L20 7"/>
+        </svg>
+        Apply
+      </button>
+      <button class="undo-btn hidden" id="undo-btn" onclick="undoEdit()">Undo</button>
+    </div>
+    <div id="diff-area" class="hidden"></div>`;
+
+  loadSourceFile();
+}
+
+async function loadSourceFile() {
+  const viewer = document.getElementById('code-viewer');
+  if (!viewer || !claudeActiveFile) return;
+  viewer.textContent = 'Loading…';
+  try {
+    const content = await fsReadFile(claudeActiveFile.path);
+    viewer.textContent = content;
+    claudeLastOrig = content;
+  } catch (e) {
+    viewer.textContent = 'Could not read file: ' + e.message;
+  }
+}
+
+function switchEditFile(fJson) {
+  claudeActiveFile = JSON.parse(fJson);
+  claudeLastOrig   = null;
+  claudeUndoSnap   = null;
+  claudeLastDiff   = null;
+  diffExpanded     = false;
+  renderClaudeBody();
+}
+
+// ── Apply edit ─────────────────────────────────────────────────
+function resetApplyBtn() {
+  const btn = document.getElementById('apply-btn');
+  if (!btn) return;
+  btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg> Apply`;
+  btn.disabled = false;
+  btn.classList.remove('loading');
+}
+
+async function applyEdit() {
+  const promptEl = document.getElementById('claude-prompt');
+  const applyBtn = document.getElementById('apply-btn');
+  const diffArea = document.getElementById('diff-area');
+  const undoBtn  = document.getElementById('undo-btn');
+
+  if (!applyBtn) return;
+
+  const prompt = promptEl ? promptEl.value.trim() : '';
+  if (!prompt) { if (promptEl) promptEl.focus(); return; }
+  if (!claudeActiveFile) return;
+
+  applyBtn.disabled = true;
+  applyBtn.classList.add('loading');
+  applyBtn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+    style="animation:spin 1s linear infinite">
+    <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+  </svg> Thinking…`;
+  if (diffArea) diffArea.classList.add('hidden');
+
+  if (!document.getElementById('spin-style')) {
+    const s = document.createElement('style');
+    s.id = 'spin-style';
+    s.textContent = '@keyframes spin{to{transform:rotate(360deg)}}';
+    document.head.appendChild(s);
+  }
+
+  // Always read the current file content (claudeLastOrig tracks current state)
+  let original = claudeLastOrig;
+  if (!original) {
+    try {
+      original = await fsReadFile(claudeActiveFile.path);
+      claudeLastOrig = original;
+    } catch (e) {
+      resetApplyBtn();
+      showErrorBanner('Could not read file: ' + e.message, false);
+      return;
+    }
+  }
+
+  const ext  = claudeActiveFile.path.split('.').pop();
+  const lang = { html: 'HTML', jsx: 'JSX/React', js: 'JavaScript', css: 'CSS' }[ext] || 'code';
+
+  const system = `You are an expert frontend developer maintaining the ACTZ design system.
+ACTZ is dark, cinematic, Colorado-flag palette: gold (--primary/CTAs), blue (--secondary), red (--accent) on deep navy.
+Fonts: Manrope (UI), Ethnocentric (brand). Glass-morphism surfaces, pill buttons, expo easing.
+File: ${claudeActiveFile.path} (${lang}).
+Return ONLY the complete modified file — no markdown fences, no explanation.`;
+
+  const userMsg = `File content:\n\`\`\`\n${original}\n\`\`\`\n\nRequest: ${prompt}\n\nReturn the complete updated file.`;
+
+  try {
+    let modified = await callClaude(system, userMsg);
+    modified = modified.replace(/^```[^\n]*\n?/, '').replace(/\n?```\s*$/, '');
+
+    // Save pre-edit snapshot for undo, then advance current state
+    claudeUndoSnap = original;
+    const { ops, linesAdded, linesRemoved } = makeDiff(original, modified);
+    claudeLastDiff = ops;
+
+    await fsWriteFile(claudeActiveFile.path, modified);
+
+    // Advance current content so next apply uses the updated file
+    claudeLastOrig = modified;
+
+    showDiff(linesAdded, linesRemoved, ops);
+    const undoBtnFresh = document.getElementById('undo-btn');
+    if (undoBtnFresh) undoBtnFresh.classList.remove('hidden');
+
+    // Reload the preview iframe
+    const iframe = document.getElementById('ds-iframe');
+    if (iframe) {
+      const base = iframe.src.split('?')[0];
+      setTimeout(() => { iframe.src = base + '?t=' + Date.now(); }, 100);
+    }
+
+    // Refresh code viewer to show new content
+    const viewer = document.getElementById('code-viewer');
+    if (viewer) viewer.textContent = modified;
+
+    const applyBtnFresh = document.getElementById('apply-btn');
+    if (applyBtnFresh) {
+      applyBtnFresh.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg> Applied ✓`;
+      setTimeout(() => {
+        resetApplyBtn();
+        if (promptEl) promptEl.value = '';
+      }, 2200);
+    }
+
+  } catch (e) {
+    resetApplyBtn();
+    const isAuthError = /invalid.*(api.key|x-api-key)|authentication|unauthorized|401/i.test(e.message);
+    showErrorBanner(
+      isAuthError ? 'Invalid API key — your key may have expired or been copied incorrectly.' : 'Claude error: ' + e.message,
+      isAuthError
+    );
+  }
+}
+
+function showErrorBanner(msg, showReconfigure) {
+  const errArea = document.getElementById('diff-area');
+  if (!errArea) return;
+  errArea.classList.remove('hidden');
+  errArea.innerHTML = `<div class="claude-error-banner">
+    <span>${msg}</span>
+    ${showReconfigure ? `<button class="reconfigure-link" onclick="openConnectModal()">Update API key →</button>` : ''}
+  </div>`;
+}
+
+// ── Diff helpers ───────────────────────────────────────────────
+function makeDiff(original, modified) {
+  const oL = original.split('\n'), mL = modified.split('\n');
+  const ops = [];
+  let i = 0, j = 0;
+  while (i < oL.length || j < mL.length) {
+    if (i >= oL.length)       { ops.push({ t: 'add',    line: mL[j++] }); }
+    else if (j >= mL.length)  { ops.push({ t: 'remove', line: oL[i++] }); }
+    else if (oL[i] === mL[j]) { ops.push({ t: 'same',   line: oL[i++] }); j++; }
+    else {
+      let fm = -1, fo = -1;
+      for (let d = 1; d <= 4 && fm === -1; d++) {
+        if (j + d < mL.length && mL[j + d] === oL[i]) fm = d;
+        if (i + d < oL.length && oL[i + d] === mL[j]) fo = d;
+      }
+      if (fm !== -1 && (fo === -1 || fm <= fo)) { for (let d = 0; d < fm; d++) ops.push({ t: 'add',    line: mL[j++] }); }
+      else if (fo !== -1)                        { for (let d = 0; d < fo; d++) ops.push({ t: 'remove', line: oL[i++] }); }
+      else { ops.push({ t: 'remove', line: oL[i++] }); ops.push({ t: 'add', line: mL[j++] }); }
+    }
+  }
+  return { ops, linesAdded: ops.filter(o => o.t === 'add').length, linesRemoved: ops.filter(o => o.t === 'remove').length };
+}
+
+function showDiff(added, removed, ops) {
+  const el = document.getElementById('diff-area');
+  if (!el) return;
+  el.classList.remove('hidden');
+  const changed = (ops || []).filter(o => o.t !== 'same');
+  el.innerHTML = `
+    <div class="diff-summary">
+      <span class="diff-add">+${added}</span>
+      <span class="diff-rem">-${removed}</span>
+      <span style="color:#bbb">lines</span>
+      ${changed.length ? `<button class="diff-toggle" onclick="toggleDiff()">
+        ${diffExpanded ? 'Hide' : 'Show'} diff
+      </button>` : ''}
+    </div>
+    <div class="diff-viewer ${diffExpanded ? '' : 'hidden'}" id="diff-viewer">
+      ${changed.slice(0, 80).map(o =>
+        `<div class="diff-line ${o.t === 'add' ? 'add' : 'rem'}">${
+          (o.t === 'add' ? '+ ' : '- ') + (o.line || '').replace(/&/g,'&amp;').replace(/</g,'&lt;')
+        }</div>`
+      ).join('')}
+    </div>`;
+}
+
+function toggleDiff() {
+  diffExpanded = !diffExpanded;
+  const ops = claudeLastDiff || [];
+  showDiff(ops.filter(o => o.t === 'add').length, ops.filter(o => o.t === 'remove').length, ops);
+}
+
+async function undoEdit() {
+  if (!claudeUndoSnap || !claudeActiveFile) return;
+  try {
+    await fsWriteFile(claudeActiveFile.path, claudeUndoSnap);
+
+    // Reset current state back to pre-edit content
+    claudeLastOrig = claudeUndoSnap;
+    claudeUndoSnap = null;
+    claudeLastDiff = null;
+
+    const undoBtn = document.getElementById('undo-btn');
+    if (undoBtn) undoBtn.classList.add('hidden');
+    const diffArea = document.getElementById('diff-area');
+    if (diffArea) diffArea.classList.add('hidden');
+
+    const iframe = document.getElementById('ds-iframe');
+    if (iframe) {
+      const base = iframe.src.split('?')[0];
+      iframe.src = base + '?t=' + Date.now();
+    }
+    const viewer = document.getElementById('code-viewer');
+    if (viewer) viewer.textContent = claudeLastOrig;
+  } catch (e) { alert('Undo failed: ' + e.message); }
+}
+
+// ── Re-render panel on nav item select ────────────────────────
+const _origSelectItem = selectItem;
+selectItem = function(gi, ii) {
+  _origSelectItem(gi, ii);
+  claudeActiveFile = null;
+  claudeLastOrig   = null;
+  claudeUndoSnap   = null;
+  claudeLastDiff   = null;
+  diffExpanded     = false;
+  if (claudePanelOpen && isConnected()) renderClaudeBody();
+};
+
+// Restore API key if it was saved
+updateConnectBtn();
+
+// ═══════════════════════════════════════════════════════════════
+// DYNAMIC NAV  — fetch from server, fall back to hardcoded array
+// ═══════════════════════════════════════════════════════════════
+
+let _pendingNewFiles = [];
+
+async function loadNav() {
+  try {
+    const r = await fetch('/api/nav');
+    if (!r.ok) return;
+    const data = await r.json();
+    if (data.groups && data.groups.length) {
+      // Preserve open state from existing NAV_GROUPS by label
+      const openMap = {};
+      NAV_GROUPS.forEach(g => { openMap[g.label] = g.open !== false; });
+      NAV_GROUPS = data.groups.map(g => ({
+        ...g,
+        open: openMap[g.label] !== undefined ? openMap[g.label] : true,
+      }));
+    }
+    _pendingNewFiles = data.newFiles || [];
+  } catch (e) {
+    // server not running — silently use hardcoded NAV_GROUPS
+  }
+}
+
+// ─── New-file modal ─────────────────────────────────────────────
+
+const SECTIONS = [
+  'UI Kit — Marketing','UI Kit — Onboarding','UI Kit — App',
+  'Type','Colors','Spacing','Components','Brand',
+];
+
+function openNewFileModal(file) {
+  const modal = document.getElementById('new-file-modal');
+  document.getElementById('nf-filename').textContent = file.url;
+  document.getElementById('nf-label').value   = file.inferredLabel   || '';
+  document.getElementById('nf-section').value = file.inferredSection || '';
+  document.getElementById('nf-status').value  = 'check';
+  modal.dataset.url = file.url;
+  modal.classList.remove('hidden');
+  document.getElementById('nf-label').focus();
+}
+
+function closeNewFileModal() {
+  document.getElementById('new-file-modal').classList.add('hidden');
+}
+
+async function saveNewFileLabel() {
+  const modal   = document.getElementById('new-file-modal');
+  const fileUrl = modal.dataset.url;
+  const label   = document.getElementById('nf-label').value.trim();
+  const section = document.getElementById('nf-section').value.trim();
+  const status  = document.getElementById('nf-status').value;
+
+  if (!label || !section) {
+    alert('Label and section are required.');
+    return;
+  }
+
+  try {
+    await fetch('/api/nav/label', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url: fileUrl, label, section, status }),
+    });
+  } catch (e) { /* server may not be up */ }
+
+  // Add to live NAV_GROUPS immediately without reload
+  let group = NAV_GROUPS.find(g => g.label === section);
+  if (!group) {
+    group = { label: section, open: true, items: [] };
+    NAV_GROUPS.push(group);
+  }
+  group.items.push({ label, url: fileUrl, status });
+
+  closeNewFileModal();
+  _pendingNewFiles = _pendingNewFiles.slice(1);
+  renderAll();
+
+  // Next queued file
+  if (_pendingNewFiles.length > 0) {
+    setTimeout(() => openNewFileModal(_pendingNewFiles[0]), 200);
+  }
+}
+
+function skipNewFile() {
+  closeNewFileModal();
+  _pendingNewFiles = _pendingNewFiles.slice(1);
+  if (_pendingNewFiles.length > 0) {
+    setTimeout(() => openNewFileModal(_pendingNewFiles[0]), 200);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════
+
+(async () => {
+  await loadNav();
+  renderAll();
+  if (_pendingNewFiles.length > 0) {
+    setTimeout(() => openNewFileModal(_pendingNewFiles[0]), 400);
+  }
+})();
+</script>
+
+<!-- ─── CONNECT MODAL ─────────────────────────────────────────── -->
+<div class="modal-overlay hidden" id="connect-modal"
+     onclick="if(event.target===this)closeConnectModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-title">Connect to Claude</span>
+      <button class="modal-close" onclick="closeConnectModal()">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <div class="modal-step">
+        <div class="modal-step-num" id="step1-num">1</div>
+        <div class="modal-step-content">
+          <div class="modal-step-label">Get your API key</div>
+          <div class="modal-step-sub">Create or copy a key from the Anthropic console</div>
+          <a href="https://console.anthropic.com/settings/keys" target="_blank"
+             class="modal-link-btn" onclick="markStep1()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+              <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+            </svg>
+            Open console.anthropic.com →
+          </a>
+        </div>
+      </div>
+
+      <div class="modal-step">
+        <div class="modal-step-num" id="step2-num">2</div>
+        <div class="modal-step-content">
+          <div class="modal-step-label">Paste your API key</div>
+          <input class="modal-api-input" id="modal-api-key" type="password"
+                 placeholder="sk-ant-api03-…" oninput="onApiKeyInput()" autocomplete="off" />
+          <div class="modal-hint">
+            Stored in your browser only (localStorage). Never sent anywhere except directly to Anthropic.
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-step">
+        <div class="modal-step-num" id="step3-num">3</div>
+        <div class="modal-step-content">
+          <div class="modal-step-label">Grant project folder access</div>
+          <div class="modal-step-sub">So Claude can read and write your component files directly</div>
+          <button class="modal-folder-btn" onclick="grantFolderAccess()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+            </svg>
+            Select actz-design-system folder
+          </button>
+          <div class="modal-dir-status" id="modal-dir-status"></div>
+        </div>
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <button class="modal-cancel" onclick="closeConnectModal()">Cancel</button>
+      <button class="modal-connect" id="modal-connect-btn" onclick="finishConnect()" disabled>
+        Connect
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── NEW FILE MODAL ────────────────────────────────────────── -->
+<div id="new-file-modal" class="hidden">
+  <div class="nf-card">
+    <h3>New file detected</h3>
+    <p class="nf-sub">Add it to the sidebar nav — or skip to ignore it.</p>
+    <div class="nf-filename" id="nf-filename"></div>
+    <div class="nf-row">
+      <label>Sidebar label</label>
+      <input id="nf-label" type="text" placeholder="e.g. Brand · App Icon v2">
+    </div>
+    <div class="nf-row">
+      <label>Section</label>
+      <input id="nf-section" type="text" list="nf-section-list" placeholder="e.g. Brand">
+      <datalist id="nf-section-list">
+        <option value="UI Kit — Marketing">
+        <option value="UI Kit — Onboarding">
+        <option value="UI Kit — App">
+        <option value="Type">
+        <option value="Colors">
+        <option value="Spacing">
+        <option value="Components">
+        <option value="Brand">
+      </datalist>
+    </div>
+    <div class="nf-row">
+      <label>Status dot</label>
+      <select id="nf-status">
+        <option value="check">✓ Done (grey check)</option>
+        <option value="blue">● In progress (blue)</option>
+        <option value="orange">● Needs work (orange)</option>
+      </select>
+    </div>
+    <div class="nf-actions">
+      <button class="nf-btn-skip" onclick="skipNewFile()">Skip</button>
+      <button class="nf-btn-add"  onclick="saveNewFileLabel()">Add to nav</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

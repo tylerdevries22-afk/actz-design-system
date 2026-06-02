@@ -1,0 +1,1455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>ACTZ · Global Spinner 4</title>
+<link rel="icon" href="../assets/brand/favicon.svg">
+<link rel="stylesheet" href="../colors_and_type.css">
+<link rel="stylesheet" href="../components.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+  body { margin:0; background:#000; min-height:100vh; padding:64px 32px 96px; font-family:var(--font-body); }
+
+  /* ── keyframes ──────────────────────────────────────────────────────────── */
+  @keyframes cw  { from{transform:rotate(0deg)}   to{transform:rotate(360deg)}  }
+  @keyframes ccw { from{transform:rotate(0deg)}   to{transform:rotate(-360deg)} }
+
+  /* Sonar Pulse (V2) */
+  @keyframes pulse-ring {
+    0%   { transform:scale(1);   opacity:.95 }
+    100% { transform:scale(3.2); opacity:0   }
+  }
+  @keyframes breathe {
+    0%,100% { transform:scale(.97); opacity:.65 }
+    50%     { transform:scale(1.04); opacity:1  }
+  }
+
+  /* Chromatic Ripple (V3) */
+  @keyframes cr-breathe {
+    0%,100% { transform:scale(.96); opacity:.6 }
+    50%     { transform:scale(1.05); opacity:1 }
+  }
+  @keyframes cr-pulse {
+    0%   { transform:scale(1);   opacity:.92 }
+    100% { transform:scale(3.4); opacity:0   }
+  }
+
+  /* Heartbeat (V4) */
+  @keyframes hb-pulse {
+    0%          { transform:scale(1);   opacity:.9  }
+    14%         { transform:scale(3.4); opacity:0   }
+    14.01%,100% { transform:scale(1);   opacity:0   }
+  }
+  @keyframes hb-center {
+    0%       { transform:scale(1);    opacity:.7  }
+    3%       { transform:scale(.91);  opacity:.4  }
+    8%       { transform:scale(1.07); opacity:1   }
+    13%      { transform:scale(1);    opacity:.7  }
+    15%      { transform:scale(.91);  opacity:.4  }
+    20%      { transform:scale(1.07); opacity:1   }
+    30%,100% { transform:scale(1);    opacity:.7  }
+  }
+
+  /* Prismatic Source (V5) — deep breathing, white hot core */
+  @keyframes ps-breathe {
+    0%,100% { transform:scale(.91); opacity:.52 }
+    50%     { transform:scale(1.09); opacity:1  }
+  }
+  @keyframes ps-core {
+    0%,100% { transform:scale(.4);  opacity:.28 }
+    50%     { transform:scale(1.55); opacity:.96 }
+  }
+  /* Slow chromatic shimmer — offsets drift slightly during breathe */
+  @keyframes ps-amber-drift {
+    0%,100% { transform:translate(5px, 2px)   }
+    50%     { transform:translate(9px, 5px)   }
+  }
+  @keyframes ps-gold-drift {
+    0%,100% { transform:translate(-1px, 6px)  }
+    50%     { transform:translate(-3px, 10px) }
+  }
+  @keyframes ps-blue-drift {
+    0%,100% { transform:translate(-5px, -3px) }
+    50%     { transform:translate(-8px, -6px) }
+  }
+
+  /* Prism Flux specular sweep */
+  @keyframes pf-sweep {
+    from { stroke-dashoffset:0  }
+    to   { stroke-dashoffset:-1 }
+  }
+
+  /* Cinematic Reveal — lens flare streak sweeps upper-left → lower-right */
+  @keyframes cg-flare {
+    0%, 72%   { transform:translateX(-360px); opacity:0 }
+    73%       { opacity:0 }
+    80%       { transform:translateX(-80px);  opacity:.88 }
+    88%       { transform:translateX(80px);   opacity:.88 }
+    95%       { transform:translateX(360px);  opacity:0 }
+    96%, 100% { transform:translateX(360px);  opacity:0 }
+  }
+
+  /* ── layout ─────────────────────────────────────────────────────────────── */
+  .page-header {
+    max-width:1240px; margin:0 auto 64px; text-align:center;
+  }
+  .eyebrow {
+    font:600 11px/1 var(--font-body); letter-spacing:.24em; text-transform:uppercase;
+    color:hsl(var(--accent)); margin-bottom:14px;
+    display:inline-flex; align-items:center; gap:12px;
+  }
+  .eyebrow::before,.eyebrow::after { content:''; width:28px; height:1px; background:hsl(var(--accent)); }
+  .page-header h1 {
+    margin:0 auto; font:700 clamp(32px,4vw,52px)/1.05 var(--font-display);
+    letter-spacing:-.03em; color:hsl(var(--foreground));
+  }
+  .page-header p {
+    margin:16px auto 0; max-width:58ch; font:400 16px/1.55 var(--font-body);
+    color:hsl(var(--foreground)/.5);
+  }
+  .grid {
+    max-width:1240px; margin:0 auto;
+    display:grid; grid-template-columns:repeat(2,1fr); gap:24px;
+  }
+  .grid-hero {
+    max-width:1240px; margin:24px auto 0;
+    display:grid; grid-template-columns:repeat(2,1fr); gap:24px;
+  }
+  .card {
+    border-radius:24px; border:1px solid rgba(60,120,255,.1);
+    background:radial-gradient(ellipse at 50% 30%, #020b1a 0%, #000 75%);
+    display:flex; flex-direction:column; align-items:center;
+    padding:48px 24px 36px; gap:18px; position:relative; overflow:hidden;
+  }
+  .card-hero {
+    width:100%;
+    border-color:rgba(255,255,255,.08);
+    background:radial-gradient(ellipse at 50% 35%, #04091A 0%, #000 70%);
+  }
+  .card::before {
+    content:''; position:absolute; inset:0; border-radius:inherit;
+    background:linear-gradient(145deg,rgba(60,120,255,.04) 0%,transparent 55%);
+    pointer-events:none;
+  }
+  .card-hero::before {
+    background:linear-gradient(145deg,rgba(255,255,255,.03) 0%,transparent 55%);
+  }
+  .stage  { width:100%; min-height:460px; display:flex; align-items:center; justify-content:center; }
+  .stage-hero { min-height:500px; }
+  .vname  { font:700 16px/1 var(--font-display); letter-spacing:.05em; color:rgba(255,255,255,.88); }
+  .vdesc  { font:400 12px/1.65 var(--font-body); color:rgba(255,255,255,.3); text-align:center; max-width:38ch; margin-top:-4px; }
+  .vtag   { font:600 10px/1 var(--font-body); letter-spacing:.2em; text-transform:uppercase; color:rgba(77,159,255,.45); }
+  .vtag-hero { color:rgba(255,255,255,.28); }
+  .grid-solo {
+    max-width:1240px; margin:24px auto 0;
+    display:flex; justify-content:center;
+  }
+  .card-solo {
+    width:100%; max-width:780px;
+    border-color:rgba(255,255,255,.1);
+    background:radial-gradient(ellipse at 50% 35%, #050A18 0%, #000 68%);
+  }
+  .card-solo::before {
+    background:linear-gradient(145deg,rgba(255,255,255,.04) 0%,transparent 55%);
+  }
+  .stage-solo { min-height:520px; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="eyebrow">UI Kit · App</div>
+  <h1>Global Spinner 4</h1>
+  <p>Prism Orbit · Sonar Pulse · Chromatic Ripple · Heartbeat · Prismatic Source · Specular Glass · Prism Flux. Pure black field, GS2 palette + WWDC26 prismatic glass physics.</p>
+</div>
+
+<div id="root"></div>
+
+<script type="text/babel">
+  // ── geometry (GS3-identical) ─────────────────────────────────────────────
+  const TRI_VB = "0 0 542.14 469.5";
+  const TRI    = "M 311.77 0 L 542.14 399 A 47 47 0 0 1 501.43 469.5 L 40.71 469.5 A 47 47 0 0 1 0 399 L 230.37 0 A 47 47 0 0 1 311.77 0 Z";
+  const R      = 469.5 / 542.14;
+
+  // ── GS2 flag palette ─────────────────────────────────────────────────────
+  const GS2 = [
+    { gc:"#8A0020", bc:"#4A0512", mc:"#DE124E", hc:"#FF8090" }, // red
+    { gc:"#6A5000", bc:"#5A4400", mc:"#F1C923", hc:"#FFE890" }, // gold
+    { gc:"#0A1A60", bc:"#0A1A4A", mc:"#2D7AF5", hc:"#86B4FF" }, // blue
+  ];
+
+  // ── glass material primitive ─────────────────────────────────────────────
+  function Glass({ d, fid, c }) {
+    const p = { fill:"none", strokeLinejoin:"round", vectorEffect:"non-scaling-stroke" };
+    return (
+      <>
+        <path {...p} d={d} stroke={c.gc} strokeWidth="26" opacity=".42" filter={`url(#${fid})`}/>
+        <path {...p} d={d} stroke="#000"  strokeWidth="20"/>
+        <path {...p} d={d} stroke={c.bc}  strokeWidth="14"/>
+        <path {...p} d={d} stroke={c.mc}  strokeWidth="9"/>
+        <path {...p} d={d} stroke={c.hc}  strokeWidth="4.5"/>
+        <path {...p} d={d} stroke="#fff"  strokeWidth="1.5" opacity=".82"/>
+      </>
+    );
+  }
+
+  function GlowFilter({ id, sd = 8 }) {
+    return (
+      <filter id={id} x="-45%" y="-45%" width="190%" height="190%">
+        <feGaussianBlur stdDeviation={sd} result="b"/>
+        <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // V1 — PRISM ORBIT
+  // ═══════════════════════════════════════════════════════════════════════════
+  const ORBIT_RINGS = [
+    { id:"r0", w:280, dur:"16s", dir:"cw",
+      gc:"#0E35B0", bc:"#08193A", mc:"#2A6EF5", hc:"#7AABFF" },
+    { id:"r1", w:178, dur:"10s", dir:"ccw",
+      gc:"#6E3A00", bc:"#1C0D00", mc:"#C97B00", hc:"#FFD000" },
+    { id:"r2", w:88,  dur:"5.5s", dir:"cw",
+      gc:"#1840CC", bc:"#051422", mc:"#3D8EFF", hc:"#B6D6FF" },
+  ];
+
+  function PrismOrbit() {
+    return (
+      <svg viewBox="-165 -150 330 300" width="380" height="345" style={{ overflow:"visible" }}>
+        <defs>
+          {ORBIT_RINGS.map(r => <GlowFilter key={r.id} id={r.id}/>)}
+          <radialGradient id="o-amb" cx="50%" cy="52%" r="50%">
+            <stop offset="0%"   stopColor="#0A1E60" stopOpacity=".28"/>
+            <stop offset="60%"  stopColor="#03093A" stopOpacity=".08"/>
+            <stop offset="100%" stopColor="#000"    stopOpacity="0"/>
+          </radialGradient>
+        </defs>
+        <ellipse cx="0" cy="0" rx="215" ry="195" fill="url(#o-amb)"/>
+        {ORBIT_RINGS.map(ring => {
+          const h = ring.w * R;
+          return (
+            <g key={ring.id} style={{ transformOrigin:"0px 0px",
+              animation:`${ring.dir} ${ring.dur} linear infinite`, willChange:"transform" }}>
+              <svg viewBox={TRI_VB} x={-ring.w/2} y={-h/2} width={ring.w} height={h} overflow="visible">
+                <Glass d={TRI} fid={ring.id} c={ring}/>
+              </svg>
+            </g>
+          );
+        })}
+      </svg>
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // V2 — SONAR PULSE  (original · blue glass)
+  // ═══════════════════════════════════════════════════════════════════════════
+  const SP_N = 6, SP_W = 116, SP_DUR = 5.4, SP_STG = SP_DUR / SP_N;
+  const SP_BLUE = { gc:"#0E35B0", bc:"#08193A", mc:"#2A6EF5", hc:"#A2CCFF" };
+
+  function SonarPulse() {
+    const ph = SP_W * R;
+    return (
+      <svg viewBox="-205 -185 410 375" width="380" height="345" style={{ overflow:"visible" }}>
+        <defs>
+          <GlowFilter id="sp-f"/>
+          <radialGradient id="sp-amb" cx="50%" cy="50%" r="50%">
+            <stop offset="0%"   stopColor="#0A2060" stopOpacity=".2"/>
+            <stop offset="100%" stopColor="#000"    stopOpacity="0"/>
+          </radialGradient>
+        </defs>
+        <ellipse cx="0" cy="0" rx="285" ry="260" fill="url(#sp-amb)"/>
+        {Array.from({ length: SP_N }, (_, i) => (
+          <g key={i} style={{ transformOrigin:"0px 0px",
+            animation:`pulse-ring ${SP_DUR}s ${(i*SP_STG).toFixed(2)}s linear infinite`,
+            willChange:"transform,opacity" }}>
+            <svg viewBox={TRI_VB} x={-SP_W/2} y={-ph/2} width={SP_W} height={ph} overflow="visible">
+              <Glass d={TRI} fid="sp-f" c={SP_BLUE}/>
+            </svg>
+          </g>
+        ))}
+        <g style={{ transformOrigin:"0px 0px",
+          animation:"breathe 2.8s ease-in-out infinite", willChange:"transform,opacity" }}>
+          <svg viewBox={TRI_VB} x={-SP_W/2} y={-ph/2} width={SP_W} height={ph} overflow="visible">
+            <Glass d={TRI} fid="sp-f" c={SP_BLUE}/>
+          </svg>
+        </g>
+      </svg>
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // V3 — CHROMATIC RIPPLE  (GS2 · color-cycling rings)
+  // ═══════════════════════════════════════════════════════════════════════════
+  const CR_DUR = 5.7, CR_N = 7, CR_STG = CR_DUR / CR_N;
+  const CR_CTR = [
+    { w:76,  c:GS2[0], delay:"0s"   },
+    { w:108, c:GS2[1], delay:".18s" },
+    { w:140, c:GS2[2], delay:".36s" },
+  ];
+  const CR_PW = 108;
+
+  function ChromaticRipple() {
+    const cph = CR_PW * R;
+    return (
+      <svg viewBox="-230 -210 460 420" width="380" height="345" style={{ overflow:"visible" }}>
+        <defs>
+          <GlowFilter id="cr-f" sd={9}/>
+          <radialGradient id="cr-amb" cx="50%" cy="50%" r="50%">
+            <stop offset="0%"   stopColor="#1A0A30" stopOpacity=".32"/>
+            <stop offset="45%"  stopColor="#0A0614" stopOpacity=".12"/>
+            <stop offset="100%" stopColor="#000"    stopOpacity="0"/>
+          </radialGradient>
+        </defs>
+        <ellipse cx="0" cy="0" rx="310" ry="285" fill="url(#cr-amb)"/>
+        {Array.from({ length: CR_N }, (_, i) => {
+          const c = GS2[i % 3];
+          const ph = CR_PW * R;
+          return (
+            <g key={i} style={{ transformOrigin:"0px 0px",
+              animation:`cr-pulse ${CR_DUR}s ${(i*CR_STG).toFixed(2)}s linear infinite`,
+              willChange:"transform,opacity" }}>
+              <svg viewBox={TRI_VB} x={-CR_PW/2} y={-ph/2} width={CR_PW} height={ph} overflow="visible">
+                <Glass d={TRI} fid="cr-f" c={c}/>
+              </svg>
+            </g>
+          );
+        })}
+        {CR_CTR.map(({ w, c, delay }) => {
+          const h = w * R;
+          return (
+            <g key={w} style={{ transformOrigin:"0px 0px",
+              animation:`cr-breathe 3.2s ${delay} ease-in-out infinite`,
+              willChange:"transform,opacity" }}>
+              <svg viewBox={TRI_VB} x={-w/2} y={-h/2} width={w} height={h} overflow="visible">
+                <Glass d={TRI} fid="cr-f" c={c}/>
+              </svg>
+            </g>
+          );
+        })}
+      </svg>
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // V4 — HEARTBEAT  (GS2 · double-beat rhythm)
+  // ═══════════════════════════════════════════════════════════════════════════
+  const HB_DUR = 3.8, HB_W = 108;
+  const HB_RINGS = [
+    { c:GS2[0], delay:0,    label:"lub-1" },
+    { c:GS2[0], delay:0.12, label:"lub-2" },
+    { c:GS2[2], delay:0.42, label:"dub-1" },
+    { c:GS2[2], delay:0.54, label:"dub-2" },
+  ];
+
+  function Heartbeat() {
+    const ph = HB_W * R;
+    return (
+      <svg viewBox="-215 -195 430 390" width="380" height="345" style={{ overflow:"visible" }}>
+        <defs>
+          <GlowFilter id="hb-f" sd={10}/>
+          <filter id="hb-impact" x="-60%" y="-60%" width="220%" height="220%">
+            <feGaussianBlur stdDeviation="14" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <radialGradient id="hb-amb" cx="50%" cy="50%" r="50%">
+            <stop offset="0%"   stopColor="#200510" stopOpacity=".35"/>
+            <stop offset="40%"  stopColor="#100208" stopOpacity=".15"/>
+            <stop offset="100%" stopColor="#000"    stopOpacity="0"/>
+          </radialGradient>
+        </defs>
+        <ellipse cx="0" cy="0" rx="290" ry="268" fill="url(#hb-amb)"/>
+        {HB_RINGS.map(({ c, delay, label }) => (
+          <g key={label} style={{ transformOrigin:"0px 0px",
+            animation:`hb-pulse ${HB_DUR}s ${delay}s cubic-bezier(.2,0,.8,1) infinite`,
+            willChange:"transform,opacity" }}>
+            <svg viewBox={TRI_VB} x={-HB_W/2} y={-ph/2} width={HB_W} height={ph} overflow="visible">
+              <Glass d={TRI} fid="hb-impact" c={c}/>
+            </svg>
+          </g>
+        ))}
+        <g style={{ transformOrigin:"0px 0px",
+          animation:`hb-center ${HB_DUR}s .05s ease-in-out infinite`,
+          willChange:"transform,opacity" }}>
+          <svg viewBox={TRI_VB} x={-HB_W/2} y={-ph/2} width={HB_W} height={ph} overflow="visible">
+            <Glass d={TRI} fid="hb-f" c={GS2[1]}/>
+          </svg>
+        </g>
+      </svg>
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // V5 — PRISMATIC SOURCE
+  //
+  // Modeled on the Swift glass image: pure-white light at center, the glass
+  // triangles act as prisms splitting it into the three ACTZ flag colors.
+  // Each ring has three chromatic offset layers (red/gold/blue) that drift
+  // apart as the ring expands — the same way a prism disperses more at
+  // greater distance from the optical center. A white radial core breathes
+  // independently, expanding and contracting like a living light source.
+  //
+  // Glass layer stack per ring:
+  //   1. Red  glow — warm, offset (+5–9, +2–5)px, blurred
+  //   2. Gold glow — warm-center, offset (−1–3, +6–10)px, blurred
+  //   3. Blue glow — cold, offset (−5–8, −3–6)px, blurred
+  //   4. White bloom — centered, soft blur
+  //   5. Black shadow base
+  //   6. Dark navy body  (#060E28)
+  //   7. Mid blue surface (#3060CC)
+  //   8. Blue-white highlight (#90BCFF)
+  //   9. Pure white specular (1.5px)
+  // ═══════════════════════════════════════════════════════════════════════════
+  const PS_N = 6, PS_W = 116, PS_DUR = 5.4, PS_STG = PS_DUR / PS_N;
+
+  // Inner helper: renders all glass layers + 3-channel chromatic glow for one ring
+  // `ring` is the animated outer <g>; chromatic <g>s are inside it so offsets scale with ring.
+  function PrismaticRing({ d, w, fids, isCenter = false }) {
+    const sw = isCenter ? 1 : 1; // uniform width — center gets its own component
+    const p  = { fill:"none", strokeLinejoin:"round", vectorEffect:"non-scaling-stroke" };
+    const h  = w * R;
+    return (
+      <>
+        {/* Red/crimson chromatic — drifts down-right from center */}
+        <g style={{ animation: isCenter ? "ps-amber-drift 2.8s ease-in-out infinite" : "none",
+                    transform: isCenter ? undefined : "translate(5px,2px)" }}>
+          <svg viewBox={TRI_VB} x={-w/2} y={-h/2} width={w} height={h} overflow="visible">
+            <path {...p} d={d} stroke="#DE124E" strokeWidth={isCenter?32:26}
+              opacity={isCenter?.34:.26} filter={`url(#${fids.r})`}/>
+          </svg>
+        </g>
+
+        {/* Gold/amber chromatic — drifts down from center */}
+        <g style={{ animation: isCenter ? "ps-gold-drift 2.8s ease-in-out infinite" : "none",
+                    transform: isCenter ? undefined : "translate(-1px,6px)" }}>
+          <svg viewBox={TRI_VB} x={-w/2} y={-h/2} width={w} height={h} overflow="visible">
+            <path {...p} d={d} stroke="#F1C923" strokeWidth={isCenter?28:22}
+              opacity={isCenter?.28:.2} filter={`url(#${fids.g})`}/>
+          </svg>
+        </g>
+
+        {/* Blue chromatic — drifts up-left from center */}
+        <g style={{ animation: isCenter ? "ps-blue-drift 2.8s ease-in-out infinite" : "none",
+                    transform: isCenter ? undefined : "translate(-5px,-3px)" }}>
+          <svg viewBox={TRI_VB} x={-w/2} y={-h/2} width={w} height={h} overflow="visible">
+            <path {...p} d={d} stroke="#2D7AF5" strokeWidth={isCenter?32:26}
+              opacity={isCenter?.34:.26} filter={`url(#${fids.b})`}/>
+          </svg>
+        </g>
+
+        {/* White hot bloom — centered, tightest blur */}
+        <svg viewBox={TRI_VB} x={-w/2} y={-h/2} width={w} height={h} overflow="visible">
+          <path {...p} d={d} stroke="#FFFFFF" strokeWidth={isCenter?22:16}
+            opacity={isCenter?.18:.13} filter={`url(#${fids.w})`}/>
+        </svg>
+
+        {/* Glass body — sharp physical layers */}
+        <svg viewBox={TRI_VB} x={-w/2} y={-h/2} width={w} height={h} overflow="visible">
+          <path {...p} d={d} stroke="#000"    strokeWidth={isCenter?22:20}/>
+          <path {...p} d={d} stroke="#060E28" strokeWidth={isCenter?15:14}/>
+          <path {...p} d={d} stroke="#3060CC" strokeWidth={isCenter?10:9}/>
+          <path {...p} d={d} stroke="#90BCFF" strokeWidth={isCenter?5.5:4.5}/>
+          <path {...p} d={d} stroke="#fff"   strokeWidth={isCenter?2:1.5} opacity=".88"/>
+        </svg>
+      </>
+    );
+  }
+
+  function PrismaticSource() {
+    const ph = PS_W * R;
+    const fids = { r:"ps-fr", g:"ps-fg", b:"ps-fb", w:"ps-fw" };
+    return (
+      <svg viewBox="-225 -205 450 415" width="480" height="440" style={{ overflow:"visible" }}>
+        <defs>
+          {/* Per-channel glow filters — different blur radii to suggest wavelength dispersion */}
+          <filter id="ps-fr" x="-55%" y="-55%" width="210%" height="210%">
+            <feGaussianBlur stdDeviation="11"/>
+          </filter>
+          <filter id="ps-fg" x="-55%" y="-55%" width="210%" height="210%">
+            <feGaussianBlur stdDeviation="9"/>
+          </filter>
+          <filter id="ps-fb" x="-55%" y="-55%" width="210%" height="210%">
+            <feGaussianBlur stdDeviation="11"/>
+          </filter>
+          <filter id="ps-fw" x="-45%" y="-45%" width="190%" height="190%">
+            <feGaussianBlur stdDeviation="5"/>
+          </filter>
+          {/* White core bloom — extra wide for the "sun" effect */}
+          <filter id="ps-core-bloom" x="-100%" y="-100%" width="300%" height="300%">
+            <feGaussianBlur stdDeviation="20" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+
+          {/* White core gradient: pure white → ice-blue → electric blue → transparent */}
+          <radialGradient id="ps-core-g" cx="50%" cy="50%" r="50%">
+            <stop offset="0%"   stopColor="#FFFFFF" stopOpacity="1"/>
+            <stop offset="18%"  stopColor="#EEF4FF" stopOpacity=".95"/>
+            <stop offset="42%"  stopColor="#90B8F0" stopOpacity=".55"/>
+            <stop offset="68%"  stopColor="#2848A8" stopOpacity=".2"/>
+            <stop offset="100%" stopColor="#000"    stopOpacity="0"/>
+          </radialGradient>
+
+          {/* Deep ambient glow matching photo: dark navy, off-center toward bottom */}
+          <radialGradient id="ps-amb" cx="50%" cy="56%" r="52%">
+            <stop offset="0%"   stopColor="#08152C" stopOpacity=".5"/>
+            <stop offset="45%"  stopColor="#04091C" stopOpacity=".2"/>
+            <stop offset="100%" stopColor="#000"    stopOpacity="0"/>
+          </radialGradient>
+        </defs>
+
+        {/* Deep navy ambient — offset low like the photo's background glow */}
+        <ellipse cx="0" cy="18" rx="310" ry="285" fill="url(#ps-amb)"/>
+
+        {/* ── 6 prismatic pulse rings ───────────────────────────────────────── */}
+        {Array.from({ length: PS_N }, (_, i) => (
+          <g key={i} style={{
+            transformOrigin:"0px 0px",
+            animation:`pulse-ring ${PS_DUR}s ${(i*PS_STG).toFixed(2)}s linear infinite`,
+            willChange:"transform,opacity",
+          }}>
+            <PrismaticRing d={TRI} w={PS_W} fids={fids}/>
+          </g>
+        ))}
+
+        {/* ── Center breathing triangle (bigger, more intense chromatics) ────── */}
+        <g style={{
+          transformOrigin:"0px 0px",
+          animation:"ps-breathe 2.8s ease-in-out infinite",
+          willChange:"transform,opacity",
+        }}>
+          <PrismaticRing d={TRI} w={PS_W} fids={fids} isCenter={true}/>
+        </g>
+
+        {/* ── White light core — the origin point ────────────────────────────── */}
+        {/* Outer soft bloom halo */}
+        <g style={{
+          transformOrigin:"0px 10px",
+          animation:"ps-core 2.8s ease-in-out infinite",
+          willChange:"transform,opacity",
+        }}>
+          <ellipse cx="0" cy="10" rx="52" ry="44"
+            fill="url(#ps-core-g)" filter="url(#ps-core-bloom)"/>
+        </g>
+        {/* Inner tight hot point — slightly offset from center per photo composition */}
+        <g style={{
+          transformOrigin:"0px 10px",
+          animation:"ps-core 2.8s .08s ease-in-out infinite",
+          willChange:"transform,opacity",
+        }}>
+          <ellipse cx="0" cy="10" rx="18" ry="15" fill="url(#ps-core-g)"/>
+        </g>
+
+      </svg>
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // V6 — SPECULAR GLASS
+  //
+  // Sonar Pulse geometry + WWDC26 prismatic glass physics.
+  //
+  // The key material insight from the Swift bird image: glass acts as a prism.
+  // A white light source at center diffracts through each glass triangle face:
+  //   base (y≈1) → pure WHITE hot (closest to light, max intensity)
+  //   mid  (y≈.45) → AMBER/GOLD (warm wavelengths, mid-field)
+  //   side/base corners → hint of red-orange (longest warm wavelengths)
+  //   apex (y≈0) → cold ELECTRIC BLUE (short wavelengths, farthest from source)
+  //
+  // Three SVG linearGradients (objectBoundingBox) are stroked at large widths
+  // through separate blur filters, then the dark glass body is layered on top:
+  //   sg-lg = white→amber→orange-red→blue (master light gradient, wide soft bloom)
+  //   sg-ag = amber/gold gradient (warm field glow, medium blur)
+  //   sg-bg = blue gradient (cold edge glow, tight bloom)
+  // Dark body on top: black→dark navy→deep blue→ice highlight→white specular
+  //
+  // Result: same geometry + animation as Sonar Pulse V2, completely different
+  // material — prismatic glass responding to a point light source at center.
+  // ═══════════════════════════════════════════════════════════════════════════
+  const SG_N = 6, SG_W = 116, SG_DUR = 5.4, SG_STG = SG_DUR / SG_N;
+
+  function SpecularGlass() {
+    const ph = SG_W * R;
+    const p  = { fill:"none", strokeLinejoin:"round", vectorEffect:"non-scaling-stroke" };
+    return (
+      <svg viewBox="-205 -185 410 375" width="380" height="345" style={{ overflow:"visible" }}>
+        <defs>
+          {/* Master light bloom — very wide diffusion, white→amber→blue along triangle */}
+          <filter id="sg-fl" x="-90%" y="-90%" width="280%" height="280%">
+            <feGaussianBlur stdDeviation="17"/>
+          </filter>
+          {/* Amber warm-field glow */}
+          <filter id="sg-fa" x="-70%" y="-70%" width="240%" height="240%">
+            <feGaussianBlur stdDeviation="12"/>
+          </filter>
+          {/* Blue cold-edge glow */}
+          <filter id="sg-fb" x="-65%" y="-65%" width="230%" height="230%">
+            <feGaussianBlur stdDeviation="9"/>
+          </filter>
+          {/* Sharp glass bloom — tight halo behind specular edge */}
+          <filter id="sg-fg" x="-45%" y="-45%" width="190%" height="190%">
+            <feGaussianBlur stdDeviation="5" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          {/* White point-source bloom */}
+          <filter id="sg-core-f" x="-110%" y="-110%" width="320%" height="320%">
+            <feGaussianBlur stdDeviation="24" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+
+          {/*
+            MASTER LIGHT GRADIENT — objectBoundingBox on the triangle path:
+            y=1 = base of triangle (hot, near source) → white
+            y=0 = apex of triangle (far, cold)        → blue
+            x=0.5 = centered vertically through triangle
+          */}
+          <linearGradient id="sg-lg" x1="0.5" y1="1" x2="0.5" y2="0" gradientUnits="objectBoundingBox">
+            <stop offset="0%"   stopColor="#FFFFFF" stopOpacity="1"/>
+            <stop offset="18%"  stopColor="#FFFFFF" stopOpacity=".96"/>
+            <stop offset="32%"  stopColor="#FFD080" stopOpacity=".88"/>
+            <stop offset="46%"  stopColor="#F09020" stopOpacity=".78"/>
+            <stop offset="58%"  stopColor="#E04818" stopOpacity=".55"/>
+            <stop offset="72%"  stopColor="#3868F0" stopOpacity=".58"/>
+            <stop offset="87%"  stopColor="#1840D8" stopOpacity=".52"/>
+            <stop offset="100%" stopColor="#0C28B0" stopOpacity=".32"/>
+          </linearGradient>
+
+          {/* AMBER GRADIENT — warm field, peaks at lower-mid zone */}
+          <linearGradient id="sg-ag" x1="0.5" y1="1" x2="0.5" y2="0" gradientUnits="objectBoundingBox">
+            <stop offset="0%"   stopColor="#FFB840" stopOpacity=".22"/>
+            <stop offset="12%"  stopColor="#F09820" stopOpacity=".95"/>
+            <stop offset="38%"  stopColor="#E08010" stopOpacity=".82"/>
+            <stop offset="60%"  stopColor="#B05808" stopOpacity=".38"/>
+            <stop offset="82%"  stopColor="#602000" stopOpacity=".08"/>
+            <stop offset="100%" stopColor="#000000" stopOpacity="0"/>
+          </linearGradient>
+
+          {/* BLUE GRADIENT — cold chromatic, peaks at apex */}
+          <linearGradient id="sg-bg" x1="0.5" y1="1" x2="0.5" y2="0" gradientUnits="objectBoundingBox">
+            <stop offset="0%"   stopColor="#000000" stopOpacity="0"/>
+            <stop offset="28%"  stopColor="#1030D8" stopOpacity=".08"/>
+            <stop offset="52%"  stopColor="#2050F0" stopOpacity=".52"/>
+            <stop offset="72%"  stopColor="#1840E0" stopOpacity=".85"/>
+            <stop offset="88%"  stopColor="#102CD0" stopOpacity=".92"/>
+            <stop offset="100%" stopColor="#0820B8" stopOpacity=".78"/>
+          </linearGradient>
+
+          {/* White core radial */}
+          <radialGradient id="sg-core-g" cx="50%" cy="50%" r="50%">
+            <stop offset="0%"   stopColor="#FFFFFF" stopOpacity="1"/>
+            <stop offset="14%"  stopColor="#F8FCFF" stopOpacity=".97"/>
+            <stop offset="38%"  stopColor="#8AB8F8" stopOpacity=".55"/>
+            <stop offset="66%"  stopColor="#1838A0" stopOpacity=".16"/>
+            <stop offset="100%" stopColor="#000"    stopOpacity="0"/>
+          </radialGradient>
+
+          {/* Ambient field — deep navy, off-center low */}
+          <radialGradient id="sg-back" cx="50%" cy="56%" r="52%">
+            <stop offset="0%"   stopColor="#060E20" stopOpacity=".65"/>
+            <stop offset="46%"  stopColor="#020810" stopOpacity=".28"/>
+            <stop offset="100%" stopColor="#000"    stopOpacity="0"/>
+          </radialGradient>
+        </defs>
+
+        {/* Background ambient */}
+        <ellipse cx="0" cy="14" rx="285" ry="262" fill="url(#sg-back)"/>
+
+        {/* ── 6 propagating rings — Sonar Pulse geometry, prismatic material ── */}
+        {Array.from({ length: SG_N }, (_, i) => (
+          <g key={i} style={{
+            transformOrigin:"0px 0px",
+            animation:`pulse-ring ${SG_DUR}s ${(i*SG_STG).toFixed(2)}s linear infinite`,
+            willChange:"transform,opacity",
+          }}>
+            <svg viewBox={TRI_VB} x={-SG_W/2} y={-ph/2} width={SG_W} height={ph} overflow="visible">
+              {/* Master light bloom — white hot base fading to blue apex */}
+              <path {...p} d={TRI} stroke="url(#sg-lg)" strokeWidth="42" filter="url(#sg-fl)"/>
+              {/* Amber warm-field glow */}
+              <path {...p} d={TRI} stroke="url(#sg-ag)" strokeWidth="30" opacity=".88" filter="url(#sg-fa)"/>
+              {/* Blue cold-edge glow */}
+              <path {...p} d={TRI} stroke="url(#sg-bg)" strokeWidth="28" opacity=".82" filter="url(#sg-fb)"/>
+              {/* Dark glass body — the physical material on top */}
+              <path {...p} d={TRI} stroke="#000"    strokeWidth="18"/>
+              <path {...p} d={TRI} stroke="#030A1C" strokeWidth="12"/>
+              <path {...p} d={TRI} stroke="#0C2AA8" strokeWidth="7"/>
+              <path {...p} d={TRI} stroke="#A8C8FF" strokeWidth="3"/>
+              <path {...p} d={TRI} stroke="#FFFFFF" strokeWidth="1.2" opacity=".85" filter="url(#sg-fg)"/>
+            </svg>
+          </g>
+        ))}
+
+        {/* ── Center breathing triangle — the light source itself ─────────────── */}
+        <g style={{
+          transformOrigin:"0px 0px",
+          animation:"breathe 2.8s ease-in-out infinite",
+          willChange:"transform,opacity",
+        }}>
+          <svg viewBox={TRI_VB} x={-SG_W/2} y={-ph/2} width={SG_W} height={ph} overflow="visible">
+            {/* Blazing white center bloom — this IS the light */}
+            <path {...p} d={TRI} stroke="#FFFFFF" strokeWidth="48" opacity=".72" filter="url(#sg-fl)"/>
+            {/* Amber warm field — strong near-source */}
+            <path {...p} d={TRI} stroke="url(#sg-ag)" strokeWidth="36" opacity=".96" filter="url(#sg-fa)"/>
+            {/* Blue edge at apex tips */}
+            <path {...p} d={TRI} stroke="url(#sg-bg)" strokeWidth="30" opacity=".62" filter="url(#sg-fb)"/>
+            {/* Glass body */}
+            <path {...p} d={TRI} stroke="#000"    strokeWidth="20"/>
+            <path {...p} d={TRI} stroke="#030A1C" strokeWidth="14"/>
+            <path {...p} d={TRI} stroke="#0C2AA8" strokeWidth="8"/>
+            <path {...p} d={TRI} stroke="#A8C8FF" strokeWidth="4"/>
+            <path {...p} d={TRI} stroke="#FFFFFF" strokeWidth="1.6" opacity=".92" filter="url(#sg-fg)"/>
+          </svg>
+        </g>
+
+        {/* ── White hot point source — the origin light ─────────────────────── */}
+        <g style={{
+          transformOrigin:"0px 8px",
+          animation:"ps-core 2.8s ease-in-out infinite",
+          willChange:"transform,opacity",
+        }}>
+          <ellipse cx="0" cy="8" rx="54" ry="46" fill="url(#sg-core-g)" filter="url(#sg-core-f)"/>
+        </g>
+        <g style={{
+          transformOrigin:"0px 8px",
+          animation:"ps-core 2.8s .08s ease-in-out infinite",
+          willChange:"transform,opacity",
+        }}>
+          <ellipse cx="0" cy="8" rx="17" ry="14" fill="url(#sg-core-g)"/>
+        </g>
+      </svg>
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // V7 — PRISM FLUX (polished)
+  //
+  // Advances over first build:
+  //   • Specular sweep: animated white dash travels the triangle perimeter.
+  //     Phase-offset per ring so each ring reflects light at a different point.
+  //   • Secondary gradient oscillation: additive="sum" SMIL on each gradient
+  //     wobbles the rotation ±20–30° at an incommensurable period — rotation
+  //     speed varies organically, never feels mechanical.
+  //   • Animated stop opacities: each gradient's peak color pulses at its own
+  //     period (2.3s / 3.1s / 4.7s / 3.8s) — colors breathe independently of
+  //     rotation and of each other. True spontaneous light behavior.
+  //   • Center cohesion: center glow now uses pf-lg (same animated master
+  //     gradient as rings) — entire animation is visually unified.
+  // ═══════════════════════════════════════════════════════════════════════════
+  const PF_N = 6, PF_W = 128, PF_DUR = 5.4, PF_STG = PF_DUR / PF_N;
+
+  function PrismFlux() {
+    const ph = PF_W * R;
+    const p  = { fill:"none", strokeLinejoin:"round", vectorEffect:"non-scaling-stroke" };
+    return (
+      <svg viewBox="-225 -205 450 415" width="420" height="382" style={{ overflow:"visible" }}>
+        <defs>
+          {/* Wide bloom — master light */}
+          <filter id="pf-fl" x="-100%" y="-100%" width="300%" height="300%">
+            <feGaussianBlur stdDeviation="20"/>
+          </filter>
+          {/* Amber warm-field */}
+          <filter id="pf-fa" x="-80%" y="-80%" width="260%" height="260%">
+            <feGaussianBlur stdDeviation="15"/>
+          </filter>
+          {/* Blue cold-edge */}
+          <filter id="pf-fb" x="-75%" y="-75%" width="250%" height="250%">
+            <feGaussianBlur stdDeviation="11"/>
+          </filter>
+          {/* Red accent */}
+          <filter id="pf-fr" x="-70%" y="-70%" width="240%" height="240%">
+            <feGaussianBlur stdDeviation="9"/>
+          </filter>
+          {/* Sharp glass bloom behind specular edge */}
+          <filter id="pf-fg" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="5" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          {/* Tight specular bloom — triple-merge for hot bright edge */}
+          <filter id="pf-spec" x="-35%" y="-35%" width="170%" height="170%">
+            <feGaussianBlur stdDeviation="2.5" result="b"/>
+            <feMerge>
+              <feMergeNode in="b"/>
+              <feMergeNode in="b"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+          {/* Core white source */}
+          <filter id="pf-core-f" x="-120%" y="-120%" width="340%" height="340%">
+            <feGaussianBlur stdDeviation="26" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+
+          {/*
+            MASTER LIGHT — white → gold → orange-red → blue
+            PRIMARY: 7s CW rotation
+            SECONDARY: ±20° wobble at 3.1s (additive) — non-uniform speed
+            STOP OPACITY: white zone pulses at 2.3s
+          */}
+          <linearGradient id="pf-lg" x1="0.5" y1="1" x2="0.5" y2="0" gradientUnits="objectBoundingBox">
+            <animateTransform attributeName="gradientTransform" type="rotate"
+              from="0 0.5 0.5" to="360 0.5 0.5" dur="7s" repeatCount="indefinite" additive="sum"/>
+            <animateTransform attributeName="gradientTransform" type="rotate"
+              values="0 0.5 0.5;20 0.5 0.5;-8 0.5 0.5;15 0.5 0.5;0 0.5 0.5"
+              dur="3.1s" repeatCount="indefinite" additive="sum"/>
+            <stop offset="0%"   stopColor="#FFFFFF" stopOpacity="1">
+              <animate attributeName="stop-opacity" dur="2.3s" repeatCount="indefinite"
+                values="1;.68;.95;.55;1"/>
+            </stop>
+            <stop offset="16%"  stopColor="#FFFFFF" stopOpacity=".97"/>
+            <stop offset="29%"  stopColor="#FFD000" stopOpacity=".92">
+              <animate attributeName="stop-opacity" dur="2.3s" repeatCount="indefinite"
+                values=".92;.45;.88;.35;.92"/>
+            </stop>
+            <stop offset="43%"  stopColor="#FFB000" stopOpacity=".86"/>
+            <stop offset="55%"  stopColor="#FF4500" stopOpacity=".72"/>
+            <stop offset="66%"  stopColor="#3060FF" stopOpacity=".68">
+              <animate attributeName="stop-opacity" dur="2.3s" repeatCount="indefinite"
+                values=".68;.92;.48;.88;.68"/>
+            </stop>
+            <stop offset="82%"  stopColor="#1840FF" stopOpacity=".62"/>
+            <stop offset="100%" stopColor="#0C1EE8" stopOpacity=".38"/>
+          </linearGradient>
+
+          {/* AMBER — 9s CW + ±25° wobble at 2.7s + peak pulses at 3.1s */}
+          <linearGradient id="pf-ag" x1="0.5" y1="1" x2="0.5" y2="0" gradientUnits="objectBoundingBox">
+            <animateTransform attributeName="gradientTransform" type="rotate"
+              from="0 0.5 0.5" to="360 0.5 0.5" dur="9s" repeatCount="indefinite" additive="sum"/>
+            <animateTransform attributeName="gradientTransform" type="rotate"
+              values="0 0.5 0.5;25 0.5 0.5;-12 0.5 0.5;18 0.5 0.5;0 0.5 0.5"
+              dur="2.7s" repeatCount="indefinite" additive="sum"/>
+            <stop offset="0%"   stopColor="#FFE040" stopOpacity=".12"/>
+            <stop offset="8%"   stopColor="#FFD000" stopOpacity="1">
+              <animate attributeName="stop-opacity" dur="3.1s" repeatCount="indefinite"
+                values="1;.42;.88;.28;1"/>
+            </stop>
+            <stop offset="30%"  stopColor="#FFB000" stopOpacity=".96"/>
+            <stop offset="52%"  stopColor="#FF6000" stopOpacity=".52"/>
+            <stop offset="72%"  stopColor="#900000" stopOpacity=".08"/>
+            <stop offset="100%" stopColor="#000000" stopOpacity="0"/>
+          </linearGradient>
+
+          {/* BLUE — 11s CCW + ±30° wobble at 4.3s + peak pulses at 4.7s */}
+          <linearGradient id="pf-bg" x1="0.5" y1="1" x2="0.5" y2="0" gradientUnits="objectBoundingBox">
+            <animateTransform attributeName="gradientTransform" type="rotate"
+              from="360 0.5 0.5" to="0 0.5 0.5" dur="11s" repeatCount="indefinite" additive="sum"/>
+            <animateTransform attributeName="gradientTransform" type="rotate"
+              values="0 0.5 0.5;-30 0.5 0.5;12 0.5 0.5;-20 0.5 0.5;0 0.5 0.5"
+              dur="4.3s" repeatCount="indefinite" additive="sum"/>
+            <stop offset="0%"   stopColor="#000000" stopOpacity="0"/>
+            <stop offset="20%"  stopColor="#1030F8" stopOpacity=".1"/>
+            <stop offset="45%"  stopColor="#2855FF" stopOpacity=".78"/>
+            <stop offset="68%"  stopColor="#1838FF" stopOpacity="1">
+              <animate attributeName="stop-opacity" dur="4.7s" repeatCount="indefinite"
+                values="1;.38;.92;.22;1"/>
+            </stop>
+            <stop offset="85%"  stopColor="#0E25F0" stopOpacity=".88"/>
+            <stop offset="100%" stopColor="#0818E0" stopOpacity=".62"/>
+          </linearGradient>
+
+          {/* RED — 45° offset, 13s CW + ±22° wobble at 5.1s + peak pulses at 3.8s */}
+          <linearGradient id="pf-rg" x1="0" y1="1" x2="1" y2="0" gradientUnits="objectBoundingBox">
+            <animateTransform attributeName="gradientTransform" type="rotate"
+              from="45 0.5 0.5" to="405 0.5 0.5" dur="13s" repeatCount="indefinite" additive="sum"/>
+            <animateTransform attributeName="gradientTransform" type="rotate"
+              values="0 0.5 0.5;22 0.5 0.5;-10 0.5 0.5;16 0.5 0.5;0 0.5 0.5"
+              dur="5.1s" repeatCount="indefinite" additive="sum"/>
+            <stop offset="0%"   stopColor="#000000" stopOpacity="0"/>
+            <stop offset="28%"  stopColor="#FF2000" stopOpacity=".08"/>
+            <stop offset="48%"  stopColor="#FF3500" stopOpacity=".78">
+              <animate attributeName="stop-opacity" dur="3.8s" repeatCount="indefinite"
+                values=".78;.18;.72;.08;.78"/>
+            </stop>
+            <stop offset="62%"  stopColor="#FF2000" stopOpacity=".68"/>
+            <stop offset="78%"  stopColor="#CC0800" stopOpacity=".12"/>
+            <stop offset="100%" stopColor="#000000" stopOpacity="0"/>
+          </linearGradient>
+
+          <radialGradient id="pf-core-g" cx="50%" cy="50%" r="50%">
+            <stop offset="0%"   stopColor="#FFFFFF" stopOpacity="1"/>
+            <stop offset="12%"  stopColor="#F8FCFF" stopOpacity=".98"/>
+            <stop offset="35%"  stopColor="#90B8FF" stopOpacity=".6"/>
+            <stop offset="62%"  stopColor="#1838B8" stopOpacity=".18"/>
+            <stop offset="100%" stopColor="#000"    stopOpacity="0"/>
+          </radialGradient>
+
+          <radialGradient id="pf-back" cx="50%" cy="56%" r="52%">
+            <stop offset="0%"   stopColor="#050D1E" stopOpacity=".72"/>
+            <stop offset="45%"  stopColor="#020810" stopOpacity=".32"/>
+            <stop offset="100%" stopColor="#000"    stopOpacity="0"/>
+          </radialGradient>
+        </defs>
+
+        <ellipse cx="0" cy="16" rx="295" ry="275" fill="url(#pf-back)"/>
+
+        {/* ── PASS 1: Glow rings — screen-blended, light accumulates ─────────── */}
+        {Array.from({ length: PF_N }, (_, i) => (
+          <g key={`glow-${i}`} style={{
+            transformOrigin:"0px 0px",
+            animation:`pulse-ring ${PF_DUR}s ${(i*PF_STG).toFixed(2)}s linear infinite`,
+            mixBlendMode:"screen",
+            willChange:"transform,opacity",
+          }}>
+            <svg viewBox={TRI_VB} x={-PF_W/2} y={-ph/2} width={PF_W} height={ph} overflow="visible">
+              <path {...p} d={TRI} stroke="url(#pf-lg)" strokeWidth="52" filter="url(#pf-fl)"/>
+              <path {...p} d={TRI} stroke="url(#pf-ag)" strokeWidth="36" filter="url(#pf-fa)"/>
+              <path {...p} d={TRI} stroke="url(#pf-bg)" strokeWidth="34" filter="url(#pf-fb)"/>
+              <path {...p} d={TRI} stroke="url(#pf-rg)" strokeWidth="28" filter="url(#pf-fr)"/>
+            </svg>
+          </g>
+        ))}
+
+        {/* ── PASS 2: Glass bodies + specular sweeps ─────────────────────────── */}
+        {Array.from({ length: PF_N }, (_, i) => (
+          <g key={`body-${i}`} style={{
+            transformOrigin:"0px 0px",
+            animation:`pulse-ring ${PF_DUR}s ${(i*PF_STG).toFixed(2)}s linear infinite`,
+            willChange:"transform,opacity",
+          }}>
+            <svg viewBox={TRI_VB} x={-PF_W/2} y={-ph/2} width={PF_W} height={ph} overflow="visible">
+              {/* Dark glass body */}
+              <path {...p} d={TRI} stroke="#000"    strokeWidth="18"/>
+              <path {...p} d={TRI} stroke="#020810" strokeWidth="12"/>
+              <path {...p} d={TRI} stroke="#0820A8" strokeWidth="7"/>
+              <path {...p} d={TRI} stroke="#B0D0FF" strokeWidth="3"/>
+              <path {...p} d={TRI} stroke="#FFFFFF" strokeWidth="1.4" opacity=".88" filter="url(#pf-fg)"/>
+              {/* Traveling specular — white arc sweeps the perimeter, unique phase per ring */}
+              <path fill="none" strokeLinejoin="round" vectorEffect="non-scaling-stroke"
+                d={TRI} stroke="rgba(255,255,255,0.92)" strokeWidth="2.2"
+                pathLength="1" strokeDasharray="0.07 0.93"
+                filter="url(#pf-spec)"
+                style={{ animation:`pf-sweep 4.2s ${(-i * 4.2 / PF_N).toFixed(2)}s linear infinite` }}
+              />
+            </svg>
+          </g>
+        ))}
+
+        {/* ── Center glow — same pf-lg gradient as rings for full cohesion ─────── */}
+        <g style={{
+          transformOrigin:"0px 0px",
+          animation:"breathe 3.2s ease-in-out infinite",
+          mixBlendMode:"screen",
+          willChange:"transform,opacity",
+        }}>
+          <svg viewBox={TRI_VB} x={-PF_W/2} y={-ph/2} width={PF_W} height={ph} overflow="visible">
+            <path {...p} d={TRI} stroke="url(#pf-lg)" strokeWidth="60" opacity=".88" filter="url(#pf-fl)"/>
+            <path {...p} d={TRI} stroke="url(#pf-ag)" strokeWidth="44" opacity="1"   filter="url(#pf-fa)"/>
+            <path {...p} d={TRI} stroke="url(#pf-bg)" strokeWidth="38" opacity=".72" filter="url(#pf-fb)"/>
+            <path {...p} d={TRI} stroke="url(#pf-rg)" strokeWidth="32" opacity=".88" filter="url(#pf-fr)"/>
+          </svg>
+        </g>
+
+        {/* ── Center glass body — two specular sweeps for richer reflection ─────── */}
+        <g style={{
+          transformOrigin:"0px 0px",
+          animation:"breathe 3.2s ease-in-out infinite",
+          willChange:"transform,opacity",
+        }}>
+          <svg viewBox={TRI_VB} x={-PF_W/2} y={-ph/2} width={PF_W} height={ph} overflow="visible">
+            <path {...p} d={TRI} stroke="#000"    strokeWidth="20"/>
+            <path {...p} d={TRI} stroke="#020810" strokeWidth="14"/>
+            <path {...p} d={TRI} stroke="#0820A8" strokeWidth="8"/>
+            <path {...p} d={TRI} stroke="#B0D0FF" strokeWidth="4"/>
+            <path {...p} d={TRI} stroke="#FFFFFF" strokeWidth="1.8" opacity=".95" filter="url(#pf-fg)"/>
+            {/* Primary sweep — slightly faster than rings, more energetic */}
+            <path fill="none" strokeLinejoin="round" vectorEffect="non-scaling-stroke"
+              d={TRI} stroke="rgba(255,255,255,0.96)" strokeWidth="2.8"
+              pathLength="1" strokeDasharray="0.09 0.91"
+              filter="url(#pf-spec)"
+              style={{ animation:"pf-sweep 3.1s linear infinite" }}
+            />
+            {/* Secondary sweep — offset 180° out of phase, slightly dimmer */}
+            <path fill="none" strokeLinejoin="round" vectorEffect="non-scaling-stroke"
+              d={TRI} stroke="rgba(255,255,255,0.55)" strokeWidth="2"
+              pathLength="1" strokeDasharray="0.05 0.95"
+              filter="url(#pf-spec)"
+              style={{ animation:"pf-sweep 3.1s -1.55s linear infinite" }}
+            />
+          </svg>
+        </g>
+
+        {/* ── White hot point source ─────────────────────────────────────────── */}
+        <g style={{
+          transformOrigin:"0px 8px",
+          animation:"ps-core 3.2s ease-in-out infinite",
+          willChange:"transform,opacity",
+        }}>
+          <ellipse cx="0" cy="8" rx="58" ry="50" fill="url(#pf-core-g)" filter="url(#pf-core-f)"/>
+        </g>
+        <g style={{
+          transformOrigin:"0px 8px",
+          animation:"ps-core 3.2s .08s ease-in-out infinite",
+          willChange:"transform,opacity",
+        }}>
+          <ellipse cx="0" cy="8" rx="20" ry="17" fill="url(#pf-core-g)"/>
+        </g>
+      </svg>
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // V8 — CINEMATIC REVEAL
+  //
+  // Ice-glass palette: deep black, white-hot ignition at base, amber at lower
+  // corners, ice blue (#B0C8F0) at the apex. Same Sonar Pulse ring geometry.
+  // Three gradient layers per ring: white-hot bloom, ice-blue cold edge, amber
+  // warm rim. Two-pass (screen glow + glass body) same as Prism Flux.
+  // Post-ring lens flare: thin streak rotated 45°, sweeps UL→LR every 8 s.
+  // ═══════════════════════════════════════════════════════════════════════════
+  const CG_N = 6, CG_W = 116, CG_DUR = 5.4, CG_STG = CG_DUR / CG_N;
+
+  function CinematicReveal() {
+    const ph = CG_W * R;
+    const p  = { fill:"none", strokeLinejoin:"round", vectorEffect:"non-scaling-stroke" };
+    return (
+      <svg viewBox="-225 -205 450 415" width="460" height="420" style={{ overflow:"visible" }}>
+        <defs>
+          {/* White-hot wide bloom */}
+          <filter id="cg-fl" x="-130%" y="-130%" width="360%" height="360%">
+            <feGaussianBlur stdDeviation="24"/>
+          </filter>
+          {/* Ice blue cold edge */}
+          <filter id="cg-fb" x="-85%" y="-85%" width="270%" height="270%">
+            <feGaussianBlur stdDeviation="13"/>
+          </filter>
+          {/* Amber warm rim */}
+          <filter id="cg-fa" x="-75%" y="-75%" width="250%" height="250%">
+            <feGaussianBlur stdDeviation="10"/>
+          </filter>
+          {/* Sharp glass bloom */}
+          <filter id="cg-fg" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="4" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          {/* Specular sweep bloom */}
+          <filter id="cg-spec" x="-40%" y="-40%" width="180%" height="180%">
+            <feGaussianBlur stdDeviation="2" result="b"/>
+            <feMerge>
+              <feMergeNode in="b"/>
+              <feMergeNode in="b"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+          {/* Core ignition bloom */}
+          <filter id="cg-core-f" x="-140%" y="-140%" width="380%" height="380%">
+            <feGaussianBlur stdDeviation="30" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          {/* Lens flare streak blur */}
+          <filter id="cg-lf" x="-50%" y="-10%" width="200%" height="120%">
+            <feGaussianBlur stdDeviation="3.5" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+
+          {/* WHITE-HOT → ICE BLUE: base blazes white, apex cools to glacier */}
+          <linearGradient id="cg-wg" x1="0.5" y1="1" x2="0.5" y2="0" gradientUnits="objectBoundingBox">
+            <stop offset="0%"   stopColor="#FFFFFF" stopOpacity="1"/>
+            <stop offset="18%"  stopColor="#FFFFFF" stopOpacity=".98"/>
+            <stop offset="36%"  stopColor="#EEF6FF" stopOpacity=".92"/>
+            <stop offset="54%"  stopColor="#B0C8F0" stopOpacity=".70"/>
+            <stop offset="74%"  stopColor="#5878C8" stopOpacity=".38"/>
+            <stop offset="100%" stopColor="#2040A0" stopOpacity=".14"/>
+          </linearGradient>
+
+          {/* ICE BLUE: cold chromatic bloom at apex */}
+          <linearGradient id="cg-ig" x1="0.5" y1="1" x2="0.5" y2="0" gradientUnits="objectBoundingBox">
+            <stop offset="0%"   stopColor="#000000" stopOpacity="0"/>
+            <stop offset="26%"  stopColor="#5888D0" stopOpacity=".06"/>
+            <stop offset="50%"  stopColor="#90B8F0" stopOpacity=".68"/>
+            <stop offset="74%"  stopColor="#B0C8F0" stopOpacity=".90"/>
+            <stop offset="100%" stopColor="#C8D8FF" stopOpacity=".75"/>
+          </linearGradient>
+
+          {/* AMBER RIM: warm base corners */}
+          <linearGradient id="cg-ag" x1="0.5" y1="1" x2="0.5" y2="0" gradientUnits="objectBoundingBox">
+            <stop offset="0%"   stopColor="#FFD080" stopOpacity=".10"/>
+            <stop offset="8%"   stopColor="#FFB000" stopOpacity=".80"/>
+            <stop offset="28%"  stopColor="#C87820" stopOpacity=".52"/>
+            <stop offset="52%"  stopColor="#804010" stopOpacity=".10"/>
+            <stop offset="100%" stopColor="#000000" stopOpacity="0"/>
+          </linearGradient>
+
+          <radialGradient id="cg-core-g" cx="50%" cy="50%" r="50%">
+            <stop offset="0%"   stopColor="#FFFFFF" stopOpacity="1"/>
+            <stop offset="14%"  stopColor="#F2F8FF" stopOpacity=".98"/>
+            <stop offset="38%"  stopColor="#A4C8F8" stopOpacity=".55"/>
+            <stop offset="66%"  stopColor="#2040A8" stopOpacity=".15"/>
+            <stop offset="100%" stopColor="#000"    stopOpacity="0"/>
+          </radialGradient>
+
+          {/* Deep-space ambient — very dark, cool blue-gray haze */}
+          <radialGradient id="cg-back" cx="50%" cy="54%" r="52%">
+            <stop offset="0%"   stopColor="#06101E" stopOpacity=".78"/>
+            <stop offset="38%"  stopColor="#030810" stopOpacity=".40"/>
+            <stop offset="100%" stopColor="#000"    stopOpacity="0"/>
+          </radialGradient>
+
+          {/* Lens flare streak — vertical gradient, transparent→white center→transparent */}
+          <linearGradient id="cg-lf-g" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%"   stopColor="#FFFFFF" stopOpacity="0"/>
+            <stop offset="36%"  stopColor="#DCF0FF" stopOpacity=".65"/>
+            <stop offset="50%"  stopColor="#FFFFFF" stopOpacity="1"/>
+            <stop offset="64%"  stopColor="#DCF0FF" stopOpacity=".65"/>
+            <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0"/>
+          </linearGradient>
+        </defs>
+
+        {/* Deep ambient haze */}
+        <ellipse cx="0" cy="14" rx="292" ry="270" fill="url(#cg-back)"/>
+
+        {/* ── PASS 1: Glow rings — screen-blended ────────────────────────────── */}
+        {Array.from({ length: CG_N }, (_, i) => (
+          <g key={`cglow-${i}`} style={{
+            transformOrigin:"0px 0px",
+            animation:`pulse-ring ${CG_DUR}s ${(i*CG_STG).toFixed(2)}s linear infinite`,
+            mixBlendMode:"screen",
+            willChange:"transform,opacity",
+          }}>
+            <svg viewBox={TRI_VB} x={-CG_W/2} y={-ph/2} width={CG_W} height={ph} overflow="visible">
+              <path {...p} d={TRI} stroke="url(#cg-wg)" strokeWidth="52" filter="url(#cg-fl)"/>
+              <path {...p} d={TRI} stroke="url(#cg-ig)" strokeWidth="36" opacity=".82" filter="url(#cg-fb)"/>
+              <path {...p} d={TRI} stroke="url(#cg-ag)" strokeWidth="26" opacity=".76" filter="url(#cg-fa)"/>
+            </svg>
+          </g>
+        ))}
+
+        {/* ── PASS 2: Glass bodies + specular sweeps ──────────────────────────── */}
+        {Array.from({ length: CG_N }, (_, i) => (
+          <g key={`cbody-${i}`} style={{
+            transformOrigin:"0px 0px",
+            animation:`pulse-ring ${CG_DUR}s ${(i*CG_STG).toFixed(2)}s linear infinite`,
+            willChange:"transform,opacity",
+          }}>
+            <svg viewBox={TRI_VB} x={-CG_W/2} y={-ph/2} width={CG_W} height={ph} overflow="visible">
+              <path {...p} d={TRI} stroke="#000"    strokeWidth="18"/>
+              <path {...p} d={TRI} stroke="#020810" strokeWidth="12"/>
+              <path {...p} d={TRI} stroke="#081830" strokeWidth="7"/>
+              <path {...p} d={TRI} stroke="#B0C8F0" strokeWidth="3"/>
+              <path {...p} d={TRI} stroke="#FFFFFF" strokeWidth="1.4" opacity=".88" filter="url(#cg-fg)"/>
+              <path fill="none" strokeLinejoin="round" vectorEffect="non-scaling-stroke"
+                d={TRI} stroke="rgba(210,234,255,0.88)" strokeWidth="2"
+                pathLength="1" strokeDasharray="0.06 0.94"
+                filter="url(#cg-spec)"
+                style={{ animation:`pf-sweep 5.2s ${(-i * 5.2 / CG_N).toFixed(2)}s linear infinite` }}
+              />
+            </svg>
+          </g>
+        ))}
+
+        {/* ── Center glow — white-hot core with ice rim ───────────────────────── */}
+        <g style={{
+          transformOrigin:"0px 0px",
+          animation:"breathe 3.4s ease-in-out infinite",
+          mixBlendMode:"screen",
+          willChange:"transform,opacity",
+        }}>
+          <svg viewBox={TRI_VB} x={-CG_W/2} y={-ph/2} width={CG_W} height={ph} overflow="visible">
+            <path {...p} d={TRI} stroke="url(#cg-wg)" strokeWidth="64" opacity=".94" filter="url(#cg-fl)"/>
+            <path {...p} d={TRI} stroke="url(#cg-ig)" strokeWidth="48" opacity=".86" filter="url(#cg-fb)"/>
+            <path {...p} d={TRI} stroke="url(#cg-ag)" strokeWidth="36" opacity=".92" filter="url(#cg-fa)"/>
+          </svg>
+        </g>
+
+        {/* ── Center glass body — two offset specular sweeps ──────────────────── */}
+        <g style={{
+          transformOrigin:"0px 0px",
+          animation:"breathe 3.4s ease-in-out infinite",
+          willChange:"transform,opacity",
+        }}>
+          <svg viewBox={TRI_VB} x={-CG_W/2} y={-ph/2} width={CG_W} height={ph} overflow="visible">
+            <path {...p} d={TRI} stroke="#000"    strokeWidth="20"/>
+            <path {...p} d={TRI} stroke="#020810" strokeWidth="14"/>
+            <path {...p} d={TRI} stroke="#081830" strokeWidth="8"/>
+            <path {...p} d={TRI} stroke="#B0C8F0" strokeWidth="4"/>
+            <path {...p} d={TRI} stroke="#FFFFFF" strokeWidth="1.8" opacity=".96" filter="url(#cg-fg)"/>
+            <path fill="none" strokeLinejoin="round" vectorEffect="non-scaling-stroke"
+              d={TRI} stroke="rgba(210,234,255,0.95)" strokeWidth="2.6"
+              pathLength="1" strokeDasharray="0.08 0.92"
+              filter="url(#cg-spec)"
+              style={{ animation:"pf-sweep 3.6s linear infinite" }}
+            />
+            <path fill="none" strokeLinejoin="round" vectorEffect="non-scaling-stroke"
+              d={TRI} stroke="rgba(160,204,255,0.48)" strokeWidth="1.8"
+              pathLength="1" strokeDasharray="0.05 0.95"
+              filter="url(#cg-spec)"
+              style={{ animation:"pf-sweep 3.6s -1.8s linear infinite" }}
+            />
+          </svg>
+        </g>
+
+        {/* ── White hot ignition core ──────────────────────────────────────────── */}
+        <g style={{ transformOrigin:"0px 8px", animation:"ps-core 3.4s ease-in-out infinite", willChange:"transform,opacity" }}>
+          <ellipse cx="0" cy="8" rx="60" ry="52" fill="url(#cg-core-g)" filter="url(#cg-core-f)"/>
+        </g>
+        <g style={{ transformOrigin:"0px 8px", animation:"ps-core 3.4s .1s ease-in-out infinite", willChange:"transform,opacity" }}>
+          <ellipse cx="0" cy="8" rx="20" ry="17" fill="url(#cg-core-g)"/>
+        </g>
+
+        {/* ── Lens flare — thin streak at 45°, sweeps UL→LR once every 8 s ────── */}
+        {/* Parent rotate(45) turns child translateX into diagonal screen motion */}
+        <g transform="rotate(45)" style={{ mixBlendMode:"screen" }}>
+          <rect x="-4" y="-450" width="8" height="900"
+            fill="url(#cg-lf-g)"
+            filter="url(#cg-lf)"
+            style={{ animation:"cg-flare 8s ease-in-out infinite", transformOrigin:"0px 0px" }}
+          />
+        </g>
+      </svg>
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // V9 — NEON PRISM
+  //
+  // Sonar Pulse geometry with neon-tube glass material.
+  // Six rings cycle through red → gold → blue (i%3), matching the Colorado
+  // flag colors. Each ring is a luminous neon tube: wide soft bloom, dark
+  // glass body, saturated emission line, white specular edge + traveling
+  // specular arc. Center always breathes red. Three reusable blur filters
+  // (wide/mid/tight) shared across all colors via screen-blend glow pass.
+  // ═══════════════════════════════════════════════════════════════════════════
+  const NP_N = 6, NP_W = 116, NP_DUR = 5.4, NP_STG = NP_DUR / NP_N;
+
+  const NP_C = [
+    // RED — saturated neon red, Colorado flag crimson
+    { k:"r", gw:"#FF1020", tube:"#FF1838", hi:"#FF7888", body:"#1A0006", sw:"rgba(255,160,170,0.95)" },
+    // GOLD — electric neon gold
+    { k:"y", gw:"#FFD000", tube:"#FFCC00", hi:"#FFE880", body:"#141000", sw:"rgba(255,244,120,0.95)" },
+    // BLUE — electric neon blue, Colorado flag cobalt
+    { k:"b", gw:"#0F48FF", tube:"#1050FF", hi:"#6898FF", body:"#00091C", sw:"rgba(140,192,255,0.95)" },
+  ];
+
+  function NeonPrism() {
+    const ph = NP_W * R;
+    const p  = { fill:"none", strokeLinejoin:"round", vectorEffect:"non-scaling-stroke" };
+    return (
+      <svg viewBox="-205 -185 410 375" width="380" height="345" style={{ overflow:"visible" }}>
+        <defs>
+          {/* Three reusable blur filters — color comes from stroke, not filter */}
+          <filter id="np-w" x="-120%" y="-120%" width="340%" height="340%">
+            <feGaussianBlur stdDeviation="20"/>
+          </filter>
+          <filter id="np-m" x="-80%" y="-80%" width="260%" height="260%">
+            <feGaussianBlur stdDeviation="9.5"/>
+          </filter>
+          <filter id="np-t" x="-60%" y="-60%" width="220%" height="220%">
+            <feGaussianBlur stdDeviation="4.5"/>
+          </filter>
+          {/* Tight specular bloom — triple merge for hot edge */}
+          <filter id="np-spec" x="-35%" y="-35%" width="170%" height="170%">
+            <feGaussianBlur stdDeviation="2" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          {/* White-hot core bloom */}
+          <filter id="np-core-f" x="-120%" y="-120%" width="340%" height="340%">
+            <feGaussianBlur stdDeviation="24" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          {/* Per-color core radial gradient for ignition point */}
+          {NP_C.map(c => (
+            <radialGradient key={c.k} id={`np-cg-${c.k}`} cx="50%" cy="50%" r="50%">
+              <stop offset="0%"   stopColor="#FFFFFF" stopOpacity="1"/>
+              <stop offset="14%"  stopColor={c.hi}   stopOpacity=".94"/>
+              <stop offset="38%"  stopColor={c.tube} stopOpacity=".48"/>
+              <stop offset="68%"  stopColor={c.gw}   stopOpacity=".12"/>
+              <stop offset="100%" stopColor="#000"    stopOpacity="0"/>
+            </radialGradient>
+          ))}
+          <radialGradient id="np-back" cx="50%" cy="54%" r="52%">
+            <stop offset="0%"   stopColor="#07071A" stopOpacity=".70"/>
+            <stop offset="42%"  stopColor="#030410" stopOpacity=".28"/>
+            <stop offset="100%" stopColor="#000"    stopOpacity="0"/>
+          </radialGradient>
+        </defs>
+
+        <ellipse cx="0" cy="14" rx="285" ry="262" fill="url(#np-back)"/>
+
+        {/* ── PASS 1: Screen-blend neon glow rings ───────────────────────────── */}
+        {Array.from({ length: NP_N }, (_, i) => {
+          const c = NP_C[i % 3];
+          return (
+            <g key={`npgl-${i}`} style={{
+              transformOrigin:"0px 0px",
+              animation:`pulse-ring ${NP_DUR}s ${(i*NP_STG).toFixed(2)}s linear infinite`,
+              mixBlendMode:"screen",
+              willChange:"transform,opacity",
+            }}>
+              <svg viewBox={TRI_VB} x={-NP_W/2} y={-ph/2} width={NP_W} height={ph} overflow="visible">
+                <path {...p} d={TRI} stroke={c.gw}   strokeWidth="50" opacity=".13" filter="url(#np-w)"/>
+                <path {...p} d={TRI} stroke={c.tube} strokeWidth="30" opacity=".50" filter="url(#np-m)"/>
+                <path {...p} d={TRI} stroke={c.hi}   strokeWidth="16" opacity=".76" filter="url(#np-t)"/>
+              </svg>
+            </g>
+          );
+        })}
+
+        {/* ── PASS 2: Dark glass bodies + specular sweeps ─────────────────────── */}
+        {Array.from({ length: NP_N }, (_, i) => {
+          const c = NP_C[i % 3];
+          return (
+            <g key={`npbd-${i}`} style={{
+              transformOrigin:"0px 0px",
+              animation:`pulse-ring ${NP_DUR}s ${(i*NP_STG).toFixed(2)}s linear infinite`,
+              willChange:"transform,opacity",
+            }}>
+              <svg viewBox={TRI_VB} x={-NP_W/2} y={-ph/2} width={NP_W} height={ph} overflow="visible">
+                <path {...p} d={TRI} stroke="#000"   strokeWidth="18"/>
+                <path {...p} d={TRI} stroke={c.body} strokeWidth="12"/>
+                <path {...p} d={TRI} stroke={c.tube} strokeWidth="7"/>
+                <path {...p} d={TRI} stroke={c.hi}   strokeWidth="3"/>
+                <path {...p} d={TRI} stroke="#FFF"   strokeWidth="1.4" opacity=".84" filter="url(#np-spec)"/>
+                {/* Traveling specular arc — color-tinted per tube */}
+                <path fill="none" strokeLinejoin="round" vectorEffect="non-scaling-stroke"
+                  d={TRI} stroke={c.sw} strokeWidth="2"
+                  pathLength="1" strokeDasharray="0.06 0.94"
+                  filter="url(#np-spec)"
+                  style={{ animation:`pf-sweep 4.8s ${(-i * 4.8 / NP_N).toFixed(2)}s linear infinite` }}
+                />
+              </svg>
+            </g>
+          );
+        })}
+
+        {/* ── Center breathing triangle — red neon ─────────────────────────────── */}
+        {/* Center glow */}
+        <g style={{
+          transformOrigin:"0px 0px",
+          animation:"breathe 2.8s ease-in-out infinite",
+          mixBlendMode:"screen",
+          willChange:"transform,opacity",
+        }}>
+          <svg viewBox={TRI_VB} x={-NP_W/2} y={-ph/2} width={NP_W} height={ph} overflow="visible">
+            <path {...p} d={TRI} stroke={NP_C[0].gw}   strokeWidth="60" opacity=".18" filter="url(#np-w)"/>
+            <path {...p} d={TRI} stroke={NP_C[0].tube} strokeWidth="38" opacity=".62" filter="url(#np-m)"/>
+            <path {...p} d={TRI} stroke={NP_C[0].hi}   strokeWidth="22" opacity=".84" filter="url(#np-t)"/>
+          </svg>
+        </g>
+        {/* Center body */}
+        <g style={{
+          transformOrigin:"0px 0px",
+          animation:"breathe 2.8s ease-in-out infinite",
+          willChange:"transform,opacity",
+        }}>
+          <svg viewBox={TRI_VB} x={-NP_W/2} y={-ph/2} width={NP_W} height={ph} overflow="visible">
+            <path {...p} d={TRI} stroke="#000"           strokeWidth="20"/>
+            <path {...p} d={TRI} stroke={NP_C[0].body}  strokeWidth="14"/>
+            <path {...p} d={TRI} stroke={NP_C[0].tube}  strokeWidth="8"/>
+            <path {...p} d={TRI} stroke={NP_C[0].hi}    strokeWidth="4"/>
+            <path {...p} d={TRI} stroke="#FFF"           strokeWidth="1.8" opacity=".92" filter="url(#np-spec)"/>
+            {/* Primary specular sweep */}
+            <path fill="none" strokeLinejoin="round" vectorEffect="non-scaling-stroke"
+              d={TRI} stroke={NP_C[0].sw} strokeWidth="2.6"
+              pathLength="1" strokeDasharray="0.08 0.92"
+              filter="url(#np-spec)"
+              style={{ animation:"pf-sweep 3.2s linear infinite" }}
+            />
+            {/* Secondary offset sweep */}
+            <path fill="none" strokeLinejoin="round" vectorEffect="non-scaling-stroke"
+              d={TRI} stroke={NP_C[0].sw} strokeWidth="1.8" opacity=".42"
+              pathLength="1" strokeDasharray="0.05 0.95"
+              filter="url(#np-spec)"
+              style={{ animation:"pf-sweep 3.2s -1.6s linear infinite" }}
+            />
+          </svg>
+        </g>
+
+        {/* ── White-hot core — ignition point ─────────────────────────────────── */}
+        <g style={{ transformOrigin:"0px 8px", animation:"ps-core 2.8s ease-in-out infinite", willChange:"transform,opacity" }}>
+          <ellipse cx="0" cy="8" rx="52" ry="44" fill="url(#np-cg-r)" filter="url(#np-core-f)"/>
+        </g>
+        <g style={{ transformOrigin:"0px 8px", animation:"ps-core 2.8s .08s ease-in-out infinite", willChange:"transform,opacity" }}>
+          <ellipse cx="0" cy="8" rx="17" ry="14" fill="url(#np-cg-r)"/>
+        </g>
+      </svg>
+    );
+  }
+
+  // ── App ──────────────────────────────────────────────────────────────────
+  function App() {
+    return (
+      <>
+        <div className="grid">
+          <div className="card">
+            <div className="stage"><PrismOrbit/></div>
+            <div className="vname">Prism Orbit</div>
+            <div className="vtag">Variation 01</div>
+            <div className="vdesc">Three rings counter-rotating at staggered speeds. Cold blue outer · amber mid · ice inner.</div>
+          </div>
+          <div className="card">
+            <div className="stage"><SonarPulse/></div>
+            <div className="vname">Sonar Pulse</div>
+            <div className="vtag">Variation 02</div>
+            <div className="vdesc">Glass center breathes. Six rings propagate outward — white-hot at origin, fading to void.</div>
+          </div>
+          <div className="card">
+            <div className="stage"><ChromaticRipple/></div>
+            <div className="vname">Chromatic Ripple</div>
+            <div className="vtag">Variation 03 · GS2 palette</div>
+            <div className="vdesc">Triple concentric center — red · gold · blue — all breathing. Rings cycle through the flag colors as they expand.</div>
+          </div>
+          <div className="card">
+            <div className="stage"><Heartbeat/></div>
+            <div className="vname">Heartbeat</div>
+            <div className="vtag">Variation 04 · GS2 palette</div>
+            <div className="vdesc">Gold center with systole / diastole. Red pair fires (lub), blue pair follows (dub), then silence. Repeat.</div>
+          </div>
+        </div>
+
+        {/* Hero row — V5 Prismatic Source + V6 Specular Glass */}
+        <div className="grid-hero">
+          <div className="card card-hero">
+            <div className="stage stage-hero"><PrismaticSource/></div>
+            <div className="vname">Prismatic Source</div>
+            <div className="vtag vtag-hero">Variation 05 · glass-prism · GS2 flag dispersion</div>
+            <div className="vdesc" style={{maxWidth:"44ch"}}>
+              Pure white light at center. The glass triangles split it: red disperses right, gold downward, blue upper-left — chromatic aberration increasing as each ring expands outward. Offset glows drift slowly during the breathe cycle, alive like physical glass catching a moving light source.
+            </div>
+          </div>
+          <div className="card card-hero">
+            <div className="stage stage-hero"><SpecularGlass/></div>
+            <div className="vname">Specular Glass</div>
+            <div className="vtag vtag-hero">Variation 06 · prismatic refraction · WWDC26 glass</div>
+            <div className="vdesc" style={{maxWidth:"44ch"}}>
+              White hot at the base — the triangle closest to the point source blazes pure white. Moving toward the apex: amber/gold (warm wavelengths), orange-red fringe, then cold electric blue at the tips. Three gradient glow layers map the full prismatic spectrum through the glass geometry on every pulse.
+            </div>
+          </div>
+        </div>
+
+        {/* Solo hero — V7 Prism Flux, full-width showcase */}
+        <div className="grid-solo">
+          <div className="card card-solo">
+            <div className="stage stage-solo"><PrismFlux/></div>
+            <div className="vname">Prism Flux</div>
+            <div className="vtag vtag-hero">Variation 07 · live gradient rotation · screen-blend accumulation · max-saturation</div>
+            <div className="vdesc" style={{maxWidth:"58ch"}}>
+              Four gradient layers — white · gold · red · blue — each rotating at a different speed through the glass geometry. Because the rotation speeds are incommensurable the light never repeats the same pattern twice. Screen-blended glow passes stack additively: where multiple rings are in flight simultaneously, glass emits light. The dark glass body renders in a second pass over the accumulated glow, keeping every edge crisp.
+            </div>
+          </div>
+        </div>
+
+        {/* Hero row — V8 Cinematic Reveal + V9 Neon Prism */}
+        <div className="grid-hero" style={{marginTop:"24px"}}>
+          <div className="card card-hero" style={{background:"radial-gradient(ellipse at 50% 40%, #040810 0%, #000 65%)"}}>
+            <div className="stage stage-hero"><CinematicReveal/></div>
+            <div className="vname">Cinematic Reveal</div>
+            <div className="vtag vtag-hero">Variation 08 · white-hot ignition · ice-glass · lens flare sweep</div>
+            <div className="vdesc" style={{maxWidth:"44ch"}}>
+              Deep black field opens. White-hot ignition at center — the glass blazes pure white at the base, cools through amber at the lower corners, and reaches glacier ice blue at the apex tips. Six shockwave rings propagate outward in the same three-layer gradient, fading to void. Once per cycle a lens flare streak sweeps from upper-left to lower-right.
+            </div>
+          </div>
+          <div className="card card-hero" style={{background:"radial-gradient(ellipse at 50% 40%, #08071E 0%, #000 68%)"}}>
+            <div className="stage stage-hero"><NeonPrism/></div>
+            <div className="vname">Neon Prism</div>
+            <div className="vtag vtag-hero">Variation 09 · neon-tube glass · flag colors · screen-blend glow</div>
+            <div className="vdesc" style={{maxWidth:"44ch"}}>
+              Colorado flag colors as neon tubes. Red center breathes at the origin. Six rings cycle outward — red · gold · blue — each rendered as a luminous glass tube: wide soft bloom, dark body, saturated emission line, white specular, color-tinted traveling arc. Screen-blended glow passes accumulate where rings overlap.
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

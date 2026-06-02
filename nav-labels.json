@@ -1,0 +1,49 @@
+{
+  "sectionOrder": [
+    "UI Kit — Marketing",
+    "UI Kit — Onboarding",
+    "UI Kit — App",
+    "Type",
+    "Colors",
+    "Spacing",
+    "Components",
+    "Brand"
+  ],
+  "files": {
+    "ui_kits/marketing/index.html":  { "label": "UI Kit · Marketing landing", "section": "UI Kit — Marketing", "status": "blue",   "sub": "Hero → partners → benefits → trips rail → value pair → CTA → footer" },
+    "ui_kits/onboarding/index.html": { "label": "UI Kit · Onboarding flow",   "section": "UI Kit — Onboarding", "status": "blue",   "sub": "8-screen personalization flow" },
+    "ui_kits/app/index.html":        { "label": "UI Kit · Traveler app",       "section": "UI Kit — App",        "status": "orange", "sub": "Marketplace · itinerary · AI concierge · map views" },
+    "preview/global-spinner.html":   { "label": "UI Kit · Global Spinner",     "section": "UI Kit — App",        "status": "blue",   "sub": "sm / md / lg / xl · inline · fullScreen overlay" },
+    "preview/global-spinner-2.html": { "label": "UI Kit · Global Spinner 2",   "section": "UI Kit — App",        "status": "blue",   "sub": "True North splash · loading → lock → dismiss · window.ACTZSplash API" },
+    "preview/global-spinner-3.html": { "label": "UI Kit · Global Spinner 3",   "section": "UI Kit — App",        "status": "blue",   "sub": "ACTZ triangles · spinner-magic physics · sm/md/lg/xl · inline · fullScreen" },
+    "preview/global-spinner-4.html": { "label": "UI Kit · Global Spinner 4",   "section": "UI Kit — App",        "status": "blue",   "sub": "Prism Orbit · Sonar Pulse · Chromatic Ripple · Heartbeat · Prismatic Source · Specular Glass · Prism Flux · Cinematic Reveal · Neon Prism" },
+
+    "preview/type-pairing.html":       { "label": "Type · Brand + UI",       "section": "Type",   "status": "check"  },
+    "preview/type-hero-gradient.html": { "label": "Type · Hero gradient",    "section": "Type",   "status": "blue"   },
+    "preview/type-scale.html":         { "label": "Type · Scale",            "section": "Type",   "status": "check"  },
+
+    "preview/colors-flag.html":      { "label": "Colors · Flag palette",  "section": "Colors",  "status": "check"  },
+    "preview/colors-semantic.html":  { "label": "Colors · Semantic",      "section": "Colors",  "status": "orange" },
+    "preview/colors-surfaces.html":  { "label": "Colors · Surfaces",      "section": "Colors",  "status": "check"  },
+    "preview/colors-text-ring.html": { "label": "Colors · Text + ring",   "section": "Colors",  "status": "check"  },
+
+    "preview/easings.html":      { "label": "Spacing · Easings",        "section": "Spacing", "status": "check"  },
+    "preview/radii.html":        { "label": "Spacing · Radii",          "section": "Spacing", "status": "check"  },
+    "preview/spacing.html":      { "label": "Spacing · Scale",          "section": "Spacing", "status": "check"  },
+    "preview/shadows-glows.html":{ "label": "Spacing · Shadows & glows","section": "Spacing", "status": "orange" },
+
+    "preview/buttons.html":                    { "label": "Components · Buttons",          "section": "Components", "status": "blue"  },
+    "preview/glass-surfaces.html":             { "label": "Components · Glass surfaces",   "section": "Components", "status": "check" },
+    "preview/component-inputs.html":           { "label": "Components · Inputs + search",  "section": "Components", "status": "blue"  },
+    "preview/component-marketplace-card.html": { "label": "Components · Marketplace card", "section": "Components", "status": "check" },
+    "preview/component-nav.html":              { "label": "Components · Navigation",       "section": "Components", "status": "blue"  },
+    "preview/pills-badges.html":               { "label": "Components · Pills + badges",   "section": "Components", "status": "blue"  },
+
+    "preview/brand-imagery.html":  { "label": "Brand · Imagery",           "section": "Brand", "status": "check"  },
+    "preview/brand-logo.html":     { "label": "Brand · Logo lockups",      "section": "Brand", "status": "check"  },
+    "preview/brand-partners.html": { "label": "Brand · Partner strip",     "section": "Brand", "status": "orange" },
+    "one-pagers/georgetown.html":  { "label": "Georgetown · One-pager",    "section": "Brand", "status": "blue"   },
+    "one-pagers/georgetown-pitch-deck.html": { "label": "Georgetown · Founding-Partner Deck", "section": "Brand", "status": "blue", "sub": "10-slide pitch · live ACTZ captures + real provider & town dashboards · PPTX download" },
+    "one-pagers/onboarding-audit.html": { "label": "Onboarding · Research audit", "section": "Brand", "status": "blue" }
+  }
+}

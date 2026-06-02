@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>ACTZ · Global Spinner 2 — True North</title>
+<link rel="icon" href="../assets/brand/favicon.svg">
+<link rel="stylesheet" href="../colors_and_type.css">
+<link rel="stylesheet" href="../components.css">
+<style>
+  body {
+    margin: 0;
+    background: hsl(var(--background));
+    min-height: 100vh;
+    padding: 64px 32px 96px;
+    font-family: var(--font-body);
+  }
+
+  .page-header {
+    max-width: 1320px;
+    margin: 0 auto 56px;
+    text-align: center;
+  }
+  .eyebrow {
+    font: 600 11px/1 var(--font-body);
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: hsl(var(--accent));
+    margin-bottom: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .eyebrow::before, .eyebrow::after {
+    content: '';
+    width: 28px;
+    height: 1px;
+    background: hsl(var(--accent));
+  }
+  .page-header h1 {
+    margin: 0 auto;
+    max-width: 22ch;
+    font: 700 clamp(32px, 4vw, 52px)/1.05 var(--font-display);
+    letter-spacing: -0.03em;
+    color: hsl(var(--foreground));
+    text-wrap: balance;
+  }
+  .page-header p {
+    margin: 16px auto 0;
+    max-width: 60ch;
+    font: 400 16px/1.55 var(--font-body);
+    color: hsl(var(--foreground) / 0.65);
+  }
+
+  .section {
+    max-width: 1320px;
+    margin: 0 auto 48px;
+  }
+  .section-label {
+    font: 600 11px/1 var(--font-body);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: hsl(var(--muted-foreground));
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid hsl(var(--border) / 0.4);
+  }
+
+  /* ── phone frames ── */
+  .phone-row {
+    display: flex;
+    gap: 32px;
+    justify-content: center;
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+  .phone-slot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+  .phone-slot .slot-label {
+    font: 600 10px/1 var(--font-body);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: hsl(var(--muted-foreground));
+  }
+  .phone-shell {
+    width: 320px;
+    height: 693px;
+    border-radius: 44px;
+    background: #08090F;
+    border: 2px solid rgba(255,255,255,0.12);
+    box-shadow:
+      0 0 0 1px rgba(0,0,0,0.8),
+      0 32px 80px rgba(0,0,0,0.7),
+      inset 0 1px 0 rgba(255,255,255,0.08);
+    overflow: hidden;
+    position: relative;
+  }
+  /* notch pill */
+  .phone-shell::before {
+    content: '';
+    position: absolute;
+    top: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90px;
+    height: 28px;
+    background: #000;
+    border-radius: 14px;
+    z-index: 10;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.08);
+  }
+  .phone-inner {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    border-radius: inherit;
+  }
+
+  /* ── the splash embedded inline, contained via relative positioning ── */
+  .splash-embed {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 78% 62% at 50% 47%, #0C1430 0%, #05060E 46%, #000000 100%);
+    overflow: hidden;
+    touch-action: none;
+  }
+  .splash-embed svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  /* ── keyframes (scoped to .splash-embed children via class prefix) ── */
+  @keyframes se-ripple {
+    0%   { transform: scale(0.24); opacity: 0;   }
+    8%   { opacity: .62; }
+    22%  { opacity: .52; }
+    44%  { opacity: .28; }
+    60%  { transform: scale(7.0); opacity: 0; }
+    100% { transform: scale(7.0); opacity: 0; }
+  }
+  @keyframes se-ringPulse {
+    0%   { scale: 1;     filter: brightness(1);    }
+    50%  { scale: 1.045; filter: brightness(1.18); }
+    100% { scale: 1;     filter: brightness(1);    }
+  }
+  @keyframes se-ringSpin { to { rotate: 360deg; } }
+  @keyframes se-spin { to { transform: rotate(360deg); } }
+
+  .se-wrip { transform-box: view-box; transform-origin: 1450px 1450px; opacity: 0;
+    animation: se-ripple 6.0s cubic-bezier(.22,.61,.36,1) infinite; }
+  #se1-wr1  { animation-delay: 0s   }
+  #se1-wr2  { animation-delay: 0.6s }
+  #se1-wr3  { animation-delay: 1.2s }
+  #se1-wr4  { animation-delay: 1.8s }
+  #se1-wr5  { animation-delay: 2.4s }
+  #se1-wr6  { animation-delay: 3.0s }
+  #se1-wr7  { animation-delay: 3.6s }
+  #se1-wr8  { animation-delay: 4.2s }
+  #se1-wr9  { animation-delay: 4.8s }
+  #se1-wr10 { animation-delay: 5.4s }
+
+  #se2-wr1  { animation-delay: 0s   }
+  #se2-wr2  { animation-delay: 0.6s }
+  #se2-wr3  { animation-delay: 1.2s }
+  #se2-wr4  { animation-delay: 1.8s }
+  #se2-wr5  { animation-delay: 2.4s }
+  #se2-wr6  { animation-delay: 3.0s }
+  #se2-wr7  { animation-delay: 3.6s }
+  #se2-wr8  { animation-delay: 4.2s }
+  #se2-wr9  { animation-delay: 4.8s }
+  #se2-wr10 { animation-delay: 5.4s }
+
+  #se3-wr1  { animation-delay: 0s   }
+  #se3-wr2  { animation-delay: 0.6s }
+  #se3-wr3  { animation-delay: 1.2s }
+  #se3-wr4  { animation-delay: 1.8s }
+  #se3-wr5  { animation-delay: 2.4s }
+  #se3-wr6  { animation-delay: 3.0s }
+  #se3-wr7  { animation-delay: 3.6s }
+  #se3-wr8  { animation-delay: 4.2s }
+  #se3-wr9  { animation-delay: 4.8s }
+  #se3-wr10 { animation-delay: 5.4s }
+
+  /* wave color overrides per embed instance */
+  #se1-wr2 path, #se1-wr6 path, #se1-wr10 path { stroke: #DE124E; }
+  #se1-wr3 path, #se1-wr7 path                  { stroke: #F1C923; }
+  #se1-wr4 path, #se1-wr8 path                  { stroke: #2D7AF5; }
+
+  #se2-wr2 path, #se2-wr6 path, #se2-wr10 path { stroke: #DE124E; }
+  #se2-wr3 path, #se2-wr7 path                  { stroke: #F1C923; }
+  #se2-wr4 path, #se2-wr8 path                  { stroke: #2D7AF5; }
+
+  #se3-wr2 path, #se3-wr6 path, #se3-wr10 path { stroke: #DE124E; }
+  #se3-wr3 path, #se3-wr7 path                  { stroke: #F1C923; }
+  #se3-wr4 path, #se3-wr8 path                  { stroke: #2D7AF5; }
+
+  .se-t4 {
+    transform-box: view-box;
+    transition: transform .45s ease, scale .45s ease, rotate .45s ease, filter .45s ease;
+  }
+  .se-c4 { transform-box: view-box; transform-origin: 1450px 1423px; }
+
+  .se-t4.se-red    { transform-origin: 1450px 1450px;
+    animation: se-ringPulse 0.6s cubic-bezier(.45,.05,.55,.95) -0.024s infinite,
+               se-ringSpin 18s linear infinite; }
+  .se-t4.se-yellow { transform-origin: 1450px 1450px;
+    animation: se-ringPulse 0.6s cubic-bezier(.45,.05,.55,.95)  0.126s infinite,
+               se-ringSpin 18s linear infinite; }
+  .se-t4.se-blue   { transform-origin: 1450px 1450px;
+    animation: se-ringPulse 0.6s cubic-bezier(.45,.05,.55,.95)  0.256s infinite,
+               se-ringSpin 18s linear infinite; }
+
+  .se-spinning .se-c4 { animation: se-spin 3.6s linear infinite; }
+
+  /* locked state */
+  .se-locked .se-wrip  { animation: none; opacity: 0; }
+  .se-locked .se-t4    { animation: none; }
+  .se-locked .se-c4    { animation: none; transform: rotate(0deg); }
+  .se-locked .se-ripples { opacity: 0; transition: opacity 1.4s cubic-bezier(.22,.61,.36,1); }
+
+  .se-wrip, .se-t4, .se-c4 {
+    will-change: transform, filter, opacity;
+    backface-visibility: hidden;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .se-wrip { animation: none !important; opacity: 0 !important; }
+    .se-t4   { animation: none !important; }
+    .se-c4   { animation: none !important; }
+  }
+
+  /* ── state badge overlay on phone ── */
+  .state-badge {
+    position: absolute;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 20;
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 999px;
+    padding: 6px 14px;
+    font: 500 10px/1 var(--font-body);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.6);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  /* ── behavior table ── */
+  .behavior-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  @media (max-width: 800px) { .behavior-grid { grid-template-columns: 1fr; } }
+  .behavior-card {
+    border-radius: 16px;
+    border: 1px solid hsl(var(--border) / 0.3);
+    background: hsl(var(--card) / 0.6);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .behavior-card .bc-phase {
+    font: 700 10px/1 var(--font-body);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+  .bc-loading { color: #2D7AF5; }
+  .bc-lock    { color: #F1C923; }
+  .bc-logo    { color: hsl(var(--foreground) / 0.5); }
+  .behavior-card .bc-title {
+    font: 600 15px/1.2 var(--font-body);
+    color: hsl(var(--foreground));
+  }
+  .behavior-card .bc-desc {
+    font: 400 13px/1.55 var(--font-body);
+    color: hsl(var(--foreground) / 0.55);
+  }
+
+  /* ── API reference ── */
+  .api-table {
+    width: 100%;
+    border-collapse: collapse;
+    font: 400 13px/1.5 var(--font-body);
+    color: hsl(var(--foreground) / 0.8);
+  }
+  .api-table th {
+    text-align: left;
+    font: 600 10px/1 var(--font-body);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: hsl(var(--muted-foreground));
+    padding: 0 12px 12px;
+    border-bottom: 1px solid hsl(var(--border) / 0.3);
+  }
+  .api-table td {
+    padding: 12px;
+    border-bottom: 1px solid hsl(var(--border) / 0.15);
+    vertical-align: top;
+  }
+  .api-table code {
+    font: 500 12px/1 monospace;
+    background: hsl(var(--muted) / 0.4);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: hsl(var(--accent));
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="eyebrow">UI Kit · App</div>
+  <h1>Global Spinner 2 — True North</h1>
+  <p>Full-bleed splash loader for the ACTZ app. The ACTZ triangle pulses white–red–gold–blue Colorado-flag waves outward while the compass arrow spins, then decelerates to true north on app-ready. No dependencies.</p>
+</div>
+
+<!-- ── Live phase previews ── -->
+<div class="section">
+  <div class="section-label">Live state demos</div>
+  <div class="phone-row">
+
+    <!-- Loading state (continuous) -->
+    <div class="phone-slot">
+      <div class="phone-shell">
+        <div class="phone-inner">
+          <div class="splash-embed se-spinning" id="embed1">
+            <svg viewBox="0 0 2900 2900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="e1chL" x1="0%" y1="8%" x2="100%" y2="96%"><stop offset="0%" stop-color="#FFFFFF"/><stop offset="100%" stop-color="#C9D0DE"/></linearGradient>
+                <linearGradient id="e1chR" x1="100%" y1="8%" x2="0%" y2="96%"><stop offset="0%" stop-color="#DCE1EB"/><stop offset="100%" stop-color="#939CB2"/></linearGradient>
+                <filter id="e1soft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="1.5"/></filter>
+              </defs>
+              <g>
+                <g id="e1-ripples" class="se-ripples">
+                  <g class="se-wrip" id="se1-wr1"><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="17" opacity="0.22" vector-effect="non-scaling-stroke" stroke-linejoin="round"/><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="6" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></g>
+                  <g class="se-wrip" id="se1-wr2"><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="17" opacity="0.22" vector-effect="non-scaling-stroke" stroke-linejoin="round"/><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="6" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></g>
+                  <g class="se-wrip" id="se1-wr3"><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="17" opacity="0.22" vector-effect="non-scaling-stroke" stroke-linejoin="round"/><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="6" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></g>
+                  <g class="se-wrip" id="se1-wr4"><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="17" opacity="0.22" vector-effect="non-scaling-stroke" stroke-linejoin="round"/><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="6" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></g>
+                  <g class="se-wrip" id="se1-wr5"><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="17" opacity="0.22" vector-effect="non-scaling-stroke" stroke-linejoin="round"/><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="6" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></g>
+                  <g class="se-wrip" id="se1-wr6"><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="17" opacity="0.22" vector-effect="non-scaling-stroke" stroke-linejoin="round"/><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="6" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></g>
+                  <g class="se-wrip" id="se1-wr7"><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="17" opacity="0.22" vector-effect="non-scaling-stroke" stroke-linejoin="round"/><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="6" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></g>
+                  <g class="se-wrip" id="se1-wr8"><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="17" opacity="0.22" vector-effect="non-scaling-stroke" stroke-linejoin="round"/><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="6" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></g>
+                  <g class="se-wrip" id="se1-wr9"><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="17" opacity="0.22" vector-effect="non-scaling-stroke" stroke-linejoin="round"/><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="6" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></g>
+                  <g class="se-wrip" id="se1-wr10"><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="17" opacity="0.22" vector-effect="non-scaling-stroke" stroke-linejoin="round"/><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="6" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></g>
+                </g>
+                <g class="se-t4 se-red"><path d="M 1479.44 1272.8 L 1618.18 1513.1 A 34.00 34.00 0 0 1 1588.74 1564.1 L 1311.26 1564.1 A 34.00 34.00 0 0 1 1281.82 1513.1 L 1420.56 1272.8 A 34.00 34.00 0 0 1 1479.44 1272.8 Z" fill="none" stroke="#4A0512" stroke-width="41" stroke-linejoin="round"/><path d="M 1479.44 1272.8 L 1618.18 1513.1 A 34.00 34.00 0 0 1 1588.74 1564.1 L 1311.26 1564.1 A 34.00 34.00 0 0 1 1281.82 1513.1 L 1420.56 1272.8 A 34.00 34.00 0 0 1 1479.44 1272.8 Z" fill="none" stroke="#F0233C" stroke-width="35" stroke-linejoin="round"/><path d="M 1479.44 1272.8 L 1618.18 1513.1 A 34.00 34.00 0 0 1 1588.74 1564.1 L 1311.26 1564.1 A 34.00 34.00 0 0 1 1281.82 1513.1 L 1420.56 1272.8 A 34.00 34.00 0 0 1 1479.44 1272.8 Z" fill="none" stroke="#FF8090" stroke-width="18" opacity="0.92" filter="url(#e1soft)" stroke-linejoin="round"/><path d="M 1479.44 1272.8 L 1618.18 1513.1 A 34.00 34.00 0 0 1 1588.74 1564.1 L 1311.26 1564.1 A 34.00 34.00 0 0 1 1281.82 1513.1 L 1420.56 1272.8 A 34.00 34.00 0 0 1 1479.44 1272.8 Z" fill="none" stroke="#FFFFFF" stroke-width="6" opacity="0.80" stroke-linejoin="round"/></g>
+                <g class="se-t4 se-yellow"><path d="M 1482.04 1145.8 L 1729.47 1574.35 A 37.00 37.00 0 0 1 1697.42 1629.85 L 1202.58 1629.85 A 37.00 37.00 0 0 1 1170.53 1574.35 L 1417.96 1145.8 A 37.00 37.00 0 0 1 1482.04 1145.8 Z" fill="none" stroke="#5A4400" stroke-width="40" stroke-linejoin="round"/><path d="M 1482.04 1145.8 L 1729.47 1574.35 A 37.00 37.00 0 0 1 1697.42 1629.85 L 1202.58 1629.85 A 37.00 37.00 0 0 1 1170.53 1574.35 L 1417.96 1145.8 A 37.00 37.00 0 0 1 1482.04 1145.8 Z" fill="none" stroke="#FFC400" stroke-width="34" stroke-linejoin="round"/><path d="M 1482.04 1145.8 L 1729.47 1574.35 A 37.00 37.00 0 0 1 1697.42 1629.85 L 1202.58 1629.85 A 37.00 37.00 0 0 1 1170.53 1574.35 L 1417.96 1145.8 A 37.00 37.00 0 0 1 1482.04 1145.8 Z" fill="none" stroke="#FFE890" stroke-width="17" opacity="0.92" filter="url(#e1soft)" stroke-linejoin="round"/><path d="M 1482.04 1145.8 L 1729.47 1574.35 A 37.00 37.00 0 0 1 1697.42 1629.85 L 1202.58 1629.85 A 37.00 37.00 0 0 1 1170.53 1574.35 L 1417.96 1145.8 A 37.00 37.00 0 0 1 1482.04 1145.8 Z" fill="none" stroke="#FFFFFF" stroke-width="6" opacity="0.80" stroke-linejoin="round"/></g>
+                <g class="se-t4 se-blue"><path d="M 1501.1 1050.1 L 1821.87 1605.7 A 59.00 59.00 0 0 1 1770.78 1694.2 L 1129.22 1694.2 A 59.00 59.00 0 0 1 1078.13 1605.7 L 1398.9 1050.1 A 59.00 59.00 0 0 1 1501.1 1050.1 Z" fill="none" stroke="#0A1A4A" stroke-width="52" stroke-linejoin="round"/><path d="M 1501.1 1050.1 L 1821.87 1605.7 A 59.00 59.00 0 0 1 1770.78 1694.2 L 1129.22 1694.2 A 59.00 59.00 0 0 1 1078.13 1605.7 L 1398.9 1050.1 A 59.00 59.00 0 0 1 1501.1 1050.1 Z" fill="none" stroke="#2C6CF2" stroke-width="46" stroke-linejoin="round"/><path d="M 1501.1 1050.1 L 1821.87 1605.7 A 59.00 59.00 0 0 1 1770.78 1694.2 L 1129.22 1694.2 A 59.00 59.00 0 0 1 1078.13 1605.7 L 1398.9 1050.1 A 59.00 59.00 0 0 1 1501.1 1050.1 Z" fill="none" stroke="#86B4FF" stroke-width="23" opacity="0.92" filter="url(#e1soft)" stroke-linejoin="round"/><path d="M 1501.1 1050.1 L 1821.87 1605.7 A 59.00 59.00 0 0 1 1770.78 1694.2 L 1129.22 1694.2 A 59.00 59.00 0 0 1 1078.13 1605.7 L 1398.9 1050.1 A 59.00 59.00 0 0 1 1501.1 1050.1 Z" fill="none" stroke="#FFFFFF" stroke-width="6" opacity="0.80" stroke-linejoin="round"/></g>
+                <g class="se-c4"><path d="M 1450 1313 L 1542 1507 L 1450 1468 Z" fill="url(#e1chR)"/><path d="M 1450 1313 L 1450 1468 L 1358 1507 Z" fill="url(#e1chL)"/><path d="M 1450 1313 L 1450 1468" stroke="#FFF" stroke-width="2.6" opacity="0.95"/></g>
+              </g>
+            </svg>
+          </div>
+          <div class="state-badge">Loading</div>
+        </div>
+      </div>
+      <div class="slot-label">Loading state</div>
+    </div>
+
+    <!-- Locked state -->
+    <div class="phone-slot">
+      <div class="phone-shell">
+        <div class="phone-inner">
+          <div class="splash-embed se-locked" id="embed2">
+            <svg viewBox="0 0 2900 2900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="e2chL" x1="0%" y1="8%" x2="100%" y2="96%"><stop offset="0%" stop-color="#FFFFFF"/><stop offset="100%" stop-color="#C9D0DE"/></linearGradient>
+                <linearGradient id="e2chR" x1="100%" y1="8%" x2="0%" y2="96%"><stop offset="0%" stop-color="#DCE1EB"/><stop offset="100%" stop-color="#939CB2"/></linearGradient>
+                <filter id="e2soft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="1.5"/></filter>
+              </defs>
+              <g>
+                <g class="se-ripples" style="opacity:0">
+                  <g class="se-wrip" id="se2-wr1"><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="17" opacity="0.22" vector-effect="non-scaling-stroke" stroke-linejoin="round"/><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="6" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></g>
+                  <g class="se-wrip" id="se2-wr2"><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="17" opacity="0.22" vector-effect="non-scaling-stroke" stroke-linejoin="round"/><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="6" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></g>
+                  <g class="se-wrip" id="se2-wr3"><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="17" opacity="0.22" vector-effect="non-scaling-stroke" stroke-linejoin="round"/><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="6" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></g>
+                  <g class="se-wrip" id="se2-wr4"><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="17" opacity="0.22" vector-effect="non-scaling-stroke" stroke-linejoin="round"/><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="6" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></g>
+                  <g class="se-wrip" id="se2-wr5"><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="17" opacity="0.22" vector-effect="non-scaling-stroke" stroke-linejoin="round"/><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="6" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></g>
+                  <g class="se-wrip" id="se2-wr6"><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="17" opacity="0.22" vector-effect="non-scaling-stroke" stroke-linejoin="round"/><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="6" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></g>
+                  <g class="se-wrip" id="se2-wr7"><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="17" opacity="0.22" vector-effect="non-scaling-stroke" stroke-linejoin="round"/><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="6" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></g>
+                  <g class="se-wrip" id="se2-wr8"><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="17" opacity="0.22" vector-effect="non-scaling-stroke" stroke-linejoin="round"/><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="6" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></g>
+                  <g class="se-wrip" id="se2-wr9"><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="17" opacity="0.22" vector-effect="non-scaling-stroke" stroke-linejoin="round"/><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="6" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></g>
+                  <g class="se-wrip" id="se2-wr10"><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="17" opacity="0.22" vector-effect="non-scaling-stroke" stroke-linejoin="round"/><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="6" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></g>
+                </g>
+                <g class="se-t4 se-red"><path d="M 1479.44 1272.8 L 1618.18 1513.1 A 34.00 34.00 0 0 1 1588.74 1564.1 L 1311.26 1564.1 A 34.00 34.00 0 0 1 1281.82 1513.1 L 1420.56 1272.8 A 34.00 34.00 0 0 1 1479.44 1272.8 Z" fill="none" stroke="#4A0512" stroke-width="41" stroke-linejoin="round"/><path d="M 1479.44 1272.8 L 1618.18 1513.1 A 34.00 34.00 0 0 1 1588.74 1564.1 L 1311.26 1564.1 A 34.00 34.00 0 0 1 1281.82 1513.1 L 1420.56 1272.8 A 34.00 34.00 0 0 1 1479.44 1272.8 Z" fill="none" stroke="#F0233C" stroke-width="35" stroke-linejoin="round"/><path d="M 1479.44 1272.8 L 1618.18 1513.1 A 34.00 34.00 0 0 1 1588.74 1564.1 L 1311.26 1564.1 A 34.00 34.00 0 0 1 1281.82 1513.1 L 1420.56 1272.8 A 34.00 34.00 0 0 1 1479.44 1272.8 Z" fill="none" stroke="#FF8090" stroke-width="18" opacity="0.92" filter="url(#e2soft)" stroke-linejoin="round"/><path d="M 1479.44 1272.8 L 1618.18 1513.1 A 34.00 34.00 0 0 1 1588.74 1564.1 L 1311.26 1564.1 A 34.00 34.00 0 0 1 1281.82 1513.1 L 1420.56 1272.8 A 34.00 34.00 0 0 1 1479.44 1272.8 Z" fill="none" stroke="#FFFFFF" stroke-width="6" opacity="0.80" stroke-linejoin="round"/></g>
+                <g class="se-t4 se-yellow"><path d="M 1482.04 1145.8 L 1729.47 1574.35 A 37.00 37.00 0 0 1 1697.42 1629.85 L 1202.58 1629.85 A 37.00 37.00 0 0 1 1170.53 1574.35 L 1417.96 1145.8 A 37.00 37.00 0 0 1 1482.04 1145.8 Z" fill="none" stroke="#5A4400" stroke-width="40" stroke-linejoin="round"/><path d="M 1482.04 1145.8 L 1729.47 1574.35 A 37.00 37.00 0 0 1 1697.42 1629.85 L 1202.58 1629.85 A 37.00 37.00 0 0 1 1170.53 1574.35 L 1417.96 1145.8 A 37.00 37.00 0 0 1 1482.04 1145.8 Z" fill="none" stroke="#FFC400" stroke-width="34" stroke-linejoin="round"/><path d="M 1482.04 1145.8 L 1729.47 1574.35 A 37.00 37.00 0 0 1 1697.42 1629.85 L 1202.58 1629.85 A 37.00 37.00 0 0 1 1170.53 1574.35 L 1417.96 1145.8 A 37.00 37.00 0 0 1 1482.04 1145.8 Z" fill="none" stroke="#FFE890" stroke-width="17" opacity="0.92" filter="url(#e2soft)" stroke-linejoin="round"/><path d="M 1482.04 1145.8 L 1729.47 1574.35 A 37.00 37.00 0 0 1 1697.42 1629.85 L 1202.58 1629.85 A 37.00 37.00 0 0 1 1170.53 1574.35 L 1417.96 1145.8 A 37.00 37.00 0 0 1 1482.04 1145.8 Z" fill="none" stroke="#FFFFFF" stroke-width="6" opacity="0.80" stroke-linejoin="round"/></g>
+                <g class="se-t4 se-blue"><path d="M 1501.1 1050.1 L 1821.87 1605.7 A 59.00 59.00 0 0 1 1770.78 1694.2 L 1129.22 1694.2 A 59.00 59.00 0 0 1 1078.13 1605.7 L 1398.9 1050.1 A 59.00 59.00 0 0 1 1501.1 1050.1 Z" fill="none" stroke="#0A1A4A" stroke-width="52" stroke-linejoin="round"/><path d="M 1501.1 1050.1 L 1821.87 1605.7 A 59.00 59.00 0 0 1 1770.78 1694.2 L 1129.22 1694.2 A 59.00 59.00 0 0 1 1078.13 1605.7 L 1398.9 1050.1 A 59.00 59.00 0 0 1 1501.1 1050.1 Z" fill="none" stroke="#2C6CF2" stroke-width="46" stroke-linejoin="round"/><path d="M 1501.1 1050.1 L 1821.87 1605.7 A 59.00 59.00 0 0 1 1770.78 1694.2 L 1129.22 1694.2 A 59.00 59.00 0 0 1 1078.13 1605.7 L 1398.9 1050.1 A 59.00 59.00 0 0 1 1501.1 1050.1 Z" fill="none" stroke="#86B4FF" stroke-width="23" opacity="0.92" filter="url(#e2soft)" stroke-linejoin="round"/><path d="M 1501.1 1050.1 L 1821.87 1605.7 A 59.00 59.00 0 0 1 1770.78 1694.2 L 1129.22 1694.2 A 59.00 59.00 0 0 1 1078.13 1605.7 L 1398.9 1050.1 A 59.00 59.00 0 0 1 1501.1 1050.1 Z" fill="none" stroke="#FFFFFF" stroke-width="6" opacity="0.80" stroke-linejoin="round"/></g>
+                <g class="se-c4" style="transform:rotate(0deg)"><path d="M 1450 1313 L 1542 1507 L 1450 1468 Z" fill="url(#e2chR)"/><path d="M 1450 1313 L 1450 1468 L 1358 1507 Z" fill="url(#e2chL)"/><path d="M 1450 1313 L 1450 1468" stroke="#FFF" stroke-width="2.6" opacity="0.95"/></g>
+              </g>
+            </svg>
+          </div>
+          <div class="state-badge">Locked · True North</div>
+        </div>
+      </div>
+      <div class="slot-label">Locked — true north</div>
+    </div>
+
+    <!-- Live demo (auto-cycling) -->
+    <div class="phone-slot">
+      <div class="phone-shell" id="demo-shell">
+        <div class="phone-inner">
+          <div class="splash-embed se-spinning" id="embed3">
+            <svg viewBox="0 0 2900 2900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="e3chL" x1="0%" y1="8%" x2="100%" y2="96%"><stop offset="0%" stop-color="#FFFFFF"/><stop offset="100%" stop-color="#C9D0DE"/></linearGradient>
+                <linearGradient id="e3chR" x1="100%" y1="8%" x2="0%" y2="96%"><stop offset="0%" stop-color="#DCE1EB"/><stop offset="100%" stop-color="#939CB2"/></linearGradient>
+                <filter id="e3soft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="1.5"/></filter>
+              </defs>
+              <g>
+                <g id="e3-ripples" class="se-ripples">
+                  <g class="se-wrip" id="se3-wr1"><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="17" opacity="0.22" vector-effect="non-scaling-stroke" stroke-linejoin="round"/><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="6" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></g>
+                  <g class="se-wrip" id="se3-wr2"><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="17" opacity="0.22" vector-effect="non-scaling-stroke" stroke-linejoin="round"/><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="6" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></g>
+                  <g class="se-wrip" id="se3-wr3"><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="17" opacity="0.22" vector-effect="non-scaling-stroke" stroke-linejoin="round"/><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="6" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></g>
+                  <g class="se-wrip" id="se3-wr4"><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="17" opacity="0.22" vector-effect="non-scaling-stroke" stroke-linejoin="round"/><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="6" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></g>
+                  <g class="se-wrip" id="se3-wr5"><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="17" opacity="0.22" vector-effect="non-scaling-stroke" stroke-linejoin="round"/><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="6" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></g>
+                  <g class="se-wrip" id="se3-wr6"><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="17" opacity="0.22" vector-effect="non-scaling-stroke" stroke-linejoin="round"/><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="6" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></g>
+                  <g class="se-wrip" id="se3-wr7"><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="17" opacity="0.22" vector-effect="non-scaling-stroke" stroke-linejoin="round"/><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="6" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></g>
+                  <g class="se-wrip" id="se3-wr8"><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="17" opacity="0.22" vector-effect="non-scaling-stroke" stroke-linejoin="round"/><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="6" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></g>
+                  <g class="se-wrip" id="se3-wr9"><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="17" opacity="0.22" vector-effect="non-scaling-stroke" stroke-linejoin="round"/><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="6" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></g>
+                  <g class="se-wrip" id="se3-wr10"><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="17" opacity="0.22" vector-effect="non-scaling-stroke" stroke-linejoin="round"/><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="6" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></g>
+                </g>
+                <g class="se-t4 se-red"><path d="M 1479.44 1272.8 L 1618.18 1513.1 A 34.00 34.00 0 0 1 1588.74 1564.1 L 1311.26 1564.1 A 34.00 34.00 0 0 1 1281.82 1513.1 L 1420.56 1272.8 A 34.00 34.00 0 0 1 1479.44 1272.8 Z" fill="none" stroke="#4A0512" stroke-width="41" stroke-linejoin="round"/><path d="M 1479.44 1272.8 L 1618.18 1513.1 A 34.00 34.00 0 0 1 1588.74 1564.1 L 1311.26 1564.1 A 34.00 34.00 0 0 1 1281.82 1513.1 L 1420.56 1272.8 A 34.00 34.00 0 0 1 1479.44 1272.8 Z" fill="none" stroke="#F0233C" stroke-width="35" stroke-linejoin="round"/><path d="M 1479.44 1272.8 L 1618.18 1513.1 A 34.00 34.00 0 0 1 1588.74 1564.1 L 1311.26 1564.1 A 34.00 34.00 0 0 1 1281.82 1513.1 L 1420.56 1272.8 A 34.00 34.00 0 0 1 1479.44 1272.8 Z" fill="none" stroke="#FF8090" stroke-width="18" opacity="0.92" filter="url(#e3soft)" stroke-linejoin="round"/><path d="M 1479.44 1272.8 L 1618.18 1513.1 A 34.00 34.00 0 0 1 1588.74 1564.1 L 1311.26 1564.1 A 34.00 34.00 0 0 1 1281.82 1513.1 L 1420.56 1272.8 A 34.00 34.00 0 0 1 1479.44 1272.8 Z" fill="none" stroke="#FFFFFF" stroke-width="6" opacity="0.80" stroke-linejoin="round"/></g>
+                <g class="se-t4 se-yellow"><path d="M 1482.04 1145.8 L 1729.47 1574.35 A 37.00 37.00 0 0 1 1697.42 1629.85 L 1202.58 1629.85 A 37.00 37.00 0 0 1 1170.53 1574.35 L 1417.96 1145.8 A 37.00 37.00 0 0 1 1482.04 1145.8 Z" fill="none" stroke="#5A4400" stroke-width="40" stroke-linejoin="round"/><path d="M 1482.04 1145.8 L 1729.47 1574.35 A 37.00 37.00 0 0 1 1697.42 1629.85 L 1202.58 1629.85 A 37.00 37.00 0 0 1 1170.53 1574.35 L 1417.96 1145.8 A 37.00 37.00 0 0 1 1482.04 1145.8 Z" fill="none" stroke="#FFC400" stroke-width="34" stroke-linejoin="round"/><path d="M 1482.04 1145.8 L 1729.47 1574.35 A 47.00 37.00 0 0 1 1697.42 1629.85 L 1202.58 1629.85 A 37.00 37.00 0 0 1 1170.53 1574.35 L 1417.96 1145.8 A 37.00 37.00 0 0 1 1482.04 1145.8 Z" fill="none" stroke="#FFE890" stroke-width="17" opacity="0.92" filter="url(#e3soft)" stroke-linejoin="round"/><path d="M 1482.04 1145.8 L 1729.47 1574.35 A 37.00 37.00 0 0 1 1697.42 1629.85 L 1202.58 1629.85 A 37.00 37.00 0 0 1 1170.53 1574.35 L 1417.96 1145.8 A 37.00 37.00 0 0 1 1482.04 1145.8 Z" fill="none" stroke="#FFFFFF" stroke-width="6" opacity="0.80" stroke-linejoin="round"/></g>
+                <g class="se-t4 se-blue"><path d="M 1501.1 1050.1 L 1821.87 1605.7 A 59.00 59.00 0 0 1 1770.78 1694.2 L 1129.22 1694.2 A 59.00 59.00 0 0 1 1078.13 1605.7 L 1398.9 1050.1 A 59.00 59.00 0 0 1 1501.1 1050.1 Z" fill="none" stroke="#0A1A4A" stroke-width="52" stroke-linejoin="round"/><path d="M 1501.1 1050.1 L 1821.87 1605.7 A 59.00 59.00 0 0 1 1770.78 1694.2 L 1129.22 1694.2 A 59.00 59.00 0 0 1 1078.13 1605.7 L 1398.9 1050.1 A 59.00 59.00 0 0 1 1501.1 1050.1 Z" fill="none" stroke="#2C6CF2" stroke-width="46" stroke-linejoin="round"/><path d="M 1501.1 1050.1 L 1821.87 1605.7 A 59.00 59.00 0 0 1 1770.78 1694.2 L 1129.22 1694.2 A 59.00 59.00 0 0 1 1078.13 1605.7 L 1398.9 1050.1 A 59.00 59.00 0 0 1 1501.1 1050.1 Z" fill="none" stroke="#86B4FF" stroke-width="23" opacity="0.92" filter="url(#e3soft)" stroke-linejoin="round"/><path d="M 1501.1 1050.1 L 1821.87 1605.7 A 59.00 59.00 0 0 1 1770.78 1694.2 L 1129.22 1694.2 A 59.00 59.00 0 0 1 1078.13 1605.7 L 1398.9 1050.1 A 59.00 59.00 0 0 1 1501.1 1050.1 Z" fill="none" stroke="#FFFFFF" stroke-width="6" opacity="0.80" stroke-linejoin="round"/></g>
+                <g class="se-c4" id="e3-arrow"><path d="M 1450 1313 L 1542 1507 L 1450 1468 Z" fill="url(#e3chR)"/><path d="M 1450 1313 L 1450 1468 L 1358 1507 Z" fill="url(#e3chL)"/><path d="M 1450 1313 L 1450 1468" stroke="#FFF" stroke-width="2.6" opacity="0.95"/></g>
+              </g>
+            </svg>
+          </div>
+          <div class="state-badge" id="demo-badge">Loading</div>
+        </div>
+      </div>
+      <div class="slot-label">Auto-cycling demo</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── Behavior reference ── -->
+<div class="section">
+  <div class="section-label">Phase behavior</div>
+  <div class="behavior-grid">
+    <div class="behavior-card">
+      <div class="bc-phase bc-loading">Loading</div>
+      <div class="bc-title">Arrow spins · Waves radiate</div>
+      <div class="bc-desc">The compass arrow rotates at 3.6s/rev (locked to the 0.6s wave interval × 6). Ten waves are born one-at-a-time from the triangle centre, cycling white → red → gold → blue. Each colored ring answers with a soft pulse as a wave crosses it.</div>
+    </div>
+    <div class="behavior-card">
+      <div class="bc-phase bc-lock">Lock</div>
+      <div class="bc-title">Ensemble deceleration</div>
+      <div class="bc-desc">On <code>ACTZSplash.appReady()</code>: the arrow captures its current rotation, then animates 1–2 full extra turns before easing onto true north (0°). Waves fade out over 1.4s. The three rings stop pulsing simultaneously — a single shared decel.</div>
+    </div>
+    <div class="behavior-card">
+      <div class="bc-phase bc-logo">Static hold</div>
+      <div class="bc-title">True north · Ready</div>
+      <div class="bc-desc">The ACTZ triangle mark held steady — arrow pointing up, rings still, background gradient. On <code>ACTZSplash.dismiss()</code> the entire overlay fades out in 0.6s and fires <code>actz-splash:hidden</code>. Reduced-motion: static logo, no animation.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── JS API ── -->
+<div class="section">
+  <div class="section-label">window.ACTZSplash API</div>
+  <table class="api-table">
+    <thead>
+      <tr><th>Method</th><th>Description</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>ACTZSplash.hold()</code></td><td>Call on app mount — takes control, disables the auto-preview loop.</td></tr>
+      <tr><td><code>ACTZSplash.appReady()</code></td><td>App finished loading — runs the lock/settle sequence, holds the static mark.</td></tr>
+      <tr><td><code>ACTZSplash.dismiss()</code></td><td><code>appReady()</code> + fades the overlay away after an 800ms hold.</td></tr>
+      <tr><td><code>ACTZSplash.lock()</code></td><td>Alias of <code>appReady()</code>.</td></tr>
+      <tr><td><code>ACTZSplash.setMinimumShowTime(ms)</code></td><td>Override the 2000ms minimum display time before lock runs.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<script>
+  (function () {
+    var embed = document.getElementById('embed3');
+    var badge = document.getElementById('demo-badge');
+    var arrow = document.getElementById('e3-arrow');
+    var phase = 'loading';
+    var lockTimer, loadTimer;
+
+    function getAngle(el) {
+      try {
+        var tr = getComputedStyle(el).transform;
+        if (!tr || tr === 'none') return 0;
+        var m = new DOMMatrixReadOnly(tr);
+        return ((Math.atan2(m.b, m.a) * 180 / Math.PI) + 360) % 360;
+      } catch (e) { return 0; }
+    }
+
+    function doLock() {
+      phase = 'locking';
+      badge.textContent = 'Locking…';
+      var cur = getAngle(arrow);
+      var end = (Math.floor(cur / 360) + 2) * 360;
+      embed.classList.remove('se-spinning');
+      embed.classList.add('se-locked');
+      arrow.style.transform = 'rotate(0deg)';
+      if (arrow.animate) {
+        var a = arrow.animate(
+          [{ transform: 'rotate(' + cur + 'deg)' }, { transform: 'rotate(' + end + 'deg)' }],
+          { duration: 2000, easing: 'cubic-bezier(.2,.6,.3,1)', fill: 'forwards' }
+        );
+        a.onfinish = function () { try { a.cancel(); } catch (e) {} onLocked(); };
+      } else {
+        setTimeout(onLocked, 2000);
+      }
+    }
+
+    function onLocked() {
+      phase = 'locked';
+      badge.textContent = 'Locked · True North';
+      lockTimer = setTimeout(doReset, 3000);
+    }
+
+    function doReset() {
+      embed.classList.add('se-spinning');
+      embed.classList.remove('se-locked');
+      arrow.style.transform = '';
+      phase = 'loading';
+      badge.textContent = 'Loading';
+      loadTimer = setTimeout(doLock, 4200);
+    }
+
+    loadTimer = setTimeout(doLock, 4200);
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>ACTZ · Global Spinner</title>
+<link rel="icon" href="../assets/brand/favicon.svg">
+<link rel="stylesheet" href="../colors_and_type.css">
+<link rel="stylesheet" href="../components.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+  @keyframes spinner-magic {
+    0%   { transform: scale(0) rotate(0deg);   filter: blur(0px);   }
+    50%  { transform: scale(1) rotate(90deg);  filter: blur(0.5px); }
+    100% { transform: scale(2) rotate(180deg); filter: blur(1px);   }
+  }
+  @keyframes spinner-glow {
+    0%, 100% { opacity: 0.2; transform: scale(1);   }
+    50%       { opacity: 0.5; transform: scale(1.5); }
+  }
+  .global-spinner-square {
+    animation: spinner-magic calc(2s / var(--speed, 1)) ease infinite alternate;
+    animation-delay: var(--delay);
+    transform-origin: center;
+    will-change: transform;
+  }
+
+  body {
+    margin: 0;
+    background: hsl(var(--background));
+    min-height: 100vh;
+    padding: 64px 32px 96px;
+    font-family: var(--font-body);
+  }
+
+  .page-header {
+    max-width: 1320px;
+    margin: 0 auto 64px;
+    text-align: center;
+  }
+  .eyebrow {
+    font: 600 11px/1 var(--font-body);
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: hsl(var(--accent));
+    margin-bottom: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .eyebrow::before, .eyebrow::after {
+    content: '';
+    width: 28px;
+    height: 1px;
+    background: hsl(var(--accent));
+  }
+  .page-header h1 {
+    margin: 0 auto;
+    max-width: 22ch;
+    font: 700 clamp(32px, 4vw, 52px)/1.05 var(--font-display);
+    letter-spacing: -0.03em;
+    color: hsl(var(--foreground));
+    text-wrap: balance;
+  }
+  .page-header p {
+    margin: 16px auto 0;
+    max-width: 56ch;
+    font: 400 16px/1.55 var(--font-body);
+    color: hsl(var(--foreground) / 0.65);
+  }
+
+  .section {
+    max-width: 1320px;
+    margin: 0 auto 56px;
+  }
+  .section-label {
+    font: 600 11px/1 var(--font-body);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: hsl(var(--muted-foreground));
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid hsl(var(--border) / 0.4);
+  }
+  .card-grid {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+  .spinner-card {
+    flex: 1;
+    min-width: 180px;
+    border-radius: 20px;
+    border: 1px solid hsl(var(--border) / 0.3);
+    background: radial-gradient(ellipse at 50% 20%, rgba(88,28,220,0.12) 0%, hsl(var(--card)) 70%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 24px 28px;
+    gap: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .spinner-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(135deg, rgba(168,85,247,0.06) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .card-size-tag {
+    font: 600 10px/1 var(--font-body);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: hsl(var(--muted-foreground));
+  }
+  .card-sub {
+    font: 400 12px/1.4 var(--font-body);
+    color: hsl(var(--foreground) / 0.4);
+    text-align: center;
+  }
+
+  .fullscreen-preview {
+    border-radius: 20px;
+    overflow: hidden;
+    height: 360px;
+    position: relative;
+    border: 1px solid hsl(var(--border) / 0.3);
+    background: radial-gradient(ellipse at center, #0a0014 0%, #000000 100%);
+  }
+
+  .inline-row {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .inline-demo-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: 999px;
+    border: 1px solid hsl(var(--border) / 0.5);
+    background: hsl(var(--card));
+    color: hsl(var(--foreground) / 0.7);
+    font: 500 13px/1 var(--font-body);
+    cursor: default;
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="eyebrow">UI Kit · App</div>
+  <h1>Global Spinner</h1>
+  <p>Animated loading state — concentric rotating squares cycling through a purple-to-blue gradient. Four sizes, inline variant, and full-screen overlay mode.</p>
+</div>
+
+<div id="root"></div>
+
+<script type="text/babel">
+  const { useMemo } = React;
+
+  const SPEED = 0.35;
+
+  function squaresFor(size) {
+    const count = size === 'sm' ? 8 : size === 'md' ? 12 : size === 'lg' ? 16 : 20;
+    const pad   = size === 'sm' ? 5 : size === 'md' ? 8 : size === 'lg' ? 10 : 12;
+    return Array.from({ length: count }, (_, i) => {
+      const index = i + 1;
+      const hue   = (index * 360 / count) % 360;
+      return {
+        id:      index,
+        padding: index * pad,
+        offset:  index * -pad,
+        color:   `hsl(${260 + hue / 3}, 80%, 60%)`,
+        delay:   i * 0.1,
+      };
+    });
+  }
+
+  function SpinnerCore({ size }) {
+    const squares = useMemo(() => squaresFor(size), [size]);
+    return (
+      <div style={{ position: 'relative' }}>
+        <div style={{ position: 'relative' }}>
+          {squares.map(sq => (
+            <div
+              key={sq.id}
+              className="global-spinner-square"
+              style={{
+                position:    'absolute',
+                boxSizing:   'content-box',
+                border:      `1px solid ${sq.color}`,
+                borderRadius: '2px',
+                padding:     `${sq.padding}px`,
+                top:         `${sq.offset}px`,
+                left:        `${sq.offset}px`,
+                boxShadow:   `0 0 3px ${sq.color}, inset 0 0 3px rgba(255,255,255,0.1)`,
+                '--delay':   `${sq.delay}s`,
+                '--speed':   SPEED,
+              }}
+            />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  function GlowParticles() {
+    const particles = useMemo(() => (
+      Array.from({ length: 10 }, (_, i) => ({
+        id:    i,
+        left:  `${(i * 11.3 + 7) % 100}%`,
+        top:   `${(i * 17.7 + 13) % 100}%`,
+        dur:   3 + (i % 4),
+        dly:   (i * 0.37) % 3,
+      }))
+    ), []);
+
+    return (
+      <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none' }}>
+        {particles.map(p => (
+          <div
+            key={p.id}
+            style={{
+              position:        'absolute',
+              width:           '2px',
+              height:          '2px',
+              borderRadius:    '50%',
+              backgroundColor: '#a855f7',
+              left:            p.left,
+              top:             p.top,
+              animation:       `spinner-glow ${p.dur}s ease-in-out infinite`,
+              animationDelay:  `${p.dly}s`,
+            }}
+          />
+        ))}
+      </div>
+    );
+  }
+
+  function GlobalSpinner({ size = 'md', text }) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, position: 'relative' }}>
+        <GlowParticles />
+        <SpinnerCore size={size} />
+        {text && (
+          <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: 14, fontWeight: 500, marginTop: 8, animation: 'spinner-glow 2s ease-in-out infinite', fontFamily: 'var(--font-body)' }}>
+            {text}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  function InlineSpinner() {
+    const squares = useMemo(() => (
+      Array.from({ length: 4 }, (_, i) => {
+        const hue   = (i * 90) % 360;
+        const color = `hsl(${260 + hue / 3}, 80%, 60%)`;
+        return { id: i, padding: (i + 1) * 3, offset: (i + 1) * -3, color, delay: i * 0.1 };
+      })
+    ), []);
+
+    return (
+      <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ position: 'relative', width: 20, height: 20 }}>
+          {squares.map(sq => (
+            <div
+              key={sq.id}
+              className="global-spinner-square"
+              style={{
+                position:    'absolute',
+                boxSizing:   'content-box',
+                border:      `1px solid ${sq.color}`,
+                borderRadius: '2px',
+                padding:     `${sq.padding}px`,
+                top:         `${sq.offset}px`,
+                left:        `${sq.offset}px`,
+                boxShadow:   `0 0 2px ${sq.color}`,
+                '--delay':   `${sq.delay}s`,
+                '--speed':   SPEED,
+              }}
+            />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  const SIZES = [
+    { key: 'sm', label: 'sm',  sub: '8 squares' },
+    { key: 'md', label: 'md',  sub: '12 squares' },
+    { key: 'lg', label: 'lg',  sub: '16 squares' },
+    { key: 'xl', label: 'xl',  sub: '20 squares' },
+  ];
+
+  function App() {
+    return (
+      <React.Fragment>
+
+        {/* Size variants */}
+        <div className="section">
+          <div className="section-label">Size variants</div>
+          <div className="card-grid">
+            {SIZES.map(({ key, label, sub }) => (
+              <div key={key} className="spinner-card">
+                <div style={{ minHeight: key === 'xl' ? 180 : key === 'lg' ? 140 : key === 'md' ? 110 : 80, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <GlobalSpinner size={key} />
+                </div>
+                <div className="card-size-tag">size="{label}"</div>
+                <div className="card-sub">{sub}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* With loading text */}
+        <div className="section">
+          <div className="section-label">With text prop</div>
+          <div className="card-grid">
+            <div className="spinner-card" style={{ flex: '0 0 auto', minWidth: 260 }}>
+              <div style={{ minHeight: 120, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <GlobalSpinner size="md" text="Loading your trip…" />
+              </div>
+              <div className="card-size-tag">text="Loading your trip…"</div>
+            </div>
+            <div className="spinner-card" style={{ flex: '0 0 auto', minWidth: 260 }}>
+              <div style={{ minHeight: 120, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <GlobalSpinner size="md" text="Finding experiences…" />
+              </div>
+              <div className="card-size-tag">text="Finding experiences…"</div>
+            </div>
+            <div className="spinner-card" style={{ flex: '0 0 auto', minWidth: 260 }}>
+              <div style={{ minHeight: 120, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <GlobalSpinner size="lg" text="ACTZ AI is thinking…" />
+              </div>
+              <div className="card-size-tag">size="lg" · AI concierge</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Inline spinner */}
+        <div className="section">
+          <div className="section-label">Inline spinner — button & card states</div>
+          <div className="inline-row">
+            <div className="inline-demo-btn">
+              <InlineSpinner />
+              <span>Booking…</span>
+            </div>
+            <div className="inline-demo-btn">
+              <InlineSpinner />
+              <span>Saving itinerary</span>
+            </div>
+            <div className="inline-demo-btn">
+              <InlineSpinner />
+              <span>Connecting</span>
+            </div>
+            <div className="inline-demo-btn" style={{ background: 'hsl(var(--accent)/0.15)', borderColor: 'hsl(var(--accent)/0.4)', color: 'hsl(var(--accent))' }}>
+              <InlineSpinner />
+              <span>Processing payment</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Full-screen overlay simulation */}
+        <div className="section">
+          <div className="section-label">fullScreen mode — overlay preview</div>
+          <div className="fullscreen-preview">
+            <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, position: 'relative' }}>
+                <GlowParticles />
+                <SpinnerCore size="lg" />
+                <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: 13, fontWeight: 500, marginTop: 8, fontFamily: 'var(--font-body)', letterSpacing: '0.04em' }}>
+                  fullScreen · z-[600]
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </React.Fragment>
+    );
+  }
+
+  ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

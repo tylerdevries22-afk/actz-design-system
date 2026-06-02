@@ -229,8 +229,8 @@
 
 <div class="header" data-screen-label="00 Header">
   <div class="eyebrow">Onboarding · flow prototype</div>
-  <h1>Six taps to a personalized first trip.</h1>
-  <p>Welcome → interests → destination → travel mode → notifications → ready. Tap any step on the right to jump to it. Selections persist as you move.</p>
+  <h1>Eight screens to a personalized ACTZ experience.</h1>
+  <p>Welcome → sign up → intent → interests → location → planning style → social preference → profile. Tap any step on the right to jump. Selections persist as you move.</p>
 </div>
 
 <div class="stage" id="stage"></div>
@@ -239,39 +239,53 @@
 <script type="text/babel" src="Data.jsx"></script>
 <script type="text/babel" src="Onboarding.jsx"></script>
 <script type="text/babel">
-  const { IOSDevice, OnboardingFlow } = window;
+  const { IOSDevice } = window;
+  const {
+    WelcomeStep, AuthStep, IntentStep, InterestsStep,
+    LocationStep, PlanStyleStep, SocialStep, ProfileStep,
+  } = window;
+
   const STEP_LABELS = [
-    { id: 0, label: 'Welcome',       sub: 'Brand splash + start CTA' },
-    { id: 1, label: 'Interests',     sub: 'Multi-select category chips' },
-    { id: 2, label: 'Destination',   sub: '4-tile photo picker + search' },
-    { id: 3, label: 'Travel mode',   sub: 'Solo · Crew · Family' },
-    { id: 4, label: 'Notifications', sub: 'iOS permission ask · contextual' },
-    { id: 5, label: 'You\u2019re in',sub: 'Confirmation + start app' },
+    { id: 0, label: 'Welcome',   sub: 'Mission statement · brand splash' },
+    { id: 1, label: 'Sign up',   sub: 'Apple · Google · email · phone' },
+    { id: 2, label: 'Intent',    sub: 'Why are you here? · 7 options' },
+    { id: 3, label: 'Interests', sub: 'What are you into? · 15 categories' },
+    { id: 4, label: 'Location',  sub: 'Where to personalize your feed' },
+    { id: 5, label: 'Planning',  sub: 'How do you like to explore?' },
+    { id: 6, label: 'Social',    sub: 'Group experience preference' },
+    { id: 7, label: 'Profile',   sub: 'Display name + optional details' },
   ];
 
   function App() {
-    const [step, setStep] = React.useState(0);
-    const [picks, setPicks] = React.useState(['Hiking', 'Camping', 'Hot springs']);
-    const [picked, setPicked] = React.useState('Aspen');
-    const [mode, setMode] = React.useState('crew');
+    const [step,           setStep]          = React.useState(0);
+    const [picks,          setPicks]         = React.useState([]);
+    const [intent,         setIntent]        = React.useState(null);
+    const [locationChoice, setLocationChoice]= React.useState(null);
+    const [planStyles,     setPlanStyles]    = React.useState([]);
+    const [socialPref,     setSocialPref]    = React.useState(null);
+    const [displayName,    setDisplayName]   = React.useState('');
 
-    const go = (s) => setStep(s);
+    const go   = (s) => setStep(s);
     const back = () => setStep(Math.max(0, step - 1));
-    const next = () => setStep(Math.min(5, step + 1));
-    const total = 6;
+    const next = () => setStep(Math.min(7, step + 1));
+    const total = 8;
 
     const screens = {
       0: <WelcomeStep go={go} total={total} />,
-      1: <InterestsStep go={go} back={back} total={total} picks={picks} setPicks={setPicks} />,
-      2: <WhereStep go={go} back={back} total={total} picked={picked} setPicked={setPicked} />,
-      3: <CrewStep go={go} back={back} total={total} mode={mode} setMode={setMode} />,
-      4: <NotifyStep go={go} back={back} total={total} />,
-      5: <DoneStep go={go} back={back} total={total} picks={picks} picked={picked} mode={mode} />,
+      1: <AuthStep    go={go} back={back} total={total} />,
+      2: <IntentStep  go={go} back={back} total={total} intent={intent} setIntent={setIntent} />,
+      3: <InterestsStep go={go} back={back} total={total} picks={picks} setPicks={setPicks} />,
+      4: <LocationStep  go={go} back={back} total={total} locationChoice={locationChoice} setLocationChoice={setLocationChoice} />,
+      5: <PlanStyleStep go={go} back={back} total={total} planStyles={planStyles} setPlanStyles={setPlanStyles} />,
+      6: <SocialStep    go={go} back={back} total={total} socialPref={socialPref} setSocialPref={setSocialPref} />,
+      7: <ProfileStep   go={go} back={back} total={total} displayName={displayName} setDisplayName={setDisplayName} />,
     };
+
+    const label = STEP_LABELS[step];
 
     return (
       <React.Fragment>
-        <div className="device-col" data-screen-label={`0${step+1} ${STEP_LABELS[step].label}`}>
+        <div className="device-col" data-screen-label={`${String(step+1).padStart(2,'0')} ${label.label}`}>
           <div className="device-frame-wrap">
             <div>
               <IOSDevice width={402} height={874} dark={true}>
@@ -281,13 +295,13 @@
           </div>
           <div className="stage-label">
             <span className="num">{String(step+1).padStart(2,'0')}</span>
-            {STEP_LABELS[step].label} · step {step+1} of 6
+            {label.label} · step {step+1} of 8
           </div>
         </div>
 
         <aside className="stepper">
           <div className="kicker">Walk the flow</div>
-          <h3>Six steps, 60 seconds</h3>
+          <h3>Eight screens, 90 seconds</h3>
           <p>Tap a step to jump. Your selections persist as you move through the flow.</p>
           <div className="step-list">
             {STEP_LABELS.map(s => (
@@ -307,7 +321,7 @@
           </div>
           <div className="nav-pager">
             <button onClick={back} disabled={step === 0}>← Back</button>
-            <button className="pri" onClick={next} disabled={step === 5}>Next →</button>
+            <button className="pri" onClick={next} disabled={step === 7}>Next →</button>
           </div>
           <div className="hint">Or tap inside the phone to advance.</div>
         </aside>

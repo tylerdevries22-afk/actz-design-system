@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>ACTZ · Global Spinner 3</title>
+<link rel="icon" href="../assets/brand/favicon.svg">
+<link rel="stylesheet" href="../colors_and_type.css">
+<link rel="stylesheet" href="../components.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+  @keyframes arrow-sync {
+    0%        { transform: rotate(0deg);   animation-timing-function: cubic-bezier(0.34, 1.3, 0.64, 1); }
+    33.333%   { transform: rotate(120deg); animation-timing-function: cubic-bezier(0.34, 1.3, 0.64, 1); }
+    66.667%   { transform: rotate(240deg); animation-timing-function: cubic-bezier(0.34, 1.3, 0.64, 1); }
+    100%      { transform: rotate(360deg); }
+  }
+  @keyframes spinner-magic {
+    0%   { transform: scale(0) rotate(0deg);   }
+    50%  { transform: scale(1) rotate(90deg);  }
+    100% { transform: scale(2) rotate(180deg); }
+  }
+  @keyframes spinner-glow {
+    0%, 100% { opacity: 0.2; transform: scale(1);   }
+    50%       { opacity: 0.5; transform: scale(1.5); }
+  }
+  /* Metallic shimmer — duration and ease match spinner-magic so sweep syncs with triangle movement */
+  @keyframes text-shimmer {
+    0%   { background-position: 100% center; }
+    100% { background-position: 0%   center; }
+  }
+  /* Inline spinner — smooth full rotation CW then CCW, mirroring spinner-magic's alternate rhythm */
+  @keyframes inline-rotate {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+  .global-spinner-triangle {
+    animation: spinner-magic calc(2s / var(--speed, 1)) ease infinite alternate;
+    animation-delay: var(--delay);
+    transform-origin: center;
+    will-change: transform;
+    overflow: visible;
+  }
+
+  body {
+    margin: 0;
+    background: #000000;
+    min-height: 100vh;
+    padding: 64px 32px 96px;
+    font-family: var(--font-body);
+  }
+
+  .page-header {
+    max-width: 1320px;
+    margin: 0 auto 64px;
+    text-align: center;
+  }
+  .eyebrow {
+    font: 600 11px/1 var(--font-body);
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: hsl(var(--accent));
+    margin-bottom: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .eyebrow::before, .eyebrow::after {
+    content: '';
+    width: 28px;
+    height: 1px;
+    background: hsl(var(--accent));
+  }
+  .page-header h1 {
+    margin: 0 auto;
+    max-width: 22ch;
+    font: 700 clamp(32px, 4vw, 52px)/1.05 var(--font-display);
+    letter-spacing: -0.03em;
+    color: hsl(var(--foreground));
+    text-wrap: balance;
+  }
+  .page-header p {
+    margin: 16px auto 0;
+    max-width: 56ch;
+    font: 400 16px/1.55 var(--font-body);
+    color: hsl(var(--foreground) / 0.65);
+  }
+
+  .section {
+    max-width: 1320px;
+    margin: 0 auto 56px;
+  }
+  .section-label {
+    font: 600 11px/1 var(--font-body);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: hsl(var(--muted-foreground));
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid hsl(var(--border) / 0.4);
+  }
+  .card-grid {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+  .spinner-card {
+    flex: 1;
+    min-width: 180px;
+    border-radius: 20px;
+    border: 1px solid hsl(var(--border) / 0.3);
+    background: radial-gradient(ellipse at 50% 40%, #010810 0%, #000000 80%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 24px 28px;
+    gap: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .spinner-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(135deg, rgba(44,108,242,0.07) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .card-size-tag {
+    font: 600 10px/1 var(--font-body);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: hsl(var(--muted-foreground));
+  }
+  .card-sub {
+    font: 400 12px/1.4 var(--font-body);
+    color: hsl(var(--foreground) / 0.4);
+    text-align: center;
+  }
+
+  .fullscreen-preview {
+    overflow: hidden;
+    height: 100vh;
+    position: relative;
+    background: #000000;
+  }
+  .fullscreen-breakout {
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    margin-left: -50vw;
+  }
+
+  .inline-row {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .inline-demo-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: 999px;
+    border: 1px solid hsl(var(--border) / 0.5);
+    background: hsl(var(--card));
+    color: hsl(var(--foreground) / 0.7);
+    font: 500 13px/1 var(--font-body);
+    cursor: default;
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="eyebrow">UI Kit · App</div>
+  <h1>Global Spinner 3</h1>
+  <p>Neon concentric ACTZ triangle rings — red · gold · blue cycling outward — with dark shadow backdrop, color stroke, white highlight, and drop-shadow glow. Compass arrow at center. sm=3 · md=5 · lg=7 · xl=9 rings.</p>
+</div>
+
+<div id="root"></div>
+
+<script type="text/babel">
+  const { useMemo } = React;
+
+  // ─── geometry ────────────────────────────────────────────────────────────────
+  const TRI_VB    = "0 0 542.14 469.5";
+  const TRI       = "M 311.77 0 L 542.14 399 A 47 47 0 0 1 501.43 469.5 L 40.71 469.5 A 47 47 0 0 1 0 399 L 230.37 0 A 47 47 0 0 1 311.77 0 Z";
+  const TRI_RATIO = 469.5 / 542.14;
+
+  const ARROW_VB    = "0 0 184 194";
+  const ARROW_R     = "M 92 0 L 184 194 L 92 155 Z";
+  const ARROW_L     = "M 92 0 L 92 155 L 0 194 Z";
+  const ARROW_SHAFT = "M 92 7 L 92 148";
+  const ARROW_RCX   = 92  / 184;
+  const ARROW_RCY   = 137 / 194;
+
+  // ─── ring system ─────────────────────────────────────────────────────────────
+  const RING_COUNTS = { sm: 3, md: 5, lg: 7, xl: 9 };
+  const INNER_W     = { sm: 72, md: 88, lg: 104, xl: 120 };
+  const RING_GAP    = 70;
+  const SPEED       = 0.35;
+  const INLINE_SPD  = 1.0;
+
+  const RING_COLORS = [
+    { main: '#FF1A38', dark: '#3A010E', hl: '#FF7A8F' },
+    { main: '#FFD000', dark: '#4A3800', hl: '#FFE97A' },
+    { main: '#2A6EF5', dark: '#061238', hl: '#7AB2FF' },
+  ];
+
+  function getRings(size) {
+    const count = RING_COUNTS[size];
+    const baseW = INNER_W[size];
+    return Array.from({ length: count }, (_, i) => {
+      const w = baseW + i * RING_GAP;
+      const h = w * TRI_RATIO;
+      return {
+        id:    i,
+        w, h,
+        left:  -(w / 2),
+        top:   -(h / 2),
+        color: RING_COLORS[i % 3].main,
+        dark:  RING_COLORS[i % 3].dark,
+        hl:    RING_COLORS[i % 3].hl,
+        delay: i * 0.1,
+      };
+    });
+  }
+
+  // ─── arrow ───────────────────────────────────────────────────────────────────
+  // outerRef / innerRef are forwarded from SpinnerCore for FLIP animation.
+  // arrow-sync keeps running while phase !== 'dismissed' so the FLIP effect
+  // can snapshot the current animated angle before killing the animation.
+  function ArrowCenter({ phase, size, outerRef, innerRef }) {
+    const ringW     = INNER_W[size];
+    const ringH     = ringW * TRI_RATIO;
+    const aw        = Math.round(ringW * 0.45);
+    const ah        = Math.round(aw * (194 / 184));
+    const rcx       = aw * ARROW_RCX;
+    const rcy       = ah * ARROW_RCY;
+    const anim      = phase !== 'dismissed'
+      ? `arrow-sync ${2 / SPEED}s ease infinite alternate`
+      : 'none';
+
+    return (
+      <div
+        ref={outerRef}
+        className="global-spinner-triangle"
+        style={{
+          position:      'absolute',
+          width:         ringW,
+          height:        ringH,
+          left:          -(ringW / 2),
+          top:           -(ringH / 2),
+          '--delay':     '0s',
+          '--speed':     SPEED,
+          pointerEvents: 'none',
+          overflow:      'visible',
+        }}
+      >
+        <div
+          ref={innerRef}
+          style={{
+            position:        'absolute',
+            width:           aw,
+            height:          ah,
+            left:            ringW / 2 - rcx,
+            top:             (ringH * 2 / 3) - rcy,
+            transformOrigin: `${rcx}px ${rcy}px`,
+            animation:       anim,
+          }}
+        >
+          <svg viewBox={ARROW_VB} width={aw} height={ah}
+            xmlns="http://www.w3.org/2000/svg" style={{ display: 'block', overflow: 'visible' }}>
+            <defs>
+              <linearGradient id="gs3chL" x1="0%" y1="8%" x2="100%" y2="96%">
+                <stop offset="0%"   stopColor="#FFFFFF"/>
+                <stop offset="100%" stopColor="#C9D0DE"/>
+              </linearGradient>
+              <linearGradient id="gs3chR" x1="100%" y1="8%" x2="0%" y2="96%">
+                <stop offset="0%"   stopColor="#DCE1EB"/>
+                <stop offset="100%" stopColor="#939CB2"/>
+              </linearGradient>
+            </defs>
+            <path d={ARROW_R}     fill="url(#gs3chR)"/>
+            <path d={ARROW_L}     fill="url(#gs3chL)"/>
+            <path d={ARROW_SHAFT} fill="none" stroke="#FFFFFF" strokeWidth="3" opacity="0.95"/>
+          </svg>
+        </div>
+      </div>
+    );
+  }
+
+  // ─── spinner core ─────────────────────────────────────────────────────────────
+  function SpinnerCore({ size, phase = 'loading' }) {
+    const rings       = useMemo(() => getRings(size), [size]);
+    const isDismissed = phase === 'dismissed';
+
+    const ringRefsArr   = React.useRef([]);
+    const arrowOuterRef = React.useRef(null);
+    const arrowInnerRef = React.useRef(null);
+    const prevPhaseRef  = React.useRef(phase);
+
+    React.useLayoutEffect(() => {
+      const prev = prevPhaseRef.current;
+      prevPhaseRef.current = phase;
+
+      // ── lock: FLIP from current spinning position → true north ──────────────
+      if (phase === 'locked' && prev !== 'locked') {
+        const ringEls = ringRefsArr.current.filter(Boolean);
+        const outerEl = arrowOuterRef.current;
+        const innerEl = arrowInnerRef.current;
+        const all     = [...ringEls, outerEl].filter(Boolean);
+
+        // snapshot current animated transforms before killing animation
+        const snapAll   = all.map(el => getComputedStyle(el).transform);
+        const snapInner = innerEl ? getComputedStyle(innerEl).transform : null;
+
+        // pin at current visual position, kill animation
+        all.forEach((el, i) => {
+          el.style.animation  = 'none';
+          el.style.transition = 'none';
+          el.style.transform  = snapAll[i];
+        });
+        if (innerEl && snapInner) {
+          innerEl.style.animation  = 'none';
+          innerEl.style.transition = 'none';
+          innerEl.style.transform  = snapInner;
+        }
+
+        // double-RAF: now browser sees the pinned transform, animate to target
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            const spring = 'cubic-bezier(0.34, 1.3, 0.64, 1)';
+            // inside-out stagger: inner ring settles first, arrow outer last
+            all.forEach((el, i) => {
+              el.style.transition = `transform 0.8s ${(i * 0.035).toFixed(3)}s ${spring}`;
+              el.style.transform  = 'scale(1) rotate(0deg)';
+            });
+            if (innerEl) {
+              innerEl.style.transition = `transform 0.8s 0s ${spring}`;
+              innerEl.style.transform  = 'rotate(0deg)';
+            }
+          });
+        });
+      }
+
+      // ── loading: clear FLIP inline styles so CSS class animation resumes ──────
+      if (phase === 'loading') {
+        const ringEls = ringRefsArr.current.filter(Boolean);
+        const outerEl = arrowOuterRef.current;
+        const innerEl = arrowInnerRef.current;
+        [...ringEls, outerEl].filter(Boolean).forEach(el => {
+          el.style.animation  = '';
+          el.style.transition = '';
+          el.style.transform  = '';
+        });
+        if (innerEl) {
+          // animation is managed by React JSX (arrow-sync); only clear FLIP state
+          innerEl.style.transition = '';
+          innerEl.style.transform  = '';
+        }
+      }
+    }, [phase]);
+
+    return (
+      <div style={{
+        position:   'relative',
+        width:      0,
+        height:     0,
+        transform:  isDismissed ? 'scale(0)' : undefined,
+        opacity:    isDismissed ? 0 : undefined,
+        transition: isDismissed ? 'transform 0.5s ease-in, opacity 0.5s ease-in' : undefined,
+      }}>
+        {rings.map((ring, i) => (
+          <svg
+            key={ring.id}
+            ref={el => { ringRefsArr.current[i] = el; }}
+            className="global-spinner-triangle"
+            viewBox={TRI_VB}
+            xmlns="http://www.w3.org/2000/svg"
+            style={{
+              position:  'absolute',
+              width:     `${ring.w}px`,
+              height:    `${ring.h}px`,
+              top:       `${ring.top}px`,
+              left:      `${ring.left}px`,
+              '--delay': `${ring.delay}s`,
+              '--speed': SPEED,
+            }}
+          >
+            <path d={TRI} fill="none" stroke={ring.dark}  strokeWidth="14" strokeLinejoin="round" vectorEffect="non-scaling-stroke"/>
+            <path d={TRI} fill="none" stroke={ring.color} strokeWidth="10" strokeLinejoin="round" vectorEffect="non-scaling-stroke"/>
+            <path d={TRI} fill="none" stroke={ring.hl}    strokeWidth="6"  strokeLinejoin="round" opacity="0.90" vectorEffect="non-scaling-stroke"/>
+            <path d={TRI} fill="none" stroke="#FFFFFF"    strokeWidth="2"  strokeLinejoin="round" opacity="0.80" vectorEffect="non-scaling-stroke"/>
+          </svg>
+        ))}
+        <ArrowCenter phase={phase} size={size} outerRef={arrowOuterRef} innerRef={arrowInnerRef} />
+      </div>
+    );
+  }
+
+  // ─── glow particles ───────────────────────────────────────────────────────────
+  function GlowParticles({ phase = 'loading' }) {
+    const particles = useMemo(() => (
+      Array.from({ length: 10 }, (_, i) => ({
+        id:    i,
+        left:  `${(i * 11.3 + 7)  % 100}%`,
+        top:   `${(i * 17.7 + 13) % 100}%`,
+        dur:   3 + (i % 3),
+        dly:   (i * 0.37) % 3,
+        color: RING_COLORS[i % 3].main,
+      }))
+    ), []);
+    const isDismissed = phase === 'dismissed';
+    return (
+      <div style={{
+        position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none',
+        opacity:    isDismissed ? 0 : undefined,
+        transition: isDismissed ? 'opacity 0.5s ease-in' : undefined,
+      }}>
+        {particles.map(p => (
+          <div key={p.id} style={{
+            position: 'absolute', width: '2px', height: '2px', borderRadius: '50%',
+            backgroundColor: p.color, left: p.left, top: p.top,
+            animation: `spinner-glow ${p.dur}s ease-in-out infinite`,
+            animationDelay: `${p.dly}s`,
+          }}/>
+        ))}
+      </div>
+    );
+  }
+
+  // ─── metallic shimmer label ───────────────────────────────────────────────────
+  // Sweep is keyed to same ease/alternate/duration as spinner-magic so the
+  // highlight travels in sync with triangle expansion and contraction.
+  function ShimmerText({ children }) {
+    return (
+      <div style={{
+        fontFamily:          'var(--font-body)',
+        fontSize:            12,
+        fontWeight:          600,
+        letterSpacing:       '0.1em',
+        textTransform:       'uppercase',
+        background:          'linear-gradient(105deg, rgba(100,112,135,0.9) 0%, rgba(168,180,204,0.95) 18%, #e8eef8 30%, #ffffff 40%, #e8f0ff 48%, #ffffff 55%, #e8eef8 65%, rgba(168,180,204,0.95) 78%, rgba(100,112,135,0.9) 100%)',
+        WebkitBackgroundClip:'text',
+        backgroundClip:      'text',
+        color:               'transparent',
+        backgroundSize:      '300% 100%',
+        animation:           `text-shimmer ${2 / SPEED}s ease infinite alternate`,
+      }}>
+        {children}
+      </div>
+    );
+  }
+
+  // ─── card spinner ─────────────────────────────────────────────────────────────
+  function GlobalSpinnerTri({ size = 'md' }) {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+        <GlowParticles />
+        <SpinnerCore size={size} />
+      </div>
+    );
+  }
+
+  // ─── inline variant ───────────────────────────────────────────────────────────
+  // 3 rings (red / gold / blue), rotation only — no scale change.
+  // alternate reverses to CCW; stagger gives a layered ripple.
+  function InlineTriangle() {
+    const rings = useMemo(() => [
+      { id: 0, w:  8, color: RING_COLORS[0].main, dark: RING_COLORS[0].dark, delay: 0    },
+      { id: 1, w: 16, color: RING_COLORS[1].main, dark: RING_COLORS[1].dark, delay: 0.14 },
+      { id: 2, w: 24, color: RING_COLORS[2].main, dark: RING_COLORS[2].dark, delay: 0.28 },
+    ], []);
+    return (
+      <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ position: 'relative', width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ position: 'relative', width: 0, height: 0 }}>
+            {rings.map(ring => {
+              const h = ring.w * TRI_RATIO;
+              return (
+                <svg key={ring.id} viewBox={TRI_VB} xmlns="http://www.w3.org/2000/svg"
+                  style={{
+                    position:        'absolute',
+                    width:           `${ring.w}px`,
+                    height:          `${h}px`,
+                    top:             `${-(h / 2)}px`,
+                    left:            `${-(ring.w / 2)}px`,
+                    overflow:        'visible',
+                    transformOrigin: 'center',
+                    willChange:      'transform',
+                    animation:       `inline-rotate ${2 / INLINE_SPD}s ease infinite alternate`,
+                    animationDelay:  `${ring.delay}s`,
+                  }}
+                >
+                  <path d={TRI} fill="none" stroke={ring.dark}  strokeWidth="5" strokeLinejoin="round" opacity="0.75" vectorEffect="non-scaling-stroke"/>
+                  <path d={TRI} fill="none" stroke={ring.color} strokeWidth="3" strokeLinejoin="round" vectorEffect="non-scaling-stroke"/>
+                  <path d={TRI} fill="none" stroke="#FFFFFF"    strokeWidth="1" strokeLinejoin="round" opacity="0.55" vectorEffect="non-scaling-stroke"/>
+                </svg>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ─── fullscreen section ───────────────────────────────────────────────────────
+  // Scales xl spinner so outermost ring at peak scale(2) covers the viewport diagonal.
+  // Cycle: loading (4.2s) → locked / true north (2s) → dismissed → repeat.
+  function FullscreenSection() {
+    const [phase,   setPhase]   = React.useState('loading');
+    const [scale,   setScale]   = React.useState(1);
+    const [visible, setVisible] = React.useState(false);
+
+    React.useLayoutEffect(() => {
+      const outermost = INNER_W.xl + (RING_COUNTS.xl - 1) * RING_GAP; // 680
+      const peakW     = outermost * 2;                                  // 1360 at scale(2)
+      const update    = () => {
+        const diag = Math.sqrt(window.innerWidth ** 2 + window.innerHeight ** 2);
+        setScale(diag / peakW);
+      };
+      update();
+      window.addEventListener('resize', update);
+      return () => window.removeEventListener('resize', update);
+    }, []);
+
+    React.useEffect(() => {
+      const t = setTimeout(() => setVisible(true), 50);
+      return () => clearTimeout(t);
+    }, []);
+
+    React.useEffect(() => {
+      let t;
+      if (phase === 'loading')   t = setTimeout(() => setPhase('locked'),    4200);
+      if (phase === 'locked')    t = setTimeout(() => setPhase('dismissed'),  2000);
+      if (phase === 'dismissed') t = setTimeout(() => {
+        setVisible(false);
+        setTimeout(() => { setPhase('loading'); setTimeout(() => setVisible(true), 50); }, 400);
+      }, 600);
+      return () => clearTimeout(t);
+    }, [phase]);
+
+    const isLocked = phase === 'locked';
+    const label    = phase === 'loading' ? 'loading…' : isLocked ? 'LOCKED · TRUE NORTH' : '';
+
+    return (
+      <div style={{
+        position: 'absolute', inset: 0,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        overflow: 'hidden',
+        opacity:    visible ? 1 : 0,
+        transition: 'opacity 0.4s ease',
+      }}>
+        <GlowParticles phase={phase} />
+        <div style={{ transform: `scale(${scale})`, transformOrigin: '0px 0px' }}>
+          <SpinnerCore size="xl" phase={phase} />
+        </div>
+        <div style={{
+          position:      'absolute',
+          bottom:        32,
+          color:         isLocked ? 'rgba(255,255,255,0.5)' : 'rgba(255,255,255,0.28)',
+          fontSize:      11,
+          fontWeight:    600,
+          fontFamily:    'var(--font-body)',
+          letterSpacing: '0.18em',
+          textTransform: 'uppercase',
+          opacity:       phase === 'dismissed' ? 0 : 1,
+          transition:    'opacity 0.3s ease, color 0.5s ease',
+        }}>
+          {label}
+        </div>
+      </div>
+    );
+  }
+
+  const SIZES = [
+    { key: 'sm', label: 'sm', sub: '3 rings',  minH: 240 },
+    { key: 'md', label: 'md', sub: '5 rings',  minH: 400 },
+    { key: 'lg', label: 'lg', sub: '7 rings',  minH: 560 },
+    { key: 'xl', label: 'xl', sub: '9 rings',  minH: 720 },
+  ];
+
+  function App() {
+    return (
+      <React.Fragment>
+
+        <div className="section">
+          <div className="section-label">Size variants</div>
+          <div className="card-grid">
+            {SIZES.map(({ key, label, sub, minH }) => (
+              <div key={key} className="spinner-card">
+                <div style={{ minHeight: minH, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <GlobalSpinnerTri size={key} />
+                </div>
+                <div className="card-size-tag">size="{label}"</div>
+                <div className="card-sub">{sub}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="section">
+          <div className="section-label">With text prop</div>
+          <div className="card-grid">
+            <div className="spinner-card" style={{ flex: '0 0 auto', minWidth: 260 }}>
+              <div style={{ flex: 1, width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 360 }}>
+                <GlobalSpinnerTri size="md" />
+              </div>
+              <ShimmerText>Loading your trip…</ShimmerText>
+              <div className="card-size-tag">text="Loading your trip…"</div>
+            </div>
+            <div className="spinner-card" style={{ flex: '0 0 auto', minWidth: 260 }}>
+              <div style={{ flex: 1, width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 360 }}>
+                <GlobalSpinnerTri size="md" />
+              </div>
+              <ShimmerText>Finding experiences…</ShimmerText>
+              <div className="card-size-tag">text="Finding experiences…"</div>
+            </div>
+            <div className="spinner-card" style={{ flex: '0 0 auto', minWidth: 260 }}>
+              <div style={{ flex: 1, width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 480 }}>
+                <GlobalSpinnerTri size="lg" />
+              </div>
+              <ShimmerText>ACTZ AI is thinking…</ShimmerText>
+              <div className="card-size-tag">size="lg" · AI concierge</div>
+            </div>
+          </div>
+        </div>
+
+        <div className="section">
+          <div className="section-label">Inline variant — button &amp; card states</div>
+          <div className="inline-row">
+            <div className="inline-demo-btn"><InlineTriangle /><span>Booking…</span></div>
+            <div className="inline-demo-btn"><InlineTriangle /><span>Saving itinerary</span></div>
+            <div className="inline-demo-btn"><InlineTriangle /><span>Connecting</span></div>
+            <div className="inline-demo-btn" style={{ background: 'rgba(44,108,242,0.1)', borderColor: 'rgba(44,108,242,0.4)', color: '#7aabff' }}>
+              <InlineTriangle /><span>Processing payment</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="section" style={{ maxWidth: 'none', marginBottom: 0 }}>
+          <div className="section-label" style={{ maxWidth: 1320, margin: '0 auto 24px', paddingBottom: 12 }}>
+            fullScreen mode — loading → true north → dismiss · auto-cycle
+          </div>
+        </div>
+        <div className="fullscreen-breakout">
+          <div className="fullscreen-preview">
+            <FullscreenSection />
+          </div>
+        </div>
+
+      </React.Fragment>
+    );
+  }
+
+  ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
