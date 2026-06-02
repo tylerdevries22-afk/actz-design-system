@@ -20,13 +20,21 @@ This reads:
 …and writes `one-pagers/georgetown-pitch-deck.html` (with a built-in ⤓ PPTX download button
 that points at the sibling `one-pagers/ACTZ_Georgetown_Pitch.pptx`).
 
-## What's in here
+## What's in here (full Georgetown-pitch archive)
 
 | Path | What |
 |---|---|
-| `build-georgetown-deck.mjs` | the generator (path-adjusted from the original build workspace) |
-| `clips/` | real captures from actz.org — `home-hero`, `hub-landing`, `ai-trip-builder`, `rails-scroll` (each ≤8 s, mp4+webm+poster) |
+| `build-georgetown-deck.mjs` | the generator (uses the design system's own CSS/fonts) |
 | `ACTZ_logo.png` | brand logo used on cover + close |
+| `clips/` | **deck-ready videos** — `home-hero`, `hub-landing`, `ai-trip-builder`, `rails-scroll`, each `.mp4` + `.webm` + `.poster.jpg` (≤8 s, what the deck embeds) |
+| `raw/` | **original screen recordings** (`*.webm`) + full-page stills (`*.png`) straight from the capture, before ffmpeg post-processing |
+| `docs/` | pitch narrative + specs + run report — `PITCH_SCRIPT.md`, `DECK_BUILD_PROMPT.md`, `PRD.md`, `DECISIONS.md`, `REPORT.md` |
+| `reference/` | `REFERENCE_ACTZ_Georgetown_Pitch.html` (the premium visual target) + `ACTZ_Georgetown_Pitch.reference-replica.html` (the earlier slot-replica build) |
+
+Also alongside in the repo:
+- `../../one-pagers/georgetown-pitch-deck.html` — the live, self-contained deck (videos base64-inlined)
+- `../../one-pagers/ACTZ_Georgetown_Pitch.pptx` — PowerPoint export (playable clips)
+- `../../one-pagers/georgetown.html` — the standalone Georgetown one-pager
 
 ## Content notes (honesty)
 
