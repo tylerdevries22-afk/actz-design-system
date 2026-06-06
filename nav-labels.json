@@ -44,6 +44,7 @@
     "preview/brand-partners.html": { "label": "Brand · Partner strip",     "section": "Brand", "status": "orange" },
     "one-pagers/georgetown.html":  { "label": "Georgetown · One-pager",    "section": "Brand", "status": "blue"   },
     "one-pagers/georgetown-pitch-deck.html": { "label": "Georgetown · Founding-Partner Deck", "section": "Brand", "status": "blue", "sub": "10-slide pitch · live ACTZ captures + real provider & town dashboards · PPTX download" },
+    "one-pagers/georgetown-council-deck.html": { "label": "Georgetown · City Council Deck", "section": "Brand", "status": "orange", "sub": "12-slide story-driven pitch for City Council · real ACTZ home screen + iOS notification stack · live components" },
     "one-pagers/onboarding-audit.html": { "label": "Onboarding · Research audit", "section": "Brand", "status": "blue" }
   }
 }
