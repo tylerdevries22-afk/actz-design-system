@@ -647,7 +647,7 @@ h2.big{font:800 clamp(2rem,3.6vw,3.5rem)/1.05 var(--font-display);letter-spacing
 .foot{position:absolute;left:clamp(28px,6vw,104px);bottom:30px;z-index:3;font:600 .72rem/1 var(--font-body);letter-spacing:.14em;text-transform:uppercase;color:hsl(var(--muted-foreground))}
 .idx{position:absolute;right:clamp(28px,6vw,104px);bottom:30px;z-index:3;font-family:var(--font-brand);font-size:.8rem;color:hsl(var(--foreground)/.5)}
 /* video frame */
-.vid{position:relative;margin:0;border-radius:var(--r-m);overflow:hidden;background:#060d18;
+.vid{position:relative;margin:0;max-width:100%;border-radius:var(--r-m);overflow:hidden;background:#060d18;
   border:1px solid hsl(var(--foreground)/.1);box-shadow:var(--shadow-card),0 0 0 1px rgba(255,255,255,.04),0 0 60px -20px hsl(var(--co-blue)/.5)}
 .vid video{display:block;width:100%;height:100%;object-fit:cover}
 .vid.fill{position:absolute;inset:0;border-radius:0;border:0;box-shadow:none}
@@ -671,6 +671,13 @@ h2.big{font:800 clamp(2rem,3.6vw,3.5rem)/1.05 var(--font-display);letter-spacing
 .stat{padding:1.2rem 1.4rem;border-radius:var(--r-m);background:hsl(215 50% 11%/.6);border:1px solid hsl(var(--co-stroke));margin-bottom:14px}
 .stat b{display:block;font:800 2.4rem/1 var(--font-display);color:hsl(var(--co-gold));letter-spacing:-.02em}
 .stat span{display:block;margin-top:.4rem;font-size:.95rem;color:hsl(var(--muted-foreground));line-height:1.4}
+/* slide 3 — inline Maya avatar + bottom-pinned sources */
+#s3 .inner.two{align-items:stretch}
+#s3 .inner.two>div:first-child{display:flex;flex-direction:column}
+#s3 .lead .mava{width:1.6em;height:1.6em;border-radius:50%;object-fit:cover;object-position:center 16%;vertical-align:-.45em;margin-right:.45em;box-shadow:0 0 0 2px hsl(var(--co-blue)/.55)}
+#s3 .src{margin-top:auto;padding-top:1rem;border-top:1px solid hsl(var(--co-stroke));max-width:56ch}
+#s3 .src .lbl{display:block;font:800 .58rem/1 var(--font-body);letter-spacing:.15em;text-transform:uppercase;color:hsl(var(--muted-foreground)/.6);margin-bottom:.45rem}
+#s3 .src p{margin:0;font:400 .64rem/1.5 var(--font-body);color:hsl(var(--muted-foreground)/.6)}
 /* logo */
 .logo{height:46px;width:auto;display:block;filter:drop-shadow(0 4px 12px rgba(0,0,0,.5))}
 .cover-brand{display:flex;align-items:center;gap:18px}
@@ -833,6 +840,7 @@ h1.big,h2.big{text-wrap:balance}
 .trk-card .tl{margin-top:.55rem;font:400 .9rem/1.5 var(--font-body);color:hsl(var(--muted-foreground))}
 
 @media(max-width:900px){.two,.cols,.askgrid,.gcards,.grid2,.mktrings,.trk{grid-template-columns:1fr}.tiers,.grid4{grid-template-columns:1fr 1fr}.clipgrid{grid-template-columns:1fr}}
+@media(max-width:480px){.grid4{grid-template-columns:1fr}}
 
 /* ============================================================
    COUNCIL DECK — real ACTZ homepage components + iOS notifications
@@ -990,6 +998,7 @@ h1.big,h2.big{text-wrap:balance}
 .tcard .tsec.off{color:hsl(var(--muted-foreground)/.5)}
 .tcard .tfrow{display:grid;grid-template-columns:17px 1fr 104px;align-items:center;column-gap:.5rem;min-height:1.25rem;font:400 .82rem/1.15 var(--font-body)}
 .tcard .tfrow .ft{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media(max-width:480px){.tcard .tfrow{align-items:start}.tcard .tfrow .ft{white-space:normal;overflow:visible}}
 .tcard .tfrow svg{width:16px;height:16px}
 .tcard .tfrow.new{color:#fff;font-weight:600}
 .tcard.tt1 .tfrow.new svg{color:hsl(var(--co-blue-light))}
@@ -1090,11 +1099,14 @@ h1.big,h2.big{text-wrap:balance}
 .pcard.pv .ppts b{color:hsl(var(--co-blue-light)/.92)}
 .pcard.pl .ppts b{color:hsl(var(--co-gold)/.92)}
 .pcard.pe .ppts b{color:hsl(var(--co-red-light)/.92)}
+/* slide 2 — Town card rounded-square avatar */
+.pcard .pav.sq{border-radius:20px}
+.pcard .pav.sq img{object-position:center 50%}
 @media(max-width:760px){.pcards{grid-template-columns:1fr}}
 /* ===== added slide A: Real problems -> effective solutions ===== */
 .rps-title{font:800 clamp(1.9rem,3.3vw,3rem)/1.05 var(--font-display);text-align:center;letter-spacing:-.015em;color:hsl(var(--foreground)/.85);margin-bottom:clamp(1rem,2.6vh,1.9rem)}
 .rps-title .pw{color:hsl(var(--co-red-light))}
-.rps-title .sw{color:hsl(var(--co-blue-light))}
+.rps-title .sw{color:hsl(var(--co-gold))}
 .rps-title .dash{color:hsl(var(--foreground)/.4);font-weight:400}
 .rps{display:grid;grid-template-columns:1.02fr 1fr;gap:clamp(26px,4vw,62px);align-items:stretch}
 .rps-problems{display:flex;flex-direction:column;gap:clamp(12px,1.8vh,18px)}
@@ -1108,54 +1120,54 @@ h1.big,h2.big{text-wrap:balance}
 .fw-os .ic{display:flex;gap:1.5rem;color:hsl(var(--foreground)/.88)}
 .fw-os .ic svg{width:21px;height:21px}
 .fw-os .lb{font:700 1.02rem/1 var(--font-body);color:#fff}
-.fwd{position:relative;width:460px;max-width:100%;height:418px;margin-top:.2rem}
+.fwd{position:relative;width:480px;max-width:100%;height:460px;margin-top:.2rem}
 .fwd .lines{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
-.fw-n{position:absolute;width:92px;height:92px;border-radius:50%;display:grid;place-items:center;z-index:2}
+.fw-n{position:absolute;width:88px;height:88px;border-radius:50%;display:grid;place-items:center;overflow:visible;z-index:2}
 .fw-n svg{width:38px;height:38px;color:#fff}
-.fw-n.b{background:radial-gradient(circle at 34% 28%,hsl(210 92% 64%),hsl(220 88% 40%));box-shadow:0 0 0 4px #0a1018,0 0 30px -2px hsl(var(--co-blue)/.75),0 16px 40px -14px #000}
-.fw-n.g{background:radial-gradient(circle at 34% 28%,hsl(47 96% 66%),hsl(40 92% 46%));box-shadow:0 0 0 4px #0a1018,0 0 30px -2px hsl(var(--co-gold)/.7),0 16px 40px -14px #000}
-.fw-n.r{background:radial-gradient(circle at 34% 28%,hsl(2 88% 62%),hsl(356 82% 44%));box-shadow:0 0 0 4px #0a1018,0 0 30px -2px hsl(var(--co-red)/.75),0 16px 40px -14px #000}
-.fw-c{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:58px;height:58px;border-radius:15px;display:grid;place-items:center;background:#05070d;box-shadow:0 0 0 1px hsl(0 0% 100%/.14),0 0 28px -4px hsl(var(--co-gold)/.55);z-index:3}
+.fw-n img{width:100%;height:100%;border-radius:50%;object-fit:cover;object-position:center 16%;display:block}
+.fw-n.sq{border-radius:20px}
+.fw-n.sq img{border-radius:16px;object-position:center 48%}
+.fw-n.b{background:radial-gradient(circle at 34% 28%,hsl(210 92% 64%),hsl(220 88% 40%));box-shadow:0 0 0 3px hsl(var(--co-blue)),0 0 0 6px #0a1018,0 0 28px -2px hsl(var(--co-blue)/.65),0 16px 40px -14px #000}
+.fw-n.g{background:radial-gradient(circle at 34% 28%,hsl(47 96% 66%),hsl(40 92% 46%));box-shadow:0 0 0 3px hsl(var(--co-gold)),0 0 0 6px #0a1018,0 0 28px -2px hsl(var(--co-gold)/.6),0 16px 40px -14px #000}
+.fw-n.r{background:radial-gradient(circle at 34% 28%,hsl(2 88% 62%),hsl(356 82% 44%));box-shadow:0 0 0 3px hsl(var(--co-red)),0 0 0 6px #0a1018,0 0 28px -2px hsl(var(--co-red)/.65),0 16px 40px -14px #000}
+.fw-c{position:absolute;left:50%;top:256px;transform:translate(-50%,-50%);width:100px;height:54px;border-radius:14px;display:grid;place-items:center;background:#05070d;box-shadow:0 0 0 1px hsl(0 0% 100%/.14),0 0 30px -4px hsl(var(--co-gold)/.5);z-index:3}
 .fw-c svg{width:30px;height:30px;color:hsl(var(--co-gold))}
+.fw-c img{width:100%;height:100%;object-fit:contain;padding:10px 13px;box-sizing:border-box;display:block}
 .fw-cap{position:absolute;left:50%;transform:translateX(-50%);top:calc(50% + 40px);font:600 .78rem/1 var(--font-body);color:hsl(var(--foreground)/.72);white-space:nowrap;z-index:3}
-.fw-lab{position:absolute;font:700 .92rem/1.1 var(--font-body);color:#fff;white-space:nowrap;z-index:2}
-/* ===== added slide B: Value Proposition (full-bleed columns + slim black strip) ===== */
-#s8b{padding:0}
-#s8b .vp-grid{align-self:stretch;width:100%;min-height:100vh;display:grid;grid-template-columns:.55fr 1fr 1fr 1fr}
-.vp-side{position:relative;display:flex;flex-direction:column;justify-content:flex-end;padding:0 1rem clamp(2.4rem,8vh,4.8rem) clamp(1.5rem,2.6vw,3.2rem);background:linear-gradient(180deg,hsl(216 54% 6%),hsl(219 56% 4%));border-right:1px solid hsl(0 0% 100%/.06)}
-.vp-side .vp-eye{font:700 .66rem/1.3 var(--font-body);letter-spacing:.2em;text-transform:uppercase;color:hsl(var(--co-gold));margin-bottom:.8rem}
-.vp-side .vp-title{font:800 clamp(1.8rem,2.5vw,3rem)/1.04 var(--font-display);letter-spacing:-.02em;color:hsl(var(--foreground)/.92)}
-.vp-col{position:relative;display:flex;flex-direction:column;padding:clamp(2.2rem,7vh,3.8rem) clamp(1rem,1.5vw,1.8rem) clamp(2rem,5vh,3rem)}
-.vp-col::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none}
-.vp-blue::before{background:linear-gradient(168deg,hsl(214 70% 25%/.62),hsl(216 54% 6%) 64%)}
-.vp-gold::before{background:linear-gradient(168deg,hsl(43 72% 27%/.56),hsl(216 54% 6%) 64%)}
-.vp-red::before{background:linear-gradient(168deg,hsl(357 62% 27%/.57),hsl(216 54% 6%) 64%)}
-.vp-col+.vp-col::after{content:"";position:absolute;left:0;top:0;bottom:0;width:1px;background:hsl(0 0% 100%/.07);z-index:1}
-.vp-head{position:relative;z-index:1;font:800 clamp(1.3rem,1.85vw,1.85rem)/1.05 var(--font-display);color:#fff;margin-bottom:clamp(1.1rem,3vh,1.85rem)}
-.vp-head .to{display:block;font:700 .74rem/1 var(--font-body);color:hsl(var(--foreground)/.58);text-transform:uppercase;letter-spacing:.12em;margin-bottom:.32rem}
-.vp-tiles{position:relative;z-index:1;display:grid;grid-template-columns:1fr 1fr;gap:10px;align-content:start}
-.vp-tiles span{display:flex;align-items:center;justify-content:center;text-align:center;min-height:clamp(72px,9.4vh,92px);padding:.65rem .55rem;border-radius:13px;background:linear-gradient(165deg,hsl(215 46% 12%/.82),hsl(216 50% 7%/.6));border:1px solid hsl(var(--co-stroke));box-shadow:var(--shadow-inset-hi);font:500 clamp(.8rem,.98vw,.92rem)/1.22 var(--font-body);color:hsl(var(--foreground)/.95)}
-@media(max-width:900px){#s8b .vp-grid{grid-template-columns:1fr}}
-/* ===== slide 5: social-loop funnel (dynamic) ===== */
+.fw-lab{position:absolute;transform:translate(-50%,-50%);font:800 .74rem/1.1 var(--font-body);letter-spacing:.09em;text-transform:uppercase;color:#fff;white-space:nowrap;text-shadow:0 1px 7px #05070d,0 0 4px #05070d;z-index:4}
+.fw-tr{position:absolute;transform:translate(-50%,-50%);border-radius:50%;display:grid;place-items:center;z-index:1}
+.fw-tr img{width:100%;height:100%;border-radius:50%;object-fit:cover;object-position:center 16%;display:block}
+.fw-tr svg{width:54%;height:54%}
+.fw-tr.b{box-shadow:0 0 0 2px hsl(var(--co-blue)),0 0 11px -2px hsl(var(--co-blue)/.6)}
+.fw-tr.g{background:hsl(216 52% 8%);color:hsl(var(--co-gold));box-shadow:0 0 0 2px hsl(var(--co-gold)),0 0 11px -2px hsl(var(--co-gold)/.55)}
+.fw-tr.r{background:hsl(216 52% 8%);color:hsl(var(--co-red-light));box-shadow:0 0 0 2px hsl(var(--co-red)),0 0 11px -2px hsl(var(--co-red)/.6)}
+.fw-tr.sq{border-radius:7px}
+.fw-tr.sq img{border-radius:7px}
+/* ===== slide s3b flywheel — responsive ===== */
+@media(max-width:900px){.rps{grid-template-columns:1fr;gap:clamp(1rem,3vh,1.6rem)}.rps-problems,.fw{min-width:0}.rps-problems .ppc{flex:none}.fw{align-items:center}}
+@media(max-width:540px){.fwd{max-width:none;zoom:.82}}
+@media(max-width:400px){.fwd{zoom:.7}}
+/* ===== slide 5: social-loop funnel (restored + responsive) ===== */
 #s5 .devtwo{grid-template-columns:1.55fr 1fr;align-items:center}
-.slf{display:flex;align-items:center;gap:clamp(6px,.8vw,14px)}
+.slf{display:flex;align-items:center;gap:clamp(5px,.7vw,14px);flex-wrap:nowrap}
 .slf-stage{display:flex;flex-direction:column;align-items:center;gap:.45rem;flex:none}
 .slf-s2{flex:1 1 auto;min-width:0}
-.lf-av.big{width:60px;height:60px;font-size:1.05rem;box-shadow:0 0 0 3px hsl(var(--co-blue)/.5),0 0 26px -4px hsl(var(--co-blue)/.65)}
-.slf-cnt{font:800 1.9rem/1 var(--font-display);color:hsl(var(--co-gold))}
+.lf-av.big{width:clamp(48px,4vw,60px);height:clamp(48px,4vw,60px);font-size:1.05rem;box-shadow:0 0 0 3px hsl(var(--co-blue)/.5),0 0 26px -4px hsl(var(--co-blue)/.65)}
+.slf-cnt{font:800 clamp(1.5rem,2.4vw,1.9rem)/1 var(--font-display);color:hsl(var(--co-gold))}
 .slf-cap{font:600 .72rem/1.2 var(--font-body);color:hsl(var(--muted-foreground));text-align:center}
 .slf-cap .num{color:hsl(var(--co-gold));font-weight:800}
 .slf-arr{display:flex;flex-direction:column;align-items:center;gap:3px;flex:none;color:hsl(var(--co-gold)/.9)}
-.slf-arr svg{width:26px;height:26px}
-.slf-arr i{font:600 .58rem/1 var(--font-body);font-style:normal;color:hsl(var(--muted-foreground));white-space:nowrap;text-transform:uppercase;letter-spacing:.04em}
-.slf-people{display:flex;flex-direction:column;gap:7px;width:100%}
-.slf-row{display:flex;align-items:center;gap:.55rem;padding:.42rem .6rem;border-radius:12px;background:hsl(215 48% 11%/.72);border:1px solid hsl(var(--co-stroke));box-shadow:var(--shadow-inset-hi)}
-.slf-row b{font:700 .82rem/1 var(--font-body);color:#fff;white-space:nowrap}
+.slf-arr svg{width:26px;height:26px;flex:none}
+.slf-arr i{font:600 .56rem/1 var(--font-body);font-style:normal;color:hsl(var(--muted-foreground));white-space:nowrap;text-transform:uppercase;letter-spacing:.04em}
+.slf-people{display:flex;flex-direction:column;gap:clamp(5px,.9vh,8px);width:100%}
+.slf-row{display:flex;align-items:center;gap:.55rem;padding:.42rem .6rem;border-radius:12px;background:hsl(215 48% 11%/.72);border:1px solid hsl(var(--co-stroke));box-shadow:var(--shadow-inset-hi);min-width:0}
+.slf-row .lf-av{width:26px;height:26px}
+.slf-row b{font:700 .82rem/1 var(--font-body);color:#fff;white-space:nowrap;flex:none}
 .slf-go{color:hsl(var(--co-gold));font-weight:800;flex:none}
-.slf-bk{margin-left:auto;font:500 .78rem/1.2 var(--font-body);color:hsl(var(--foreground)/.82);text-align:right;white-space:nowrap}
-.slf-moon{width:50px;height:50px;border-radius:15px;display:grid;place-items:center;background:hsl(var(--co-gold)/.12);border:1px solid hsl(var(--co-gold)/.4);color:hsl(var(--co-gold))}
+.slf-bk{margin-left:auto;font:500 .78rem/1.2 var(--font-body);color:hsl(var(--foreground)/.82);text-align:right;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.slf-moon{width:clamp(42px,3.4vw,50px);height:clamp(42px,3.4vw,50px);border-radius:15px;display:grid;place-items:center;background:hsl(var(--co-gold)/.12);border:1px solid hsl(var(--co-gold)/.4);color:hsl(var(--co-gold))}
 .slf-moon svg{width:26px;height:26px}
-.slf-ribbon{margin-top:clamp(1.2rem,3vh,1.9rem);display:flex;align-items:center;gap:.7rem;padding:.85rem 1.4rem;border-radius:var(--r-pill);background:linear-gradient(100deg,hsl(var(--co-gold)/.15),hsl(215 50% 10%/.45));border:1px solid hsl(var(--co-gold)/.32);font:500 .94rem/1.3 var(--font-body);color:hsl(var(--foreground)/.92)}
+.slf-ribbon{margin-top:clamp(1.1rem,2.6vh,1.8rem);display:flex;align-items:center;gap:.7rem;padding:.8rem 1.3rem;border-radius:var(--r-pill);background:linear-gradient(100deg,hsl(var(--co-gold)/.15),hsl(215 50% 10%/.45));border:1px solid hsl(var(--co-gold)/.32);font:500 .92rem/1.3 var(--font-body);color:hsl(var(--foreground)/.92)}
 .slf-ribbon b{color:hsl(var(--co-gold));font-weight:800}
 .slf-rib-ico{flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:hsl(var(--co-gold)/.18);color:hsl(var(--co-gold))}
 .slf-rib-ico svg{width:16px;height:16px}
@@ -1163,7 +1175,54 @@ h1.big,h2.big{text-wrap:balance}
 #s5.in .slf-stage,#s5.in .slf-arr,#s5.in .slf-row,#s5.in .slf-ribbon{opacity:1;transform:none}
 #s5 .slf-arr svg path{stroke-dasharray:42;stroke-dashoffset:42;transition:stroke-dashoffset .6s ease var(--d,0s)}
 #s5.in .slf-arr svg path{stroke-dashoffset:0}
-@media(max-width:900px){#s5 .devtwo{grid-template-columns:1fr}.slf{flex-direction:column}.slf-s2{width:100%}}
+@media(prefers-reduced-motion:reduce){#s5 .slf-stage,#s5 .slf-arr,#s5 .slf-row,#s5 .slf-ribbon{opacity:1;transform:none}#s5 .slf-arr svg path{stroke-dashoffset:0}}
+@media(max-width:960px){#s5 .devtwo{grid-template-columns:1fr}.slf{flex-direction:column;align-items:stretch}.slf-s2{width:100%}.slf-arr{flex-direction:row;justify-content:center;transform:rotate(90deg)}}
+/* ===== added slide B: Value Proposition (icon-tile refresh + avatars + scroll-in) ===== */
+#s8b{padding:0}
+#s8b .vp-grid{align-self:stretch;width:100%;min-height:100vh;display:grid;grid-template-columns:.55fr 1fr 1fr 1fr;grid-template-rows:auto 1fr}
+.vp-bar{grid-column:1 / -1;grid-row:1;display:flex;flex-direction:column;justify-content:center;gap:.55rem;padding:clamp(1.1rem,2.6vh,1.8rem) clamp(1.5rem,2.6vw,3.2rem);background:hsl(216 54% 6%);border-bottom:1px solid hsl(0 0% 100%/.08)}
+.vp-bar .vp-eye{font:700 .66rem/1.3 var(--font-body);letter-spacing:.2em;text-transform:uppercase;color:hsl(var(--co-gold))}
+.vp-bar .vp-title{font:800 clamp(1.5rem,2.3vw,2.6rem)/1.04 var(--font-display);letter-spacing:-.02em;color:hsl(var(--foreground)/.95);max-width:20ch}
+#s8b .vp-side{grid-row:2;grid-column:1}
+#s8b .vp-col{grid-row:2}
+.vp-side{position:relative;display:flex;flex-direction:column;justify-content:flex-start;padding:clamp(1.5rem,3.6vh,2.5rem) 1rem clamp(1.5rem,3.6vh,2.5rem) clamp(1.5rem,2.6vw,3.2rem);background:linear-gradient(180deg,hsl(216 54% 6%),hsl(219 56% 4%));border-right:1px solid hsl(0 0% 100%/.06)}
+.vp-side .vp-eye{font:700 .66rem/1.3 var(--font-body);letter-spacing:.2em;text-transform:uppercase;color:hsl(var(--co-gold));margin-bottom:.8rem}
+.vp-side .vp-title{font:800 clamp(1.8rem,2.5vw,3rem)/1.04 var(--font-display);letter-spacing:-.02em;color:hsl(var(--foreground)/.92)}
+.vp-col{position:relative;display:flex;flex-direction:column;justify-content:flex-start;padding:clamp(1.5rem,3.6vh,2.5rem) clamp(.9rem,1.4vw,1.6rem)}
+.vp-col::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none}
+.vp-blue::before{background:linear-gradient(168deg,hsl(214 70% 25%/.6),hsl(216 54% 6%) 66%)}
+.vp-gold::before{background:linear-gradient(168deg,hsl(43 72% 27%/.54),hsl(216 54% 6%) 66%)}
+.vp-red::before{background:linear-gradient(168deg,hsl(357 62% 27%/.55),hsl(216 54% 6%) 66%)}
+.vp-col+.vp-col::after{content:"";position:absolute;left:0;top:0;bottom:0;width:1px;background:hsl(0 0% 100%/.07);z-index:1}
+.vp-head{position:relative;z-index:1;display:flex;align-items:center;gap:.7rem;flex:none;height:48px;margin-bottom:clamp(.9rem,2.2vh,1.4rem)}
+.vp-ava{width:46px;height:46px;border-radius:50%;flex:none;overflow:hidden;background:hsl(215 40% 18%)}
+.vp-ava img{width:100%;height:100%;object-fit:cover;object-position:center 22%}
+.vp-htx{display:flex;flex-direction:column}
+.vp-htx .to{font:700 .66rem/1.2 var(--font-body);text-transform:uppercase;letter-spacing:.12em;color:hsl(var(--foreground)/.58)}
+.vp-htx .nm{font:800 clamp(1.1rem,1.55vw,1.5rem)/1.05 var(--font-display);color:#fff}
+.vp-tiles{position:relative;z-index:1;flex:1;display:grid;grid-template-rows:repeat(6,1fr);gap:clamp(7px,1.1vh,11px)}
+.vp-tile{display:flex;flex-direction:row;align-items:center;gap:.7rem;padding:.5rem .8rem;border-radius:13px;background:linear-gradient(165deg,hsl(216 44% 11%/.82),hsl(216 50% 7%/.6));border:1px solid hsl(var(--co-stroke));box-shadow:var(--shadow-inset-hi);transition:opacity .55s var(--ease-out-expo) var(--d,0s),transform .55s var(--ease-out-expo) var(--d,0s),border-color .25s,box-shadow .25s}
+.vp-ic{width:34px;height:34px;flex:none;border-radius:10px;display:grid;place-items:center}
+.vp-ic svg{width:19px;height:19px}
+.vp-tl{font:600 .84rem/1.25 var(--font-body);color:hsl(var(--foreground)/.95)}
+.vp-rail-head{flex:none;height:48px;margin-bottom:clamp(.9rem,2.2vh,1.4rem)}
+.vp-rail{flex:1;display:grid;grid-template-rows:repeat(6,1fr);gap:clamp(7px,1.1vh,11px)}
+.vp-rl{display:flex;align-items:center;gap:.5rem;font:800 .62rem/1.15 var(--font-body);letter-spacing:.09em;text-transform:uppercase;color:hsl(var(--foreground)/.52)}
+.vp-rl .n{font:800 .6rem/1 var(--font-body);color:hsl(var(--co-gold));opacity:.85;flex:none}
+.vp-blue .vp-ava{box-shadow:0 0 0 2px hsl(var(--co-blue)/.6),0 0 22px -4px hsl(var(--co-blue)/.5)}
+.vp-gold .vp-ava{box-shadow:0 0 0 2px hsl(var(--co-gold)/.6),0 0 22px -4px hsl(var(--co-gold)/.5)}
+.vp-red .vp-ava{box-shadow:0 0 0 2px hsl(var(--co-red)/.6),0 0 22px -4px hsl(var(--co-red)/.5)}
+.vp-blue .vp-ic{background:hsl(var(--co-blue)/.16);color:hsl(var(--co-blue-light));border:1px solid hsl(var(--co-blue)/.32)}
+.vp-gold .vp-ic{background:hsl(var(--co-gold)/.15);color:hsl(var(--co-gold));border:1px solid hsl(var(--co-gold)/.34)}
+.vp-red .vp-ic{background:hsl(var(--co-red)/.16);color:hsl(var(--co-red-light));border:1px solid hsl(var(--co-red)/.32)}
+.vp-blue .vp-tile:hover{border-color:hsl(var(--co-blue)/.55);box-shadow:var(--shadow-inset-hi),0 16px 36px -18px hsl(var(--co-blue)/.7)}
+.vp-gold .vp-tile:hover{border-color:hsl(var(--co-gold)/.55);box-shadow:var(--shadow-inset-hi),0 16px 36px -18px hsl(var(--co-gold)/.65)}
+.vp-red .vp-tile:hover{border-color:hsl(var(--co-red)/.55);box-shadow:var(--shadow-inset-hi),0 16px 36px -18px hsl(var(--co-red)/.7)}
+#s8b .vp-head,#s8b .vp-tile{opacity:0;transform:translateY(16px)}
+#s8b.in .vp-head,#s8b.in .vp-tile{opacity:1;transform:none}
+.vp-head{transition:opacity .55s var(--ease-out-expo) var(--d,0s),transform .55s var(--ease-out-expo) var(--d,0s)}
+@media(prefers-reduced-motion:reduce){#s8b .vp-head,#s8b .vp-tile{opacity:1;transform:none;transition:border-color .2s,box-shadow .2s}}
+@media(max-width:900px){#s8b .vp-grid{grid-template-columns:1fr;grid-template-rows:none}.vp-bar{grid-column:auto;grid-row:auto}#s8b .vp-side{display:none}#s8b .vp-col{grid-row:auto}}
 </style>
 </head>
 <body>
@@ -1189,7 +1248,7 @@ h1.big,h2.big{text-wrap:balance}
   <div class="glow"></div><div class="grain"></div>
   <div class="inner">
     <span class="eyebrow">A Saturday in June</span>
-    <h2 class="big" style="margin-top:.4rem">Three people, <span class="gold">one Georgetown Saturday.</span></h2>
+    <h2 class="big" style="margin-top:.4rem">Three perspectives, <span class="gold">one Georgetown Saturday.</span></h2>
     <div class="pcards">
       <article class="pcard pv">
         <span class="pav"><img src="../assets/brand/maya-avatar.webp" alt="Maya Rivera"></span>
@@ -1211,14 +1270,14 @@ h1.big,h2.big{text-wrap:balance}
           <li><b>At stake</b><span>revenue driving past on I-70</span></li>
         </ul>
       </article>
-      <article class="pcard pe">
-        <span class="pav"><img src="../assets/brand/event-avatar.webp" alt="Emma Carter"></span>
-        <div class="pnm">Emma Carter</div>
-        <span class="ptag">Event</span>
+      <article class="pcard pe town">
+        <span class="pav sq"><img src="../assets/imagery/i70-georgetown.webp" alt="Georgetown"></span>
+        <div class="pnm">Georgetown</div>
+        <span class="ptag">The Town</span>
         <ul class="ppts">
-          <li><b>Profile</b><span>fall festival · traveling with 7 friends</span></li>
-          <li><b>Needs</b><span>lodging, dinner &amp; tickets tonight</span></li>
-          <li><b>At stake</b><span>8 visitors — local spend or gone</span></li>
+          <li><b>Profile</b><span>historic Main-Street town off I-70</span></li>
+          <li><b>Wants</b><span>overnight stays &amp; Main-Street spend</span></li>
+          <li><b>At stake</b><span>its tax base &amp; a Main Street that lasts</span></li>
         </ul>
       </article>
     </div>
@@ -1234,14 +1293,14 @@ h1.big,h2.big{text-wrap:balance}
   <div class="inner two">
     <div>
       <span class="eyebrow">What Georgetown captures today</span>
-      <h1 class="big">12 million cars a year — <span class="red">and a sliver of the spend.</span></h1>
-      <p class="lead" style="margin-top:1.2rem">Maya is one of roughly 12 million vehicles a year. Fewer than 1 in 50 actually stops — and of the bookings that do happen, 15–30% leaks straight back out to the OTAs. Georgetown carries the traffic, the parking, and the trail wear, but keeps only a sliver of the spend.</p>
-      <p style="margin-top:1rem;font:400 .64rem/1.55 var(--font-body);color:hsl(var(--muted-foreground)/.72);max-width:50ch">Sources: CDOT I-70 corridor traffic counts · Colorado Tourism Office / Dean Runyan travel-impact data · Georgetown Loop Railroad &amp; Gateway Visitor Center · published OTA commission rates. OTA-leakage dollar figure is a conservative estimate.</p>
+      <h1 class="big">12,000,000 cars a year — <span class="red">and a sliver of the spend.</span></h1>
+      <p class="lead" style="margin-top:1.2rem"><img class="mava" src="../assets/brand/maya-avatar.webp" alt="Maya">Maya is just passing through — like almost everyone on <span style="white-space:nowrap">I-70</span>. The few who stop mostly book through OTAs, so Georgetown gets the traffic, not the revenue.</p>
+      <div class="src"><span class="lbl">Sources</span><p>CDOT I-70 corridor traffic counts · Colorado Tourism Office / Dean Runyan travel-impact data · Georgetown Loop Railroad &amp; Gateway Visitor Center · published OTA commission rates. OTA-leakage dollar figure is a conservative estimate.</p></div>
     </div>
     <div>
-      <div class="stat"><b>12M+</b><span>vehicles a year off I-70 past Georgetown — CDOT corridor counts</span></div>
-      <div class="stat"><b>15–30%</b><span>of every OTA booking leaves town as commission — an est. $1M+ a year out of Georgetown</span></div>
-      <div class="stat"><b>~1 in 50</b><span>of those cars actually stops — on the order of 130–230k visitors a year</span></div>
+      <div class="stat"><b>230,769</b><span>vehicles a week off I-70 past Georgetown — 12M/year ÷ 52 (CDOT)</span></div>
+      <div class="stat"><b style="color:hsl(var(--co-red-light))">15–30%</b><span>of every OTA booking leaves town as commission — an est. $1M+ a year out of Georgetown</span></div>
+      <div class="stat"><b style="color:hsl(var(--co-red-light))">~1 in 50</b><span>of those cars actually stops — on the order of 130–230k visitors a year</span></div>
     </div>
   </div>
   <div class="foot">The problem</div><div class="idx">03 / 12</div>
@@ -1254,38 +1313,46 @@ h1.big,h2.big{text-wrap:balance}
     <h2 class="rps-title">Real <span class="pw">problems</span> <span class="dash">&mdash;</span> effective <span class="sw">solutions</span></h2>
     <div class="rps">
       <div class="rps-problems">
-        <div class="ppc"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8M16 17H8M10 9H8"/></svg></span><b>Pamphlets, not real plans</b></div>
-        <div class="ppc"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg></span><b>Disconnected tourism tech</b></div>
-        <div class="ppc"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="17" x2="22" y1="8" y2="13"/><line x1="22" x2="17" y1="8" y2="13"/></svg></span><b>Drive-bys, not overnight stays</b></div>
+        <div class="ppc"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18 3 21V6l6-3 6 3 6-3v15l-6 3-6-3Z"/><path d="M9 3v15"/><path d="M15 6v15"/></svg></span><b>No real plan — so they drive past</b></div>
+        <div class="ppc"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="M2 7h20"/><path d="M12 22V7"/></svg></span><b>Invisible to the cars going by</b></div>
+        <div class="ppc"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" x2="21" y1="22" y2="22"/><line x1="6" x2="6" y1="18" y2="11"/><line x1="10" x2="10" y1="18" y2="11"/><line x1="14" x2="14" y1="18" y2="11"/><line x1="18" x2="18" y1="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg></span><b>Keeps the traffic, not the spend</b></div>
       </div>
       <div class="fw">
         <div class="fw-os"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="4" r="1.4"/><path d="m9 21 2.5-6.5L14 18v3M11.5 14.5 10 9l4 1.2 2 3.3"/></svg></span><span class="lb">All-in-one Destination OS</span></div>
         <div class="fwd">
-          <svg class="lines" viewBox="0 0 460 418" fill="none">
+          <svg class="lines" viewBox="0 0 480 460" fill="none">
         <defs>
-          <linearGradient id="gGB" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="hsl(45 95% 56%)"/><stop offset="1" stop-color="hsl(212 90% 62%)"/></linearGradient>
-          <linearGradient id="gBR" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="hsl(212 90% 62%)"/><stop offset="1" stop-color="hsl(2 86% 60%)"/></linearGradient>
-          <linearGradient id="gRG" x1="1" y1="0" x2="0" y2="0"><stop offset="0" stop-color="hsl(2 86% 60%)"/><stop offset="1" stop-color="hsl(45 95% 56%)"/></linearGradient>
+          <linearGradient id="gLT" gradientUnits="userSpaceOnUse" x1="124" y1="295" x2="209" y2="154"><stop offset="0" stop-color="hsl(2 86% 60%)"/><stop offset="1" stop-color="hsl(212 90% 62%)"/></linearGradient>
+          <linearGradient id="gTR" gradientUnits="userSpaceOnUse" x1="268" y1="149" x2="353" y2="290"><stop offset="0" stop-color="hsl(212 90% 62%)"/><stop offset="1" stop-color="hsl(45 95% 56%)"/></linearGradient>
+          <linearGradient id="gRL" gradientUnits="userSpaceOnUse" x1="331" y1="340" x2="155" y2="340"><stop offset="0" stop-color="hsl(45 95% 56%)"/><stop offset="1" stop-color="hsl(2 86% 60%)"/></linearGradient>
           <marker id="aB" markerWidth="8" markerHeight="8" refX="5.5" refY="4" orient="auto"><path d="M0 0 8 4 0 8z" fill="hsl(212 90% 62%)"/></marker>
           <marker id="aR" markerWidth="8" markerHeight="8" refX="5.5" refY="4" orient="auto"><path d="M0 0 8 4 0 8z" fill="hsl(2 86% 60%)"/></marker>
           <marker id="aG" markerWidth="8" markerHeight="8" refX="5.5" refY="4" orient="auto"><path d="M0 0 8 4 0 8z" fill="hsl(45 95% 56%)"/></marker>
           <marker id="aW" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto"><path d="M0 0 7 3.5 0 7z" fill="hsl(0 0% 100%/.5)"/></marker>
         </defs>
-        <path d="M84 332 C 24 256 88 124 192 92" stroke="url(#gGB)" stroke-width="3.4" marker-end="url(#aB)"/>
-        <path d="M268 92 C 430 124 442 286 376 332" stroke="url(#gBR)" stroke-width="3.4" marker-end="url(#aR)"/>
-        <path d="M356 400 C 280 444 180 444 104 400" stroke="url(#gRG)" stroke-width="3.4" marker-end="url(#aG)"/>
-        <path d="M230 102 L230 174" stroke="hsl(212 80% 62%/.55)" stroke-width="2.4" stroke-dasharray="2.5 4.5" marker-end="url(#aW)"/>
-        <path d="M366 348 L262 238" stroke="hsl(2 80% 60%/.5)" stroke-width="2.4" stroke-dasharray="2.5 4.5" marker-end="url(#aW)"/>
-        <path d="M94 348 L198 238" stroke="hsl(45 85% 56%/.5)" stroke-width="2.4" stroke-dasharray="2.5 4.5" marker-end="url(#aW)"/>
+        <path d="M124 295 C 109 234 149 169 209 154" stroke="url(#gLT)" stroke-width="3.4" marker-end="url(#aB)"/>
+        <path d="M268 149 C 328 164 368 229 353 290" stroke="url(#gTR)" stroke-width="3.4" marker-end="url(#aG)"/>
+        <path d="M331 340 C 285 384 201 384 155 340" stroke="url(#gRL)" stroke-width="3.4" marker-end="url(#aR)"/>
+        <path d="M240 156 L240 219" stroke="hsl(212 80% 62%/.55)" stroke-width="2.4" stroke-dasharray="2.5 4.5" marker-end="url(#aW)"/>
+        <path d="M141 314 L180 291" stroke="hsl(2 80% 60%/.5)" stroke-width="2.4" stroke-dasharray="2.5 4.5" marker-end="url(#aW)"/>
+        <path d="M339 314 L300 291" stroke="hsl(45 85% 56%/.5)" stroke-width="2.4" stroke-dasharray="2.5 4.5" marker-end="url(#aW)"/>
       </svg>
-          <div class="fw-n b" style="left:184px;top:4px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="4" r="1.4"/><path d="m9 21 2.5-6.5L14 18v3M11.5 14.5 10 9l4 1.2 2 3.3"/></svg></div>
-          <div class="fw-n g" style="left:10px;top:326px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><polyline points="16 11 18 13 22 9"/></svg></div>
-          <div class="fw-n r" style="left:358px;top:326px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></div>
-          <div class="fw-c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4 21 20 3 20Z"/><path d="M12 10v6"/><path d="m9.5 12.5 2.5-2.5 2.5 2.5"/></svg></div>
-          <div class="fw-cap">Itineraries</div>
-          <div class="fw-lab" style="left:0;top:196px">Cities / Towns</div>
-          <div class="fw-lab" style="right:0;top:196px">Visitors</div>
-          <div class="fw-lab" style="left:50%;transform:translateX(-50%);top:392px">Small Business</div>
+          <div class="fw-n b" style="left:196px;top:60px"><img src="../assets/brand/maya-avatar.webp" alt="Maya Rivera"></div>
+          <div class="fw-n r sq" style="left:52px;top:296px"><img src="../assets/imagery/i70-georgetown.webp" alt="Georgetown"></div>
+          <div class="fw-n g" style="left:340px;top:296px"><img src="../assets/brand/local-avatar.webp" alt="Marco Alvarez"></div>
+          <div class="fw-c"><img src="../assets/brand/actz-logo-color.webp" alt="ACTZ"></div>
+          <div class="fw-lab" style="left:384px;top:186px">Visitors</div>
+          <div class="fw-lab" style="left:92px;top:193px">The Town</div>
+          <div class="fw-lab" style="left:244px;top:413px">Main-St Business</div>
+          <span class="fw-tr b" style="left:293px;top:159px;width:34px;height:34px;opacity:0.9"><img src="../assets/brand/avatar-priya.jpg" alt=""></span>
+          <span class="fw-tr b" style="left:335px;top:196px;width:25px;height:25px;opacity:0.62"><img src="../assets/brand/avatar-diego.jpg" alt=""></span>
+          <span class="fw-tr b" style="left:355px;top:248px;width:18px;height:18px;opacity:0.4"><img src="../assets/brand/avatar-jordan.jpg" alt=""></span>
+          <span class="fw-tr r sq" style="left:121px;top:268px;width:34px;height:34px;opacity:0.9"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></span>
+          <span class="fw-tr r sq" style="left:135px;top:214px;width:25px;height:25px;opacity:0.62"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></span>
+          <span class="fw-tr r sq" style="left:171px;top:172px;width:18px;height:18px;opacity:0.4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></span>
+          <span class="fw-tr g" style="left:308px;top:357px;width:34px;height:34px;opacity:0.9"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m2 7 4.4-4.4A2 2 0 0 1 7.8 2h8.3a2 2 0 0 1 1.4.6L22 7"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="M2 7h20"/></svg></span>
+          <span class="fw-tr g" style="left:251px;top:373px;width:25px;height:25px;opacity:0.62"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m2 7 4.4-4.4A2 2 0 0 1 7.8 2h8.3a2 2 0 0 1 1.4.6L22 7"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="M2 7h20"/></svg></span>
+          <span class="fw-tr g" style="left:192px;top:364px;width:18px;height:18px;opacity:0.4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m2 7 4.4-4.4A2 2 0 0 1 7.8 2h8.3a2 2 0 0 1 1.4.6L22 7"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="M2 7h20"/></svg></span>
         </div>
       </div>
     </div>
@@ -1338,10 +1405,10 @@ h1.big,h2.big{text-wrap:balance}
           <div class="slf-stage slf-s2" style="--d:.12s">
             <div class="slf-people">
               <div class="slf-row" style="--d:.3s"><span class="lf-av"><img src="../assets/brand/maya-avatar.webp" alt="Maya"></span><b>Maya R.</b><span class="slf-go">→</span><span class="slf-bk">Georgetown Loop</span></div>
-              <div class="slf-row" style="--d:.4s"><span class="lf-av" style="background:linear-gradient(135deg,#2e83fa,#1e5fd0)">PS</span><b>Priya S.</b><span class="slf-go">→</span><span class="slf-bk">Lebanon Mine</span></div>
-              <div class="slf-row" style="--d:.5s"><span class="lf-av" style="background:linear-gradient(135deg,#10b981,#0a7d5a)">DM</span><b>Diego M.</b><span class="slf-go">→</span><span class="slf-bk">2-night stay</span></div>
-              <div class="slf-row" style="--d:.6s"><span class="lf-av" style="background:linear-gradient(135deg,#8b5cf6,#6d3fd0)">JK</span><b>Jordan K.</b><span class="slf-go">→</span><span class="slf-bk">Mt Bierstadt</span></div>
-              <div class="slf-row" style="--d:.7s"><span class="lf-av" style="background:linear-gradient(135deg,#FF6A2A,#de123b)">ST</span><b>Sam T.</b><span class="slf-go">→</span><span class="slf-bk">Dinner · 6th St</span></div>
+              <div class="slf-row" style="--d:.4s"><span class="lf-av"><img src="../assets/brand/avatar-priya.jpg" alt="Priya S."></span><b>Priya S.</b><span class="slf-go">→</span><span class="slf-bk">Lebanon Mine</span></div>
+              <div class="slf-row" style="--d:.5s"><span class="lf-av"><img src="../assets/brand/avatar-diego.jpg" alt="Diego M."></span><b>Diego M.</b><span class="slf-go">→</span><span class="slf-bk">2-night stay</span></div>
+              <div class="slf-row" style="--d:.6s"><span class="lf-av"><img src="../assets/brand/avatar-jordan.jpg" alt="Jordan K."></span><b>Jordan K.</b><span class="slf-go">→</span><span class="slf-bk">Mt Bierstadt</span></div>
+              <div class="slf-row" style="--d:.7s"><span class="lf-av"><img src="../assets/brand/avatar-sam.jpg" alt="Sam T."></span><b>Sam T.</b><span class="slf-go">→</span><span class="slf-bk">Dinner · 6th St</span></div>
             </div>
             <div class="slf-cap"><span class="num" data-count="5">5</span> bookings</div>
           </div>
@@ -1416,10 +1483,10 @@ h1.big,h2.big{text-wrap:balance}
           <div class="bucket"><div class="lf">
             <div class="lf-h"><span class="lf-dot"></span>Live in Georgetown now<span class="cnt">23 active</span></div>
             <div class="lf-row"><span class="lf-av"><img src="../assets/brand/maya-avatar.webp" alt="Maya"></span><div class="lf-tx"><div class="lf-nm"><b>Maya R.</b></div><div class="lf-ac">Booking the Georgetown Loop</div></div><span class="lf-t">now</span></div>
-            <div class="lf-row"><span class="lf-av" style="background:linear-gradient(135deg,#2e83fa,#1e5fd0)">PS</span><div class="lf-tx"><div class="lf-nm">Priya S.</div><div class="lf-ac">Checked in · Lebanon Mine</div></div><span class="lf-t">2m</span></div>
-            <div class="lf-row"><span class="lf-av" style="background:linear-gradient(135deg,#10b981,#0a7d5a)">DM</span><div class="lf-tx"><div class="lf-nm">Diego M.</div><div class="lf-ac">Started a 2-night stay</div></div><span class="lf-t">6m</span></div>
-            <div class="lf-row"><span class="lf-av" style="background:linear-gradient(135deg,#8b5cf6,#6d3fd0)">JK</span><div class="lf-tx"><div class="lf-nm">Jordan K.</div><div class="lf-ac">Hiking · Mt Bierstadt</div></div><span class="lf-t">11m</span></div>
-            <div class="lf-row"><span class="lf-av" style="background:linear-gradient(135deg,#FF6A2A,#de123b)">ST</span><div class="lf-tx"><div class="lf-nm">Sam T.</div><div class="lf-ac">Dinner booked · 6th St</div></div><span class="lf-t">14m</span></div>
+            <div class="lf-row"><span class="lf-av"><img src="../assets/brand/avatar-priya.jpg" alt="Priya S."></span><div class="lf-tx"><div class="lf-nm">Priya S.</div><div class="lf-ac">Checked in · Lebanon Mine</div></div><span class="lf-t">2m</span></div>
+            <div class="lf-row"><span class="lf-av"><img src="../assets/brand/avatar-diego.jpg" alt="Diego M."></span><div class="lf-tx"><div class="lf-nm">Diego M.</div><div class="lf-ac">Started a 2-night stay</div></div><span class="lf-t">6m</span></div>
+            <div class="lf-row"><span class="lf-av"><img src="../assets/brand/avatar-jordan.jpg" alt="Jordan K."></span><div class="lf-tx"><div class="lf-nm">Jordan K.</div><div class="lf-ac">Hiking · Mt Bierstadt</div></div><span class="lf-t">11m</span></div>
+            <div class="lf-row"><span class="lf-av"><img src="../assets/brand/avatar-sam.jpg" alt="Sam T."></span><div class="lf-tx"><div class="lf-nm">Sam T.</div><div class="lf-ac">Dinner booked · 6th St</div></div><span class="lf-t">14m</span></div>
             <div class="lf-foot"><span class="lf-cluster"><i style="background:linear-gradient(135deg,#2e83fa,#1e5fd0)"></i><i style="background:linear-gradient(135deg,#10b981,#0a7d5a)"></i><i style="background:linear-gradient(135deg,#f9ce1f,#FF6A2A)"></i></span><div class="lf-ac">+18 other visitors exploring town</div></div>
           </div></div>
         </div>
@@ -1489,21 +1556,53 @@ h1.big,h2.big{text-wrap:balance}
 <!-- 8B VALUE PROPOSITION (added) -->
 <section class="slide" id="s8b">
   <div class="vp-grid">
-    <div class="vp-side">
+    <div class="vp-bar">
       <div class="vp-eye">Value proposition</div>
       <div class="vp-title">Real value to everyone it touches.</div>
     </div>
+    <div class="vp-side">
+      <div class="vp-rail-head"></div>
+      <div class="vp-rail">
+        <div class="vp-rl"><span class="n">01</span>AI planning</div>
+        <div class="vp-rl"><span class="n">02</span>Direct booking</div>
+        <div class="vp-rl"><span class="n">03</span>One hub</div>
+        <div class="vp-rl"><span class="n">04</span>Experiences</div>
+        <div class="vp-rl"><span class="n">05</span>Data &amp; trust</div>
+        <div class="vp-rl"><span class="n">06</span>The payoff</div>
+      </div>
+    </div>
     <div class="vp-col vp-blue">
-      <div class="vp-head"><span class="to">To</span>Visitors</div>
-      <div class="vp-tiles"><span>Personalized AI itineraries</span><span>Book direct &middot; 20% under OTAs</span><span>One app: stay, eat &amp; do</span><span>Instant confirmation</span><span>Group planning &amp; cost-split</span><span>Local, vetted experiences</span><span>Offline-ready trip</span><span>Sustainable travel</span></div>
+      <div class="vp-head" style="--d:0.04s"><span class="vp-ava"><img src="../assets/brand/maya-avatar.webp" alt="Maya, a visitor"></span><span class="vp-htx"><span class="to">To</span><span class="nm">Visitors</span></span></div>
+      <div class="vp-tiles">
+        <div class="vp-tile" style="--d:0.10s"><span class="vp-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.27 1.27L3 12l5.83 1.93a2 2 0 0 1 1.27 1.27L12 21l1.9-5.8a2 2 0 0 1 1.27-1.27L21 12l-5.83-1.93a2 2 0 0 1-1.27-1.27z"/></svg></span><span class="vp-tl">Personalized AI itineraries</span></div>
+        <div class="vp-tile" style="--d:0.16s"><span class="vp-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" x2="5" y1="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg></span><span class="vp-tl">Book direct &mdash; 20% under OTAs</span></div>
+        <div class="vp-tile" style="--d:0.22s"><span class="vp-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg></span><span class="vp-tl">One app: stay, eat &amp; do</span></div>
+        <div class="vp-tile" style="--d:0.28s"><span class="vp-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2M13 17v2M13 11v2"/></svg></span><span class="vp-tl">Group planning &amp; cost-split</span></div>
+        <div class="vp-tile" style="--d:0.34s"><span class="vp-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg></span><span class="vp-tl">Local, vetted experiences</span></div>
+        <div class="vp-tile" style="--d:0.40s"><span class="vp-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></span><span class="vp-tl">Instant confirmation &amp; support</span></div>
+      </div>
     </div>
     <div class="vp-col vp-gold">
-      <div class="vp-head"><span class="to">To</span>Main-St Businesses</div>
-      <div class="vp-tiles"><span>Easy, free onboarding</span><span>Lower commission than OTAs</span><span>Live experiences &amp; events</span><span>Booking &amp; calendar tools</span><span>Featured in AI itineraries</span><span>Fill slow, off-peak hours</span><span>Fast direct payouts</span><span>Own the guest relationship</span></div>
+      <div class="vp-head" style="--d:0.06s"><span class="vp-ava"><img src="../assets/brand/local-avatar.webp" alt="Marco, a Main-St owner"></span><span class="vp-htx"><span class="to">To</span><span class="nm">Main-St Businesses</span></span></div>
+      <div class="vp-tiles">
+        <div class="vp-tile" style="--d:0.10s"><span class="vp-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.27 1.27L3 12l5.83 1.93a2 2 0 0 1 1.27 1.27L12 21l1.9-5.8a2 2 0 0 1 1.27-1.27L21 12l-5.83-1.93a2 2 0 0 1-1.27-1.27z"/></svg></span><span class="vp-tl">Featured in AI itineraries</span></div>
+        <div class="vp-tile" style="--d:0.16s"><span class="vp-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" x2="5" y1="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg></span><span class="vp-tl">Lower fees than OTAs</span></div>
+        <div class="vp-tile" style="--d:0.22s"><span class="vp-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg></span><span class="vp-tl">Storefront &amp; checkout to get found</span></div>
+        <div class="vp-tile" style="--d:0.28s"><span class="vp-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2M13 17v2M13 11v2"/></svg></span><span class="vp-tl">Sell live experiences &amp; events</span></div>
+        <div class="vp-tile" style="--d:0.34s"><span class="vp-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg></span><span class="vp-tl">Own the guest relationship</span></div>
+        <div class="vp-tile" style="--d:0.40s"><span class="vp-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></span><span class="vp-tl">Fast direct payouts</span></div>
+      </div>
     </div>
     <div class="vp-col vp-red">
-      <div class="vp-head"><span class="to">To the</span>Town</div>
-      <div class="vp-tiles"><span>New visitor &amp; tax revenue</span><span>Capture every lodging-tax $</span><span>Longer stays, higher spend</span><span>Real-time data you own</span><span>Manage peak-season crowds</span><span>Keep spend on Main St</span><span>Grant-ready reporting</span><span>Low-risk &middot; grant-funded</span></div>
+      <div class="vp-head" style="--d:0.08s"><span class="vp-ava"><img src="../assets/imagery/i70-georgetown.webp" alt="Georgetown"></span><span class="vp-htx"><span class="to">To the</span><span class="nm">Town</span></span></div>
+      <div class="vp-tiles">
+        <div class="vp-tile" style="--d:0.10s"><span class="vp-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.27 1.27L3 12l5.83 1.93a2 2 0 0 1 1.27 1.27L12 21l1.9-5.8a2 2 0 0 1 1.27-1.27L21 12l-5.83-1.93a2 2 0 0 1-1.27-1.27z"/></svg></span><span class="vp-tl">AI promotes all of Georgetown</span></div>
+        <div class="vp-tile" style="--d:0.16s"><span class="vp-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" x2="5" y1="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg></span><span class="vp-tl">Booking spend stays in town</span></div>
+        <div class="vp-tile" style="--d:0.22s"><span class="vp-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg></span><span class="vp-tl">Branded &lsquo;Visit Georgetown&rsquo; hub</span></div>
+        <div class="vp-tile" style="--d:0.28s"><span class="vp-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2M13 17v2M13 11v2"/></svg></span><span class="vp-tl">Longer stays, fuller weekends</span></div>
+        <div class="vp-tile" style="--d:0.34s"><span class="vp-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg></span><span class="vp-tl">Real-time visitor data you own</span></div>
+        <div class="vp-tile" style="--d:0.40s"><span class="vp-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></span><span class="vp-tl">New tax revenue &middot; grant-funded</span></div>
+      </div>
     </div>
   </div>
   <div class="foot">Value &middot; to everyone it touches</div><div class="idx">10 / 13</div>
@@ -1660,6 +1759,9 @@ if(dots[0])dots[0].classList.add('on');rf.style.width=(100/total)+'%';
 
 /* slide 5 social-loop: entrance + count-up */
 (function(){var s5=document.getElementById('s5');if(!s5)return;var dk=document.getElementById('deck');function run(){s5.querySelectorAll('[data-count]').forEach(function(el){var to=+el.dataset.count,st=null,dur=850;function step(t){if(!st)st=t;var pr=Math.min((t-st)/dur,1);el.textContent=Math.round(pr*to);if(pr<1)requestAnimationFrame(step);}requestAnimationFrame(step);});}var io2=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting){if(!s5.classList.contains('in')){s5.classList.add('in');run();}}else{s5.classList.remove('in');}});},{root:dk,threshold:.45});io2.observe(s5);})();
+
+/* slide 8b value-prop: scroll-in */
+(function(){var el=document.getElementById('s8b');if(!el)return;var dk=document.getElementById('deck');var io3=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting){el.classList.add('in');}else{el.classList.remove('in');}});},{root:dk,threshold:.35});io3.observe(el);})();
 </script>
 </body>
 </html>
