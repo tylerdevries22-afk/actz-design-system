@@ -1283,6 +1283,27 @@ h1.big,h2.big{text-wrap:balance}
 @media(prefers-reduced-motion:reduce){#s10d .roi-card{opacity:1;transform:none}#s10d .roi-bar .ret{width:var(--w)}#s10d .roi-bar .retx{width:var(--wx)}#s10d .roi-pb-dot{opacity:1}}
 @media(max-width:900px){.roi-grid{grid-template-columns:1fr}}
 
+
+/* ===== tier commission vs OTAs ===== */
+.tcomm{margin:.1rem 0 .85rem;padding:.65rem .75rem;border-radius:12px;background:hsl(0 0% 100%/.035);border:1px solid hsl(var(--co-stroke))}
+.tcard.tt1 .tcomm{border-color:hsl(var(--co-blue)/.45);background:hsl(var(--co-blue)/.08)}
+.tcard.tt2 .tcomm{border-color:hsl(var(--co-gold)/.45);background:hsl(var(--co-gold)/.08)}
+.tcard.tt3 .tcomm{border-color:hsl(var(--co-red)/.45);background:hsl(var(--co-red)/.08)}
+.tcomm-h{font:800 .54rem/1 var(--font-body);letter-spacing:.12em;text-transform:uppercase;color:hsl(var(--foreground)/.55);margin-bottom:.5rem}
+.tcomm-row{display:flex;align-items:center;gap:.5rem;margin-top:.34rem}
+.tcomm-name{font:800 .56rem/1 var(--font-body);letter-spacing:.05em;text-transform:uppercase;color:hsl(var(--foreground)/.6);width:36px;flex:none}
+.tcomm-bar{position:relative;flex:1;height:9px;border-radius:5px;background:hsl(0 0% 100%/.07);overflow:hidden}
+.tcomm-bar i{position:absolute;left:0;top:0;bottom:0;border-radius:5px}
+.tcomm-pct{font:800 .92rem/1 var(--font-display);flex:none;width:56px;text-align:right;letter-spacing:-.01em}
+.tcomm-row.ota .tcomm-bar i{background:hsl(2 52% 46%)}
+.tcomm-row.ota .tcomm-pct{color:hsl(var(--co-red-light));font-size:.8rem}
+.tcomm-row.ota .tcomm-name{color:hsl(var(--co-red-light)/.72)}
+.tcard.tt1 .tcomm-row.actz .tcomm-bar i{background:linear-gradient(90deg,hsl(var(--co-blue)),hsl(var(--co-blue-light)))}
+.tcard.tt1 .tcomm-row.actz .tcomm-pct{color:hsl(var(--co-blue-light))}
+.tcard.tt2 .tcomm-row.actz .tcomm-bar i{background:linear-gradient(90deg,hsl(40 92% 46%),hsl(var(--co-gold)))}
+.tcard.tt2 .tcomm-row.actz .tcomm-pct{color:hsl(var(--co-gold))}
+.tcard.tt3 .tcomm-row.actz .tcomm-bar i{background:linear-gradient(90deg,hsl(356 82% 52%),hsl(var(--co-red-light)))}
+.tcard.tt3 .tcomm-row.actz .tcomm-pct{color:hsl(var(--co-red-light))}
 </style>
 </head>
 <body>
@@ -1437,7 +1458,7 @@ h1.big,h2.big{text-wrap:balance}
         <ul class="pts">
           <li><span class="k">1</span><div><b>Tell ACTZ what she likes.</b><em>Six quick taps — hiking, history, good food, a budget. No four-hour planning project.</em></div></li>
           <li><span class="k">2</span><div><b>A Georgetown day from real businesses.</b><em>Georgetown Loop Railroad · a Mt-Bierstadt-area hike · a Main-St lunch · the Lebanon Silver Mine tour.</em></div></li>
-          <li><span class="k">3</span><div><b>Booked in the app — no OTA cut.</b><em>Every tap is a real reservation. Stripe pays the business direct; ACTZ takes 0%.</em></div></li>
+          <li><span class="k">3</span><div><b>Booked direct — keep ~99%.</b><em>Every tap is a real reservation. Stripe pays the business direct; ACTZ takes just ~1% &mdash; not the OTA&rsquo;s 20&ndash;30%.</em></div></li>
         </ul>
         <div class="pills"><span class="pill live"><i></i>Inside the live ACTZ app</span></div>
       </div>
@@ -1516,7 +1537,7 @@ h1.big,h2.big{text-wrap:balance}
       <div style="display:flex;flex-direction:column;justify-content:center">
         <ul class="pts">
           <li><span class="k">01</span><div><b>Get found &amp; get booked.</b><em>In Georgetown's Hub and marketplace — the visitor books the town, not Expedia.</em></div></li>
-          <li><span class="k">02</span><div><b>Keep 100% of the booking.</b><em>Stripe pays the business direct. ACTZ takes 0% revenue share — the dollars stay on Main Street.</em></div></li>
+          <li><span class="k">02</span><div><b>Keep ~99% of every booking.</b><em>Stripe pays the business direct. ACTZ takes just ~1% &mdash; vs 20&ndash;30% on OTAs &mdash; so the dollars stay on Main Street.</em></div></li>
           <li><span class="k">03</span><div><b>Fill the slow hours.</b><em>Empty 2pm tables → a same-day push to nearby visitors. The intercept, run by the business itself.</em></div></li>
         </ul>
         <div class="pills"><span class="pill live"><i></i>Every Georgetown business · listed free</span></div>
@@ -1580,7 +1601,7 @@ h1.big,h2.big{text-wrap:balance}
         <div class="cmp-col cmp-us"><span class="ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span></div>
       </div>
       <div class="cmp-row">
-        <div class="cmp-cap">Money stays in town · 0% revenue share</div>
+        <div class="cmp-cap">Money stays local · ~1% vs 20&ndash;30% commission</div>
         <div class="cmp-col"><span class="x"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></span></div>
         <div class="cmp-col"><span class="x"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></span></div>
         <div class="cmp-col"><span class="mid"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg></span></div>
@@ -1608,7 +1629,7 @@ h1.big,h2.big{text-wrap:balance}
         <div class="cmp-col cmp-us"><span class="ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span></div>
       </div>
     </div>
-    <p class="note">One council-owned platform — live booking, real-time data, and grant exports in a single account. No revenue share, no lock-in. ACTZ runs on the Town&rsquo;s flat subscription &mdash; not a cut of bookings &mdash; so businesses keep 100%, visitors skip the OTA markup, and the dollars stay in Georgetown.</p>
+    <p class="note">One council-owned platform — live booking, real-time data, and grant exports in a single account. No lock-in. ACTZ runs on a tiny ~1% booking commission (vs 20&ndash;30% on OTAs) plus the Town&rsquo;s flat subscription &mdash; so businesses keep ~99%, visitors skip the OTA markup, and the dollars stay in Georgetown.</p>
   </div>
   <div class="foot">How ACTZ compares</div><div class="idx">08 / 12</div>
 </section>
@@ -1681,9 +1702,14 @@ h1.big,h2.big{text-wrap:balance}
         <div class="tprice">$10k–$20k</div>
         <div class="tsub">Launch in 30 days — turn millions of I-70 travelers into Main-St visits.</div>
         <div class="tpill">Grant-eligible · low-risk start</div>
+        <div class="tcomm">
+          <div class="tcomm-h">Booking commission &middot; ACTZ vs OTAs</div>
+          <div class="tcomm-row actz"><span class="tcomm-name">ACTZ</span><span class="tcomm-bar"><i style="width:6%"></i></span><span class="tcomm-pct">1.5%</span></div>
+          <div class="tcomm-row ota"><span class="tcomm-name">OTAs</span><span class="tcomm-bar"><i style="width:90%"></i></span><span class="tcomm-pct">20&ndash;30%</span></div>
+        </div>
         <div class="tfeat">
           <div class="tsec">Visitor app &amp; hub</div>
-          <div class="tfrow new"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span class="ft">Book local businesses in-app</span><span class="q">0% fees</span></div>
+          <div class="tfrow new"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span class="ft">Book local businesses in-app</span><span class="q">free to list</span></div>
           <div class="tfrow new"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span class="ft">Explore Georgetown guides</span><span class="q">essentials</span></div>
           <div class="tfrow new"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span class="ft">Group planning &amp; cost-split</span><span class="q">1-tap</span></div>
           <div class="tfrow new"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span class="ft">Branded destination hub + sub-domain</span><span class="q">30-day</span></div>
@@ -1711,9 +1737,14 @@ h1.big,h2.big{text-wrap:balance}
         <div class="tprice">$25k–$50k</div>
         <div class="tsub">Operate the engine — grow visitor spend and recover every lodging-tax dollar.</div>
         <div class="tpill">Best value · fastest payback</div>
+        <div class="tcomm">
+          <div class="tcomm-h">Booking commission &middot; ACTZ vs OTAs</div>
+          <div class="tcomm-row actz"><span class="tcomm-name">ACTZ</span><span class="tcomm-bar"><i style="width:4%"></i></span><span class="tcomm-pct">1%</span></div>
+          <div class="tcomm-row ota"><span class="tcomm-name">OTAs</span><span class="tcomm-bar"><i style="width:90%"></i></span><span class="tcomm-pct">20&ndash;30%</span></div>
+        </div>
         <div class="tfeat">
           <div class="tsec">Visitor app &amp; hub</div>
-          <div class="tfrow new"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span class="ft">Book local businesses in-app</span><span class="q">0% fees</span></div>
+          <div class="tfrow new"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span class="ft">Book local businesses in-app</span><span class="q">free to list</span></div>
           <div class="tfrow new"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span class="ft">Explore Georgetown guides</span><span class="q">+ events</span></div>
           <div class="tfrow new"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span class="ft">Group planning &amp; cost-split</span><span class="q">1-tap</span></div>
           <div class="tfrow new"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span class="ft">Branded destination hub + sub-domain</span><span class="q">60-day</span></div>
@@ -1740,9 +1771,14 @@ h1.big,h2.big{text-wrap:balance}
         <div class="tprice">$50k–$150k</div>
         <div class="tsub">Lead the region — run Georgetown as smart-destination infrastructure.</div>
         <div class="tpill">Full platform · town-owned</div>
+        <div class="tcomm">
+          <div class="tcomm-h">Booking commission &middot; ACTZ vs OTAs</div>
+          <div class="tcomm-row actz"><span class="tcomm-name">ACTZ</span><span class="tcomm-bar"><i style="width:2%"></i></span><span class="tcomm-pct">0.5%</span></div>
+          <div class="tcomm-row ota"><span class="tcomm-name">OTAs</span><span class="tcomm-bar"><i style="width:90%"></i></span><span class="tcomm-pct">20&ndash;30%</span></div>
+        </div>
         <div class="tfeat">
           <div class="tsec">Visitor app &amp; hub</div>
-          <div class="tfrow new"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span class="ft">Book local businesses in-app</span><span class="q">0% fees</span></div>
+          <div class="tfrow new"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span class="ft">Book local businesses in-app</span><span class="q">free to list</span></div>
           <div class="tfrow new"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span class="ft">Explore Georgetown guides</span><span class="q">+ AI picks</span></div>
           <div class="tfrow new"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span class="ft">Group planning &amp; cost-split</span><span class="q">1-tap</span></div>
           <div class="tfrow new"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span class="ft">Branded destination hub + sub-domain</span><span class="q">90-day</span></div>
@@ -1764,7 +1800,6 @@ h1.big,h2.big{text-wrap:balance}
         </div>
       </article>
     </div>
-    <p class="note" style="margin-top:.9rem">Every tier &mdash; 0% revenue share, and Georgetown owns its data and audience. Grant-eligible via Colorado DOLA, the Colorado Tourism Office, and federal EDA programs (subject to award).</p>
   </div>
   <div class="foot">Pricing &amp; tiers</div><div class="idx">11 / 13</div>
 </section>
@@ -1822,7 +1857,7 @@ h1.big,h2.big{text-wrap:balance}
         <span class="roi-pb-dot t3" style="left:62%"><i></i><b>Tier 3 · ~15mo</b></span>
       </div>
     </div>
-    <p class="roi-src">Model: CDOT I-70 corridor counts (~12M vehicles/yr) &middot; Colorado Tourism Office / Dean Runyan per-visitor spend ($96 day, $437 overnight) &middot; ~130&ndash;230k Georgetown visitors/yr &middot; Georgetown 4.5% town sales tax + 2% Clear Creek lodging tax &middot; 15&ndash;30% OTA commission recapture. Blended conservative&ndash;optimistic across four levers (more stops, higher spend, day&rarr;overnight conversion, OTA recapture); 3-year horizon with a Year-1 50% adoption ramp. Illustrative estimate, not a guarantee.</p>
+    <p class="roi-src">Model: CDOT I-70 corridor counts (~12M vehicles/yr) &middot; Colorado Tourism Office / Dean Runyan per-visitor spend ($96 day, $437 overnight) &middot; ~130&ndash;230k Georgetown visitors/yr &middot; Georgetown 4.5% town sales tax + 2% Clear Creek lodging tax &middot; 15&ndash;30% OTA commission recapture. Blended conservative&ndash;optimistic across four levers (more stops, higher spend, day&rarr;overnight conversion, OTA recapture); 3-year horizon with a Year-1 50% adoption ramp. Illustrative estimate, not a guarantee. Grant-eligible via Colorado DOLA, the Colorado Tourism Office, and federal EDA programs (subject to award).</p>
   </div>
   <div class="foot">Return on investment</div><div class="idx">12 / 14</div>
 </section>
