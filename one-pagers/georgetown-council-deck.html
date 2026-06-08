@@ -1304,6 +1304,33 @@ h1.big,h2.big{text-wrap:balance}
 .tcard.tt2 .tcomm-row.actz .tcomm-pct{color:hsl(var(--co-gold))}
 .tcard.tt3 .tcomm-row.actz .tcomm-bar i{background:linear-gradient(90deg,hsl(356 82% 52%),hsl(var(--co-red-light)))}
 .tcard.tt3 .tcomm-row.actz .tcomm-pct{color:hsl(var(--co-red-light))}
+
+/* ===== ROI rebuild: worked example + payback-first tiers ===== */
+.roi-calc{margin-top:clamp(.9rem,2.2vh,1.5rem);padding:clamp(.85rem,1.7vh,1.25rem) clamp(1rem,2vw,1.5rem);border-radius:var(--r-l);background:linear-gradient(120deg,hsl(216 50% 11%/.72),hsl(216 52% 7%/.5));border:1px solid hsl(var(--co-stroke))}
+.roi-calc-h{font:800 .6rem/1 var(--font-body);letter-spacing:.12em;text-transform:uppercase;color:hsl(var(--co-gold));margin-bottom:.75rem}
+.roi-calc-h span{color:hsl(var(--foreground)/.5);font-weight:600;letter-spacing:.02em;text-transform:none}
+.roi-calc-flow{display:flex;align-items:center;gap:clamp(.5rem,1.3vw,1rem);flex-wrap:wrap}
+.rc-step{display:flex;flex-direction:column;gap:.18rem;min-width:0}
+.rc-step b{font:800 clamp(1.45rem,2.3vw,2rem)/1 var(--font-display);color:#fff;letter-spacing:-.02em}
+.rc-step span{font:500 .71rem/1.2 var(--font-body);color:hsl(var(--foreground)/.62);max-width:15ch}
+.rc-step.blue b{color:hsl(var(--co-blue-light))}
+.rc-step.gold b{color:hsl(var(--co-gold))}
+.rc-op{font:700 1.25rem/1 var(--font-display);color:hsl(var(--foreground)/.4);flex:none}
+.roi-calc-foot{margin-top:.75rem;font:500 .82rem/1.4 var(--font-body);color:hsl(var(--foreground)/.72)}
+.roi-calc-foot b{color:#fff;font-weight:700}
+.roi-scale-h{margin-top:clamp(.9rem,2.2vh,1.4rem);margin-bottom:.7rem;font:800 .64rem/1 var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:hsl(var(--foreground)/.82)}
+.roi-scale-h span{color:hsl(var(--foreground)/.45);font-weight:600;letter-spacing:.02em;text-transform:none}
+.roi-payback{margin:.35rem 0 .15rem}
+.rp-lbl{display:block;font:700 .58rem/1 var(--font-body);letter-spacing:.09em;text-transform:uppercase;color:hsl(var(--foreground)/.55)}
+.rp-big{display:block;margin:.22rem 0 .1rem;font:800 clamp(1.5rem,2.2vw,2rem)/1 var(--font-display);letter-spacing:-.01em}
+.roi-card.t1 .rp-big{color:hsl(var(--co-blue-light))}.roi-card.t2 .rp-big{color:hsl(var(--co-gold))}.roi-card.t3 .rp-big{color:hsl(var(--co-red-light))}
+.rp-sub{display:block;font:500 .68rem/1 var(--font-body);color:hsl(var(--foreground)/.5)}
+.roi-tr.dim .roi-tl{color:hsl(var(--foreground)/.4)}
+.roi-tr.dim .roi-tv{color:hsl(var(--foreground)/.62);font-weight:600}
+#s10d .roi-calc,#s10d .roi-scale-h{opacity:0;transform:translateY(14px);transition:opacity .5s var(--ease-out-expo) .05s,transform .5s var(--ease-out-expo) .05s}
+#s10d.in .roi-calc,#s10d.in .roi-scale-h{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){#s10d .roi-calc,#s10d .roi-scale-h{opacity:1;transform:none}}
+@media(max-width:760px){.roi-calc-flow{gap:.5rem}.rc-step b{font-size:1.3rem}.rc-op{font-size:1rem}}
 </style>
 </head>
 <body>
@@ -1379,7 +1406,7 @@ h1.big,h2.big{text-wrap:balance}
       <div class="src"><span class="lbl">Sources</span><p>CDOT I-70 corridor traffic counts · Colorado Tourism Office / Dean Runyan travel-impact data · Georgetown Loop Railroad &amp; Gateway Visitor Center · published OTA commission rates. OTA-leakage dollar figure is a conservative estimate.</p></div>
     </div>
     <div>
-      <div class="stat"><b>230,769</b><span>vehicles a week off I-70 past Georgetown — 12M/year ÷ 52 (CDOT)</span></div>
+      <div class="stat"><b style="color:#fff">230,769</b><span>vehicles a week off I-70 past Georgetown — 12M/year ÷ 52 (CDOT)</span></div>
       <div class="stat"><b style="color:hsl(var(--co-red-light))">15–30%</b><span>of every OTA booking leaves town as commission — an est. $400k&ndash;$1M a year out of Georgetown</span></div>
       <div class="stat"><b style="color:hsl(var(--co-red-light))">~1 in 50</b><span>of those cars actually stops — on the order of 130–230k visitors a year</span></div>
     </div>
@@ -1629,7 +1656,7 @@ h1.big,h2.big{text-wrap:balance}
         <div class="cmp-col cmp-us"><span class="ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span></div>
       </div>
     </div>
-    <p class="note">One council-owned platform — live booking, real-time data, and grant exports in a single account. No lock-in. ACTZ runs on a tiny ~1% booking commission (vs 20&ndash;30% on OTAs) plus the Town&rsquo;s flat subscription &mdash; so businesses keep ~99%, visitors skip the OTA markup, and the dollars stay in Georgetown.</p>
+    <p class="note"><b>How the money works:</b> one council-owned platform, no lock-in. The Town pays a flat subscription; Main-St businesses pay just <b>0.5&ndash;1.5%</b> (lower as the Town&rsquo;s tier rises) and keep <b>~99%</b> &mdash; vs <b>20&ndash;30%</b> on OTAs. Visitors pay less than on OTAs, and the data &amp; audience stay the Town&rsquo;s, exportable for grants.</p>
   </div>
   <div class="foot">How ACTZ compares</div><div class="idx">08 / 12</div>
 </section>
@@ -1703,7 +1730,7 @@ h1.big,h2.big{text-wrap:balance}
         <div class="tsub">Launch in 30 days — turn millions of I-70 travelers into Main-St visits.</div>
         <div class="tpill">Grant-eligible · low-risk start</div>
         <div class="tcomm">
-          <div class="tcomm-h">Booking commission &middot; ACTZ vs OTAs</div>
+          <div class="tcomm-h">Main-St commission &middot; your tier buys it down</div>
           <div class="tcomm-row actz"><span class="tcomm-name">ACTZ</span><span class="tcomm-bar"><i style="width:6%"></i></span><span class="tcomm-pct">1.5%</span></div>
           <div class="tcomm-row ota"><span class="tcomm-name">OTAs</span><span class="tcomm-bar"><i style="width:90%"></i></span><span class="tcomm-pct">20&ndash;30%</span></div>
         </div>
@@ -1738,7 +1765,7 @@ h1.big,h2.big{text-wrap:balance}
         <div class="tsub">Operate the engine — grow visitor spend and recover every lodging-tax dollar.</div>
         <div class="tpill">Best value · fastest payback</div>
         <div class="tcomm">
-          <div class="tcomm-h">Booking commission &middot; ACTZ vs OTAs</div>
+          <div class="tcomm-h">Main-St commission &middot; your tier buys it down</div>
           <div class="tcomm-row actz"><span class="tcomm-name">ACTZ</span><span class="tcomm-bar"><i style="width:4%"></i></span><span class="tcomm-pct">1%</span></div>
           <div class="tcomm-row ota"><span class="tcomm-name">OTAs</span><span class="tcomm-bar"><i style="width:90%"></i></span><span class="tcomm-pct">20&ndash;30%</span></div>
         </div>
@@ -1772,7 +1799,7 @@ h1.big,h2.big{text-wrap:balance}
         <div class="tsub">Lead the region — run Georgetown as smart-destination infrastructure.</div>
         <div class="tpill">Full platform · town-owned</div>
         <div class="tcomm">
-          <div class="tcomm-h">Booking commission &middot; ACTZ vs OTAs</div>
+          <div class="tcomm-h">Main-St commission &middot; your tier buys it down</div>
           <div class="tcomm-row actz"><span class="tcomm-name">ACTZ</span><span class="tcomm-bar"><i style="width:2%"></i></span><span class="tcomm-pct">0.5%</span></div>
           <div class="tcomm-row ota"><span class="tcomm-name">OTAs</span><span class="tcomm-bar"><i style="width:90%"></i></span><span class="tcomm-pct">20&ndash;30%</span></div>
         </div>
@@ -1809,55 +1836,52 @@ h1.big,h2.big{text-wrap:balance}
   <div class="glow"></div>
   <div class="inner">
     <span class="eyebrow">Return on investment</span>
-    <h2 class="big" style="margin-top:.4rem;font-size:clamp(1.7rem,3vw,2.7rem)">A few thousand in. <span class="gold">Hundreds of thousands back.</span></h2>
-    <p class="roi-sub">Every <b>$1 the Town invests returns ~$10&ndash;33 on Main Street</b>, and pays for itself within ~1.5 years &mdash; at near-zero net cost with grants.</p>
+    <h2 class="big" style="margin-top:.4rem;font-size:clamp(1.7rem,3vw,2.7rem)">Pays for itself &mdash; <span class="gold">then it pays the Town.</span></h2>
+    <p class="roi-sub">Even a <b>1&ndash;2% shift</b> in visitor spend covers the fee. The Town&rsquo;s investment comes back as <b>new sales tax in about a year</b>, then runs net-positive &mdash; while Main Street grows.</p>
+    <div class="roi-calc">
+      <div class="roi-calc-h">How the money converts <span>&middot; a conservative floor the pilot proves in one season</span></div>
+      <div class="roi-calc-flow">
+        <div class="rc-step"><b>1,000</b><span>drive-bys turned into overnight stays</span></div>
+        <span class="rc-op">&times;</span>
+        <div class="rc-step"><b>$437</b><span>avg overnight visitor spend</span></div>
+        <span class="rc-op">=</span>
+        <div class="rc-step blue"><b>$437k</b><span>new Main-Street spending</span></div>
+        <span class="rc-op">&rarr;</span>
+        <div class="rc-step gold"><b>~$20k</b><span>new town tax (4.5%)</span></div>
+      </div>
+      <div class="roi-calc-foot">That one move <b>more than repays a Tier-1 fee</b> &mdash; from a fraction of one percent of the 12M cars. The pilot proves the real conversion rate on Georgetown&rsquo;s own numbers, before any commitment.</div>
+    </div>
+    <div class="roi-scale-h">At full scale <span>&middot; projection, once the pilot proves the conversion</span></div>
     <div class="roi-grid">
       <article class="roi-card t1">
         <div class="roi-tier">Tier 1 · Destination Starter</div>
-        <div class="roi-hero"><span class="roi-mult">17&ndash;33<span class="x">&times;</span></span><span class="roi-mlbl">annual return<br>on Main Street</span></div>
-        <div class="roi-bar"><span class="retx" style="--wx:17%"></span><span class="ret" style="--w:8%"></span><span class="inv"></span></div>
-        <div class="roi-blbl"><b>$15k</b>/yr &rarr; <b>$0.6&ndash;1.2M</b> back over 3 yrs</div>
+        <div class="roi-payback"><span class="rp-lbl">Fee back in</span><b class="rp-big">~9&ndash;12 mo</b><span class="rp-sub">via new sales tax</span></div>
         <div class="roi-tbl">
-          <div class="roi-tr"><span class="roi-tl">Invest</span><span class="roi-tv">$10&ndash;20k/yr<small>net ~$0&ndash;10k with grants</small></span></div>
-          <div class="roi-tr"><span class="roi-tl">Town tax</span><span class="roi-tv">+$12&ndash;25k / yr</span></div>
-          <div class="roi-tr"><span class="roi-tl">Payback</span><span class="roi-tv">~9&ndash;12 months</span></div>
+          <div class="roi-tr"><span class="roi-tl">Invest</span><span class="roi-tv">$10&ndash;20k/yr<small>net ~$0&ndash;10k w/ grants</small></span></div>
+          <div class="roi-tr"><span class="roi-tl">Then ongoing</span><span class="roi-tv">+$12&ndash;25k/yr town tax</span></div>
+          <div class="roi-tr dim"><span class="roi-tl">Main St</span><span class="roi-tv">+$250&ndash;500k/yr local spend</span></div>
         </div>
       </article>
       <article class="roi-card t2">
         <div class="roi-tier">Tier 2 · Growth OS</div>
-        <div class="roi-hero"><span class="roi-mult">13&ndash;27<span class="x">&times;</span></span><span class="roi-mlbl">annual return<br>on Main Street</span></div>
-        <div class="roi-bar"><span class="retx" style="--wx:33%"></span><span class="ret" style="--w:17%"></span><span class="inv"></span></div>
-        <div class="roi-blbl"><b>$38k</b>/yr &rarr; <b>$1.2&ndash;2.4M</b> back over 3 yrs</div>
+        <div class="roi-payback"><span class="rp-lbl">Fee back in</span><b class="rp-big">~10&ndash;14 mo</b><span class="rp-sub">via new sales tax</span></div>
         <div class="roi-tbl">
-          <div class="roi-tr"><span class="roi-tl">Invest</span><span class="roi-tv">$25&ndash;50k/yr<small>net ~$0&ndash;25k with grants</small></span></div>
-          <div class="roi-tr"><span class="roi-tl">Town tax</span><span class="roi-tv">+$25&ndash;50k / yr</span></div>
-          <div class="roi-tr"><span class="roi-tl">Payback</span><span class="roi-tv">~10&ndash;14 months</span></div>
+          <div class="roi-tr"><span class="roi-tl">Invest</span><span class="roi-tv">$25&ndash;50k/yr<small>net ~$0&ndash;25k w/ grants</small></span></div>
+          <div class="roi-tr"><span class="roi-tl">Then ongoing</span><span class="roi-tv">+$25&ndash;50k/yr town tax</span></div>
+          <div class="roi-tr dim"><span class="roi-tl">Main St</span><span class="roi-tv">+$500k&ndash;1.0M/yr local spend</span></div>
         </div>
       </article>
       <article class="roi-card t3">
         <div class="roi-tier">Tier 3 · Smart Infrastructure</div>
-        <div class="roi-hero"><span class="roi-mult">10&ndash;30<span class="x">&times;</span></span><span class="roi-mlbl">annual return<br>on Main Street</span></div>
-        <div class="roi-bar"><span class="retx" style="--wx:100%"></span><span class="ret" style="--w:33%"></span><span class="inv"></span></div>
-        <div class="roi-blbl"><b>$100k</b>/yr &rarr; <b>$2.4&ndash;7.1M</b> back over 3 yrs</div>
+        <div class="roi-payback"><span class="rp-lbl">Fee back in</span><b class="rp-big">~12&ndash;18 mo</b><span class="rp-sub">via new sales tax</span></div>
         <div class="roi-tbl">
-          <div class="roi-tr"><span class="roi-tl">Invest</span><span class="roi-tv">$50&ndash;150k/yr<small>net ~$0&ndash;75k with grants</small></span></div>
-          <div class="roi-tr"><span class="roi-tl">Town tax</span><span class="roi-tv">+$50&ndash;150k / yr</span></div>
-          <div class="roi-tr"><span class="roi-tl">Payback</span><span class="roi-tv">~12&ndash;18 months</span></div>
+          <div class="roi-tr"><span class="roi-tl">Invest</span><span class="roi-tv">$50&ndash;150k/yr<small>net ~$0&ndash;75k w/ grants</small></span></div>
+          <div class="roi-tr"><span class="roi-tl">Then ongoing</span><span class="roi-tv">+$50&ndash;150k/yr town tax</span></div>
+          <div class="roi-tr dim"><span class="roi-tl">Main St</span><span class="roi-tv">+$1.0&ndash;3.0M/yr local spend</span></div>
         </div>
       </article>
     </div>
-    <div class="roi-pb">
-      <div class="roi-pb-head">Every tier pays for itself within ~1.5 years <span>&middot; from new town tax alone &middot; Main-Street impact is immediate</span></div>
-      <div class="roi-pb-track">
-        <span class="roi-pb-ax" style="left:0">0</span>
-        <span class="roi-pb-ax" style="left:50%">12 mo</span>
-        <span class="roi-pb-ax" style="left:100%">24 mo</span>
-        <span class="roi-pb-dot t1" style="left:42%"><i></i><b>Tier 1 · ~10mo</b></span>
-        <span class="roi-pb-dot t2 lo" style="left:50%"><i></i><b>Tier 2 · ~12mo</b></span>
-        <span class="roi-pb-dot t3" style="left:62%"><i></i><b>Tier 3 · ~15mo</b></span>
-      </div>
-    </div>
-    <p class="roi-src">Model: CDOT I-70 corridor counts (~12M vehicles/yr) &middot; Colorado Tourism Office / Dean Runyan per-visitor spend ($96 day, $437 overnight) &middot; ~130&ndash;230k Georgetown visitors/yr &middot; Georgetown 4.5% town sales tax + 2% Clear Creek lodging tax &middot; 15&ndash;30% OTA commission recapture. Blended conservative&ndash;optimistic across four levers (more stops, higher spend, day&rarr;overnight conversion, OTA recapture); 3-year horizon with a Year-1 50% adoption ramp. Illustrative estimate, not a guarantee. Grant-eligible via Colorado DOLA, the Colorado Tourism Office, and federal EDA programs (subject to award).</p>
+    <p class="roi-src">Model: CDOT I-70 counts (~12M vehicles/yr) &middot; Colorado Tourism Office / Dean Runyan per-visitor spend ($96 day, $437 overnight) &middot; ~130&ndash;230k Georgetown visitors/yr &middot; Georgetown 4.5% town sales tax + 2% Clear Creek lodging tax. The worked example is a conservative floor; the tier figures are full-scale projections (Year-1 ramp) the pilot is designed to prove. Illustrative, not a guarantee. Grant-eligible via Colorado DOLA, the Colorado Tourism Office, and federal EDA programs (subject to award).</p>
   </div>
   <div class="foot">Return on investment</div><div class="idx">12 / 14</div>
 </section>
