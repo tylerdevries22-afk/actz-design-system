@@ -1331,6 +1331,21 @@ h1.big,h2.big{text-wrap:balance}
 #s10d.in .roi-calc,#s10d.in .roi-scale-h{opacity:1;transform:none}
 @media(prefers-reduced-motion:reduce){#s10d .roi-calc,#s10d .roi-scale-h{opacity:1;transform:none}}
 @media(max-width:760px){.roi-calc-flow{gap:.5rem}.rc-step b{font-size:1.3rem}.rc-op{font-size:1rem}}
+
+/* ===== s3 town-capture comparison card ===== */
+.statc{padding:1.05rem 1.3rem;border-radius:var(--r-m);background:hsl(215 50% 11%/.6);border:1px solid hsl(var(--co-stroke));box-shadow:var(--shadow-inset-hi);margin-bottom:14px}
+.cmp-lbl{font:800 .56rem/1.2 var(--font-body);letter-spacing:.13em;text-transform:uppercase;color:hsl(var(--co-gold));margin-bottom:.6rem}
+.cmp-r{display:flex;align-items:center;gap:.55rem;margin-top:.4rem}
+.cmp-n{font:600 .76rem/1 var(--font-body);color:hsl(var(--foreground)/.8);width:88px;flex:none}
+.cmp-bar{position:relative;flex:1;height:10px;border-radius:5px;background:hsl(0 0% 100%/.08);overflow:hidden}
+.cmp-bar i{position:absolute;left:0;top:0;bottom:0;border-radius:5px}
+.cmp-bar i.gt{background:linear-gradient(90deg,hsl(2 82% 52%),hsl(var(--co-red-light)))}
+.cmp-bar i.is{background:linear-gradient(90deg,hsl(40 92% 46%),hsl(var(--co-gold)))}
+.cmp-v{font:800 1.02rem/1 var(--font-display);width:54px;text-align:right;flex:none;color:#fff;letter-spacing:-.01em}
+.cmp-v.gold{color:hsl(var(--co-gold))}
+.cmp-cap{margin-top:.7rem;font:400 .75rem/1.42 var(--font-body);color:hsl(var(--foreground)/.74)}
+.cmp-cap b{color:#fff;font-weight:800}
+.cmp-src{color:hsl(var(--foreground)/.45);font-size:.9em}
 </style>
 </head>
 <body>
@@ -1403,12 +1418,12 @@ h1.big,h2.big{text-wrap:balance}
       <span class="eyebrow">What Georgetown captures today</span>
       <h1 class="big">12,000,000 cars a year — <span class="red">and a sliver of the spend.</span></h1>
       <p class="lead" style="margin-top:1.2rem"><img class="mava" src="../assets/brand/maya-avatar.webp" alt="Maya">Maya is just passing through — like almost everyone on <span style="white-space:nowrap">I-70</span>. The few who stop mostly book through OTAs, so Georgetown gets the traffic, not the revenue.</p>
-      <div class="src"><span class="lbl">Sources</span><p>CDOT I-70 corridor traffic counts · Colorado Tourism Office / Dean Runyan travel-impact data · Georgetown Loop Railroad &amp; Gateway Visitor Center · published OTA commission rates. OTA-leakage dollar figure is a conservative estimate.</p></div>
+      <div class="src"><span class="lbl">Sources</span><p>CDOT I-70 corridor traffic counts · Colorado Tourism Office / Dean Runyan travel-impact data · Georgetown Loop Railroad &amp; Gateway Visitor Center · published OTA commission rates. OTA-leakage dollar figure is a conservative estimate. Sales-tax capture: Town of Georgetown (2023 audit) &amp; City of Idaho Springs financials &mdash; taxable sales implied at each town&rsquo;s rate.</p></div>
     </div>
     <div>
       <div class="stat"><b style="color:#fff">230,769</b><span>vehicles a week off I-70 past Georgetown — 12M/year ÷ 52 (CDOT)</span></div>
       <div class="stat"><b style="color:hsl(var(--co-red-light))">15–30%</b><span>of every OTA booking leaves town as commission — an est. $400k&ndash;$1M a year out of Georgetown</span></div>
-      <div class="stat"><b style="color:hsl(var(--co-red-light))">~1 in 50</b><span>of those cars actually stops — on the order of 130–230k visitors a year</span></div>
+      <div class="stat"><b style="color:hsl(var(--co-red-light))">~1 in 50</b><span>of those cars actually stops — on the order of 130–230k visitors a year</span></div><div class="statc"><div class="cmp-lbl">Same I-70 &middot; what a neighbor captures</div><div class="cmp-r"><span class="cmp-n">Georgetown</span><span class="cmp-bar"><i class="gt" style="width:41%"></i></span><b class="cmp-v">~$39M</b></div><div class="cmp-r"><span class="cmp-n">Idaho Springs</span><span class="cmp-bar"><i class="is" style="width:100%"></i></span><b class="cmp-v gold">~$96M</b></div><div class="cmp-cap"><b>~2.5&times; more</b> &mdash; same I-70, 12 miles east. <b>Tens of millions</b> in visitor spending drive past Georgetown every year. <span class="cmp-src">Audited taxable sales, 2023.</span></div></div>
     </div>
   </div>
   <div class="foot">The problem</div><div class="idx">03 / 12</div>
