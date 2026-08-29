@@ -1,0 +1,20 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "/Users/tylerdevries/actz-design-system/logs/.ab42bfc3035c7a0e084c9c1264d1f9059a34f8dd-audit.json",
+    "files": [
+        {
+            "date": 1784694839108,
+            "name": "/Users/tylerdevries/actz-design-system/logs/mcp-puppeteer-2026-07-21.log",
+            "hash": "de6b842dcb20d14a33a3caa90d3de8c51b0988ce4b34220819041f5004dbd7ce"
+        },
+        {
+            "date": 1784731646357,
+            "name": "/Users/tylerdevries/actz-design-system/logs/mcp-puppeteer-2026-07-22.log",
+            "hash": "cac9cd774b1fc0f6c7fdbb9145581d31967d22e3274952270e251ab128fcb47c"
+        }
+    ],
+    "hashType": "sha256"
+}

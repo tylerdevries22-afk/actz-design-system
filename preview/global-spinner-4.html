@@ -25,6 +25,22 @@
     0%,100% { transform:scale(.97); opacity:.65 }
     50%     { transform:scale(1.04); opacity:1  }
   }
+  @keyframes sonar-cycle-blue {
+    0%, 27%    { opacity:1 }
+    33%, 61%   { opacity:0 }
+    67%, 94%   { opacity:0 }
+    100%       { opacity:1 }
+  }
+  @keyframes sonar-cycle-red {
+    0%, 27%    { opacity:0 }
+    33%, 61%   { opacity:1 }
+    67%, 100%  { opacity:0 }
+  }
+  @keyframes sonar-cycle-yellow {
+    0%, 61%    { opacity:0 }
+    67%, 94%   { opacity:1 }
+    100%       { opacity:0 }
+  }
 
   /* Chromatic Ripple (V3) */
   @keyframes cr-breathe {
@@ -162,7 +178,7 @@
 <div class="page-header">
   <div class="eyebrow">UI Kit · App</div>
   <h1>Global Spinner 4</h1>
-  <p>Prism Orbit · Sonar Pulse · Chromatic Ripple · Heartbeat · Prismatic Source · Specular Glass · Prism Flux. Pure black field, GS2 palette + WWDC26 prismatic glass physics.</p>
+  <p>Prism Orbit · Sonar Pulse · Sonar Pulse Cycle · Chromatic Ripple · Heartbeat · Prismatic Source · Specular Glass · Prism Flux. Pure black field, GS2 palette + WWDC26 prismatic glass physics.</p>
 </div>
 
 <div id="root"></div>
@@ -248,6 +264,45 @@
   // ═══════════════════════════════════════════════════════════════════════════
   const SP_N = 6, SP_W = 116, SP_DUR = 5.4, SP_STG = SP_DUR / SP_N;
   const SP_BLUE = { gc:"#0E35B0", bc:"#08193A", mc:"#2A6EF5", hc:"#A2CCFF" };
+  const SPC_DUR = SP_DUR * 3;
+  const SPC_COLORS = [
+    {
+      key:"blue",
+      className:"sonar-cycle-blue",
+      amb:"#0A2060",
+      glass:{ gc:"#0E35B0", bc:"#08193A", mc:"#2A6EF5", hc:"#A2CCFF" },
+      stops:[
+        { offset:"0%", color:"#A8D2FF", opacity:"1" },
+        { offset:"40%", color:"#2A6EF5", opacity:".92" },
+        { offset:"72%", color:"#0E35B0", opacity:".78" },
+        { offset:"100%", color:"#071C58", opacity:".42" },
+      ],
+    },
+    {
+      key:"red",
+      className:"sonar-cycle-red",
+      amb:"#36030A",
+      glass:{ gc:"#7E001B", bc:"#2A0308", mc:"#E11245", hc:"#FF9AA8" },
+      stops:[
+        { offset:"0%", color:"#FFE2E6", opacity:"1" },
+        { offset:"32%", color:"#FF6B7A", opacity:".96" },
+        { offset:"64%", color:"#DE124E", opacity:".84" },
+        { offset:"100%", color:"#7E001B", opacity:".46" },
+      ],
+    },
+    {
+      key:"yellow",
+      className:"sonar-cycle-yellow",
+      amb:"#332400",
+      glass:{ gc:"#7A5A00", bc:"#2C2200", mc:"#F1C923", hc:"#FFF1A8" },
+      stops:[
+        { offset:"0%", color:"#FFF8D0", opacity:"1" },
+        { offset:"34%", color:"#FFE06A", opacity:".98" },
+        { offset:"66%", color:"#F1C923", opacity:".84" },
+        { offset:"100%", color:"#7A5A00", opacity:".48" },
+      ],
+    },
+  ];
 
   function SonarPulse() {
     const ph = SP_W * R;
@@ -276,6 +331,74 @@
             <Glass d={TRI} fid="sp-f" c={SP_BLUE}/>
           </svg>
         </g>
+      </svg>
+    );
+  }
+
+  function GradientGlass({ d, fid, gid, c }) {
+    const p = { fill:"none", strokeLinejoin:"round", vectorEffect:"non-scaling-stroke" };
+    return (
+      <>
+        <path {...p} d={d} stroke={`url(#${gid})`} strokeWidth="28" opacity=".42" filter={`url(#${fid})`}/>
+        <path {...p} d={d} stroke={c.gc} strokeWidth="24" opacity=".36" filter={`url(#${fid})`}/>
+        <path {...p} d={d} stroke="#000"  strokeWidth="20"/>
+        <path {...p} d={d} stroke={c.bc}  strokeWidth="14"/>
+        <path {...p} d={d} stroke={`url(#${gid})`} strokeWidth="9"/>
+        <path {...p} d={d} stroke={c.hc}  strokeWidth="4.5"/>
+        <path {...p} d={d} stroke="#fff"  strokeWidth="1.5" opacity=".82"/>
+      </>
+    );
+  }
+
+  function SonarPulseCycleLayer({ palette, ph }) {
+    return (
+      <g style={{
+        animation:`${palette.className} ${SPC_DUR}s ease-in-out infinite`,
+        willChange:"opacity",
+      }}>
+        <ellipse cx="0" cy="0" rx="285" ry="260" fill={`url(#spc-amb-${palette.key})`}/>
+        {Array.from({ length: SP_N }, (_, i) => (
+          <g key={i} style={{ transformOrigin:"0px 0px",
+            animation:`pulse-ring ${SP_DUR}s ${(i*SP_STG).toFixed(2)}s linear infinite`,
+            willChange:"transform,opacity" }}>
+            <svg viewBox={TRI_VB} x={-SP_W/2} y={-ph/2} width={SP_W} height={ph} overflow="visible">
+              <GradientGlass d={TRI} fid="spc-f" gid={`spc-g-${palette.key}`} c={palette.glass}/>
+            </svg>
+          </g>
+        ))}
+        <g style={{ transformOrigin:"0px 0px",
+          animation:"breathe 2.8s ease-in-out infinite", willChange:"transform,opacity" }}>
+          <svg viewBox={TRI_VB} x={-SP_W/2} y={-ph/2} width={SP_W} height={ph} overflow="visible">
+            <GradientGlass d={TRI} fid="spc-f" gid={`spc-g-${palette.key}`} c={palette.glass}/>
+          </svg>
+        </g>
+      </g>
+    );
+  }
+
+  function SonarPulseCycle() {
+    const ph = SP_W * R;
+    return (
+      <svg viewBox="-205 -185 410 375" width="380" height="345" style={{ overflow:"visible" }}>
+        <defs>
+          <GlowFilter id="spc-f"/>
+          {SPC_COLORS.map(palette => (
+            <React.Fragment key={palette.key}>
+              <linearGradient id={`spc-g-${palette.key}`} x1="0.5" y1="1" x2="0.5" y2="0" gradientUnits="objectBoundingBox">
+                {palette.stops.map(stop => (
+                  <stop key={stop.offset} offset={stop.offset} stopColor={stop.color} stopOpacity={stop.opacity}/>
+                ))}
+              </linearGradient>
+              <radialGradient id={`spc-amb-${palette.key}`} cx="50%" cy="50%" r="50%">
+                <stop offset="0%"   stopColor={palette.amb} stopOpacity=".2"/>
+                <stop offset="100%" stopColor="#000"       stopOpacity="0"/>
+              </radialGradient>
+            </React.Fragment>
+          ))}
+        </defs>
+        {SPC_COLORS.map(palette => (
+          <SonarPulseCycleLayer key={palette.key} palette={palette} ph={ph}/>
+        ))}
       </svg>
     );
   }
@@ -1379,6 +1502,12 @@
             <div className="vname">Sonar Pulse</div>
             <div className="vtag">Variation 02</div>
             <div className="vdesc">Glass center breathes. Six rings propagate outward — white-hot at origin, fading to void.</div>
+          </div>
+          <div className="card">
+            <div className="stage"><SonarPulseCycle/></div>
+            <div className="vname">Sonar Pulse Cycle</div>
+            <div className="vtag">Variation 02B · blue → red → yellow</div>
+            <div className="vdesc">Same pulse geometry and timing. Each full loop cross-fades the glass material from original blue to red gradient, then yellow, then resets.</div>
           </div>
           <div className="card">
             <div className="stage"><ChromaticRipple/></div>

@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "actz-may",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": ["-c", "cd /Users/tylerdevries/actz-may/.claude/worktrees/provider-finish && npm run dev"],
+      "port": 5000,
+      "autoPort": true
+    }
+  ]
+}

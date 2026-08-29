@@ -16,7 +16,7 @@
     "preview/global-spinner.html":   { "label": "UI Kit · Global Spinner",     "section": "UI Kit — App",        "status": "blue",   "sub": "sm / md / lg / xl · inline · fullScreen overlay" },
     "preview/global-spinner-2.html": { "label": "UI Kit · Global Spinner 2",   "section": "UI Kit — App",        "status": "blue",   "sub": "True North splash · loading → lock → dismiss · window.ACTZSplash API" },
     "preview/global-spinner-3.html": { "label": "UI Kit · Global Spinner 3",   "section": "UI Kit — App",        "status": "blue",   "sub": "ACTZ triangles · spinner-magic physics · sm/md/lg/xl · inline · fullScreen" },
-    "preview/global-spinner-4.html": { "label": "UI Kit · Global Spinner 4",   "section": "UI Kit — App",        "status": "blue",   "sub": "Prism Orbit · Sonar Pulse · Chromatic Ripple · Heartbeat · Prismatic Source · Specular Glass · Prism Flux · Cinematic Reveal · Neon Prism" },
+    "preview/global-spinner-4.html": { "label": "UI Kit · Global Spinner 4",   "section": "UI Kit — App",        "status": "blue",   "sub": "Prism Orbit · Sonar Pulse · Sonar Pulse Cycle · Chromatic Ripple · Heartbeat · Prismatic Source · Specular Glass · Prism Flux · Cinematic Reveal · Neon Prism" },
 
     "preview/type-pairing.html":       { "label": "Type · Brand + UI",       "section": "Type",   "status": "check"  },
     "preview/type-hero-gradient.html": { "label": "Type · Hero gradient",    "section": "Type",   "status": "blue"   },

@@ -10,12 +10,6 @@
 <link rel="stylesheet" href="../components.css">
 <script src="https://unpkg.com/lucide@latest"></script>
 <style>
-  /* Brand override: retire the red accent on this page in favour of Colorado-flag blue.
-     Recolors all --accent usages (eyebrows, capability icons, step numbers, WEEK labels,
-     footer links) red -> blue. CTAs stay gold via --primary. Hero gradient keeps its
-     gold->red->blue Colorado-flag sweep intentionally. */
-  :root { --accent: var(--co-blue); }
-
   html, body { overflow-x: hidden; }
   body { margin: 0; }
   [data-lucide] { width: 16px; height: 16px; stroke-width: 2; flex-shrink: 0; }

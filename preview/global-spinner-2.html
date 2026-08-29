@@ -67,10 +67,10 @@
 
   /* ── phone frames ── */
   .phone-row {
-    display: flex;
-    gap: 32px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(280px, 320px));
+    gap: 40px 56px;
     justify-content: center;
-    flex-wrap: wrap;
     align-items: flex-start;
   }
   .phone-slot {
@@ -86,8 +86,10 @@
     color: hsl(var(--muted-foreground));
   }
   .phone-shell {
-    width: 320px;
-    height: 693px;
+    box-sizing: border-box;
+    width: min(320px, calc(100vw - 32px));
+    height: auto;
+    aspect-ratio: 320 / 693;
     border-radius: 44px;
     background: #08090F;
     border: 2px solid rgba(255,255,255,0.12);
@@ -97,6 +99,12 @@
       inset 0 1px 0 rgba(255,255,255,0.08);
     overflow: hidden;
     position: relative;
+  }
+  @media (max-width: 760px) {
+    .phone-row { grid-template-columns: minmax(0, 320px); }
+  }
+  @media (max-width: 420px) {
+    body { padding-left: 16px; padding-right: 16px; }
   }
   /* notch pill */
   .phone-shell::before {
@@ -137,68 +145,74 @@
 
   /* ── keyframes (scoped to .splash-embed children via class prefix) ── */
   @keyframes se-ripple {
-    0%   { transform: scale(0.24); opacity: 0;   }
-    8%   { opacity: .62; }
-    22%  { opacity: .52; }
-    44%  { opacity: .28; }
-    60%  { transform: scale(7.0); opacity: 0; }
-    100% { transform: scale(7.0); opacity: 0; }
+    0%   { transform: scale(var(--se-wave-start, .01)); opacity: 0; }
+    6%   { transform: scale(calc(var(--se-wave-start, .01) + (var(--se-wave-end, 4) - var(--se-wave-start, .01)) * .035)); opacity: calc(var(--se-wave-opacity, .84) * .30); }
+    14%  { transform: scale(calc(var(--se-wave-start, .01) + (var(--se-wave-end, 4) - var(--se-wave-start, .01)) * .14)); opacity: var(--se-wave-opacity, .84); }
+    42%  { transform: scale(calc(var(--se-wave-start, .01) + (var(--se-wave-end, 4) - var(--se-wave-start, .01)) * .46)); opacity: var(--se-wave-opacity, .84); }
+    68%  { transform: scale(calc(var(--se-wave-start, .01) + (var(--se-wave-end, 4) - var(--se-wave-start, .01)) * .78)); opacity: calc(var(--se-wave-opacity, .84) * .72); }
+    88%  { transform: scale(calc(var(--se-wave-start, .01) + (var(--se-wave-end, 4) - var(--se-wave-start, .01)) * .98)); opacity: calc(var(--se-wave-opacity, .84) * .24); }
+    100% { transform: scale(var(--se-wave-end, 4)); opacity: 0; }
   }
-  @keyframes se-ringPulse {
-    0%   { scale: 1;     filter: brightness(1);    }
-    50%  { scale: 1.045; filter: brightness(1.18); }
-    100% { scale: 1;     filter: brightness(1);    }
+  @keyframes se-ripple-stroke {
+    0%, 8% { stroke-width: var(--se-ripple-width-start); }
+    38% { stroke-width: calc(var(--se-ripple-width-start) + (var(--se-ripple-width-end) - var(--se-ripple-width-start)) * .46); }
+    70% { stroke-width: calc(var(--se-ripple-width-start) + (var(--se-ripple-width-end) - var(--se-ripple-width-start)) * .84); }
+    100% { stroke-width: var(--se-ripple-width-end); }
   }
-  @keyframes se-ringSpin { to { rotate: 360deg; } }
-  @keyframes se-spin { to { transform: rotate(360deg); } }
+  @keyframes se-tunnel-frame {
+    0%   { transform: scale(var(--se-tunnel-start)); opacity: 0; }
+    14%  { opacity: var(--se-tunnel-opacity); }
+    100% { transform: scale(var(--se-tunnel-end)); opacity: var(--se-tunnel-opacity); }
+  }
 
-  .se-wrip { transform-box: view-box; transform-origin: 1450px 1450px; opacity: 0;
-    animation: se-ripple 6.0s cubic-bezier(.22,.61,.36,1) infinite; }
-  #se1-wr1  { animation-delay: 0s   }
-  #se1-wr2  { animation-delay: 0.6s }
-  #se1-wr3  { animation-delay: 1.2s }
-  #se1-wr4  { animation-delay: 1.8s }
-  #se1-wr5  { animation-delay: 2.4s }
-  #se1-wr6  { animation-delay: 3.0s }
-  #se1-wr7  { animation-delay: 3.6s }
-  #se1-wr8  { animation-delay: 4.2s }
-  #se1-wr9  { animation-delay: 4.8s }
-  #se1-wr10 { animation-delay: 5.4s }
+  .se-wrip { transform-box: view-box; transform-origin: 1450px 1423px; opacity: 0;
+    animation: se-ripple var(--se-ripple-duration, 4.2s) cubic-bezier(.16,1,.3,1) var(--se-wave-delay, 0ms) infinite both; }
+  .se-wrip path {
+    animation: se-ripple-stroke var(--se-ripple-duration, 4.2s) cubic-bezier(.16,1,.3,1) var(--se-wave-delay, 0ms) infinite both;
+  }
+  .se-ripple-paused .se-wrip,
+  .se-ripple-paused .se-wrip path { animation-play-state: paused; }
 
-  #se2-wr1  { animation-delay: 0s   }
-  #se2-wr2  { animation-delay: 0.6s }
-  #se2-wr3  { animation-delay: 1.2s }
-  #se2-wr4  { animation-delay: 1.8s }
-  #se2-wr5  { animation-delay: 2.4s }
-  #se2-wr6  { animation-delay: 3.0s }
-  #se2-wr7  { animation-delay: 3.6s }
-  #se2-wr8  { animation-delay: 4.2s }
-  #se2-wr9  { animation-delay: 4.8s }
-  #se2-wr10 { animation-delay: 5.4s }
+  /* Loading waves repeat the held red-gold-blue line recipe. */
+  #se1-wr1 path:first-child, #se1-wr4 path:first-child, #se1-wr7 path:first-child, #se1-wr10 path:first-child,
+  #se2-wr1 path:first-child, #se2-wr4 path:first-child, #se2-wr7 path:first-child, #se2-wr10 path:first-child,
+  #se3-wr1 path:first-child, #se3-wr4 path:first-child, #se3-wr7 path:first-child, #se3-wr10 path:first-child,
+  #se4-wr1 path:first-child, #se4-wr4 path:first-child, #se4-wr7 path:first-child, #se4-wr10 path:first-child {
+    stroke: #F0233C;
+    opacity: var(--se-wave-body-opacity, .72) !important;
+  }
 
-  #se3-wr1  { animation-delay: 0s   }
-  #se3-wr2  { animation-delay: 0.6s }
-  #se3-wr3  { animation-delay: 1.2s }
-  #se3-wr4  { animation-delay: 1.8s }
-  #se3-wr5  { animation-delay: 2.4s }
-  #se3-wr6  { animation-delay: 3.0s }
-  #se3-wr7  { animation-delay: 3.6s }
-  #se3-wr8  { animation-delay: 4.2s }
-  #se3-wr9  { animation-delay: 4.8s }
-  #se3-wr10 { animation-delay: 5.4s }
+  #se1-wr2 path:first-child, #se1-wr5 path:first-child, #se1-wr8 path:first-child,
+  #se2-wr2 path:first-child, #se2-wr5 path:first-child, #se2-wr8 path:first-child,
+  #se3-wr2 path:first-child, #se3-wr5 path:first-child, #se3-wr8 path:first-child,
+  #se4-wr2 path:first-child, #se4-wr5 path:first-child, #se4-wr8 path:first-child {
+    stroke: #FFC400;
+    opacity: var(--se-wave-body-opacity, .72) !important;
+  }
 
-  /* wave color overrides per embed instance */
-  #se1-wr2 path, #se1-wr6 path, #se1-wr10 path { stroke: #DE124E; }
-  #se1-wr3 path, #se1-wr7 path                  { stroke: #F1C923; }
-  #se1-wr4 path, #se1-wr8 path                  { stroke: #2D7AF5; }
+  #se1-wr3 path:first-child, #se1-wr6 path:first-child, #se1-wr9 path:first-child,
+  #se2-wr3 path:first-child, #se2-wr6 path:first-child, #se2-wr9 path:first-child,
+  #se3-wr3 path:first-child, #se3-wr6 path:first-child, #se3-wr9 path:first-child,
+  #se4-wr3 path:first-child, #se4-wr6 path:first-child, #se4-wr9 path:first-child {
+    stroke: #2C6CF2;
+    opacity: var(--se-wave-body-opacity, .72) !important;
+  }
 
-  #se2-wr2 path, #se2-wr6 path, #se2-wr10 path { stroke: #DE124E; }
-  #se2-wr3 path, #se2-wr7 path                  { stroke: #F1C923; }
-  #se2-wr4 path, #se2-wr8 path                  { stroke: #2D7AF5; }
+  .se-wrip path:last-child {
+    stroke: #FFFFFF;
+    opacity: var(--se-wave-highlight-opacity, .96);
+  }
 
-  #se3-wr2 path, #se3-wr6 path, #se3-wr10 path { stroke: #DE124E; }
-  #se3-wr3 path, #se3-wr7 path                  { stroke: #F1C923; }
-  #se3-wr4 path, #se3-wr8 path                  { stroke: #2D7AF5; }
+  .se-wrip:nth-child(1)  { --se-wave-opacity: .96;  --se-wave-body-opacity: .88; --se-wave-highlight-opacity: .96; }
+  .se-wrip:nth-child(2)  { --se-wave-opacity: .947; --se-wave-body-opacity: .84; --se-wave-highlight-opacity: .92; }
+  .se-wrip:nth-child(3)  { --se-wave-opacity: .934; --se-wave-body-opacity: .80; --se-wave-highlight-opacity: .88; }
+  .se-wrip:nth-child(4)  { --se-wave-opacity: .921; --se-wave-body-opacity: .72; --se-wave-highlight-opacity: .72; }
+  .se-wrip:nth-child(5)  { --se-wave-opacity: .908; --se-wave-body-opacity: .66; --se-wave-highlight-opacity: .62; }
+  .se-wrip:nth-child(6)  { --se-wave-opacity: .895; --se-wave-body-opacity: .60; --se-wave-highlight-opacity: .54; }
+  .se-wrip:nth-child(7)  { --se-wave-opacity: .882; --se-wave-body-opacity: .54; --se-wave-highlight-opacity: .46; }
+  .se-wrip:nth-child(8)  { --se-wave-opacity: .869; --se-wave-body-opacity: .48; --se-wave-highlight-opacity: .38; }
+  .se-wrip:nth-child(9)  { --se-wave-opacity: .856; --se-wave-body-opacity: .42; --se-wave-highlight-opacity: .32; }
+  .se-wrip:nth-child(10) { --se-wave-opacity: .843; --se-wave-body-opacity: .36; --se-wave-highlight-opacity: .26; }
 
   .se-t4 {
     transform-box: view-box;
@@ -206,33 +220,80 @@
   }
   .se-c4 { transform-box: view-box; transform-origin: 1450px 1423px; }
 
-  .se-t4.se-red    { transform-origin: 1450px 1450px;
-    animation: se-ringPulse 0.6s cubic-bezier(.45,.05,.55,.95) -0.024s infinite,
-               se-ringSpin 18s linear infinite; }
-  .se-t4.se-yellow { transform-origin: 1450px 1450px;
-    animation: se-ringPulse 0.6s cubic-bezier(.45,.05,.55,.95)  0.126s infinite,
-               se-ringSpin 18s linear infinite; }
-  .se-t4.se-blue   { transform-origin: 1450px 1450px;
-    animation: se-ringPulse 0.6s cubic-bezier(.45,.05,.55,.95)  0.256s infinite,
-               se-ringSpin 18s linear infinite; }
+  /* Loading keeps the true-north mark fixed while the outer ripples carry the motion. */
+  .se-spinning .se-t4 { animation: none; }
+  .se-spinning .se-c4 { animation: none; transform: rotate(0deg); }
 
-  .se-spinning .se-c4 { animation: se-spin 3.6s linear infinite; }
-
-  /* locked state */
-  .se-locked .se-wrip  { animation: none; opacity: 0; }
-  .se-locked .se-t4    { animation: none; }
-  .se-locked .se-c4    { animation: none; transform: rotate(0deg); }
-  .se-locked .se-ripples { opacity: 0; transition: opacity 1.4s cubic-bezier(.22,.61,.36,1); }
-
-  .se-wrip, .se-t4, .se-c4 {
-    will-change: transform, filter, opacity;
-    backface-visibility: hidden;
+  .se-tunnel {
+    display: none;
+    pointer-events: none;
+    transform-box: view-box;
+    transform-origin: 1450px 1423px;
+  }
+  .se-tunnel-frame {
+    transform-box: view-box;
+    transform-origin: 1450px 1423px;
+    opacity: 0;
+    transform: scale(.18);
+    will-change: transform, opacity;
+  }
+  .se-locking .se-tunnel { display: block; }
+  .se-locking .se-tunnel-frame {
+    animation: se-tunnel-frame var(--se-tunnel-duration, 1000ms) cubic-bezier(.16,1,.3,1) var(--se-tunnel-delay) both;
+  }
+  .se-tunnel-ready .se-tunnel { display: block; }
+  .se-tunnel-ready .se-tunnel-frame {
+    animation: none;
+    transform: scale(var(--se-tunnel-end));
+    opacity: var(--se-tunnel-opacity);
+  }
+  .se-tunnel-held .state-badge {
+    opacity: 0;
+  }
+  .tunnel-dismiss {
+    min-width: 112px;
+    padding: 9px 16px;
+    border: 1px solid hsl(var(--border) / .5);
+    border-radius: 999px;
+    background: hsl(var(--card) / .72);
+    color: hsl(var(--foreground));
+    font: 600 10px/1 var(--font-body);
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: transform .2s ease, opacity .2s ease, background-color .2s ease;
+  }
+  .tunnel-dismiss:not(:disabled):hover {
+    transform: translateY(-1px);
+    background: hsl(var(--card));
+  }
+  .tunnel-dismiss:not(:disabled):active { transform: scale(.98); }
+  .tunnel-dismiss:disabled { cursor: default; opacity: .34; }
+  .tunnel-dismiss:focus-visible {
+    outline: 2px solid hsl(var(--accent));
+    outline-offset: 3px;
   }
 
+  /* locked state */
+  .se-locked .se-wrip, .se-locked .se-wrip path { animation-play-state: paused; }
+  .se-locked .se-t4    { animation: none; }
+  .se-locked .se-c4    { animation: none; transform: rotate(0deg); }
+  .se-locked .se-ripples { opacity: 1; transition: opacity .45s cubic-bezier(.22,.61,.36,1); }
+  .se-locking .se-ripples { opacity: .22; }
+  .se-tunnel-ready .se-ripples { opacity: 0; transition: opacity .45s cubic-bezier(.22,.61,.36,1); }
+
+  .se-wrip {
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+  }
+  .se-t4, .se-c4 { will-change: transform; backface-visibility: hidden; }
+
   @media (prefers-reduced-motion: reduce) {
-    .se-wrip { animation: none !important; opacity: 0 !important; }
+    .se-wrip, .se-wrip path { animation: none !important; opacity: 0 !important; }
     .se-t4   { animation: none !important; }
     .se-c4   { animation: none !important; }
+    .se-tunnel-frame { animation: none !important; opacity: 0 !important; }
+    .tunnel-dismiss { transition: none !important; }
   }
 
   /* ── state badge overlay on phone ── */
@@ -291,6 +352,7 @@
   /* ── API reference ── */
   .api-table {
     width: 100%;
+    table-layout: fixed;
     border-collapse: collapse;
     font: 400 13px/1.5 var(--font-body);
     color: hsl(var(--foreground) / 0.8);
@@ -308,6 +370,7 @@
     padding: 12px;
     border-bottom: 1px solid hsl(var(--border) / 0.15);
     vertical-align: top;
+    overflow-wrap: anywhere;
   }
   .api-table code {
     font: 500 12px/1 monospace;
@@ -315,6 +378,7 @@
     padding: 2px 6px;
     border-radius: 4px;
     color: hsl(var(--accent));
+    overflow-wrap: anywhere;
   }
 </style>
 </head>
@@ -323,7 +387,7 @@
 <div class="page-header">
   <div class="eyebrow">UI Kit · App</div>
   <h1>Global Spinner 2 — True North</h1>
-  <p>Full-bleed splash loader for the ACTZ app. The ACTZ triangle pulses white–red–gold–blue Colorado-flag waves outward while the compass arrow spins, then decelerates to true north on app-ready. No dependencies.</p>
+  <p>Full-bleed splash loader for the ACTZ app. The upright ACTZ mark carries a continuous red-gold-blue Colorado-flag ripple field, then enters a projective triangle tunnel and holds the nested field until dismissed.</p>
 </div>
 
 <!-- ── Live phase previews ── -->
@@ -405,10 +469,10 @@
       <div class="slot-label">Locked — true north</div>
     </div>
 
-    <!-- Live demo (auto-cycling) -->
+    <!-- Live demos (auto-cycling light and dark tunnel variants) -->
     <div class="phone-slot">
-      <div class="phone-shell" id="demo-shell">
-        <div class="phone-inner">
+      <div class="phone-shell" id="demo-shell-light">
+        <div class="phone-inner se-theme-light">
           <div class="splash-embed se-spinning" id="embed3">
             <svg viewBox="0 0 2900 2900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
               <defs>
@@ -417,6 +481,7 @@
                 <filter id="e3soft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="1.5"/></filter>
               </defs>
               <g>
+                <g id="e3-tunnel" class="se-tunnel" aria-hidden="true"></g>
                 <g id="e3-ripples" class="se-ripples">
                   <g class="se-wrip" id="se3-wr1"><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="17" opacity="0.22" vector-effect="non-scaling-stroke" stroke-linejoin="round"/><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="6" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></g>
                   <g class="se-wrip" id="se3-wr2"><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="17" opacity="0.22" vector-effect="non-scaling-stroke" stroke-linejoin="round"/><path d="M 1490.7 1160.5 L 1721.07 1559.5 A 47.00 47.00 0 0 1 1680.36 1630 L 1219.64 1630 A 47.00 47.00 0 0 1 1178.93 1559.5 L 1409.3 1160.5 A 47.00 47.00 0 0 1 1490.7 1160.5 Z" fill="none" stroke="#FFFFFF" stroke-width="6" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></g>
@@ -436,10 +501,22 @@
               </g>
             </svg>
           </div>
-          <div class="state-badge" id="demo-badge">Loading</div>
+          <div class="state-badge" id="demo-light-badge" role="status" aria-live="polite">Loading</div>
         </div>
       </div>
-      <div class="slot-label">Auto-cycling demo</div>
+      <div class="slot-label">Auto-cycling · Light preview</div>
+      <button class="tunnel-dismiss" id="demo-light-dismiss" type="button" disabled>Dismiss</button>
+    </div>
+
+    <!-- Dark-mode tunnel variant; its SVG is cloned from the light variant by the shared helper. -->
+    <div class="phone-slot tunnel-slot">
+      <div class="phone-shell" id="demo-shell-dark">
+        <div class="phone-inner se-theme-dark" id="dark-demo-host">
+          <div class="state-badge" id="demo-dark-badge" role="status" aria-live="polite">Loading</div>
+        </div>
+      </div>
+      <div class="slot-label">Auto-cycling · Dark preview</div>
+      <button class="tunnel-dismiss" id="demo-dark-dismiss" type="button" disabled>Dismiss</button>
     </div>
 
   </div>
@@ -451,18 +528,18 @@
   <div class="behavior-grid">
     <div class="behavior-card">
       <div class="bc-phase bc-loading">Loading</div>
-      <div class="bc-title">Arrow spins · Waves radiate</div>
-      <div class="bc-desc">The compass arrow rotates at 3.6s/rev (locked to the 0.6s wave interval × 6). Ten waves are born one-at-a-time from the triangle centre, cycling white → red → gold → blue. Each colored ring answers with a soft pulse as a wave crosses it.</div>
+      <div class="bc-title">True north · Waves radiate</div>
+      <div class="bc-desc">The main mark stays upright while eighteen thin ripples share one 6s clock, evenly phase-shifted from the triangle centre to the edge. Each wave expands and fades through the red → gold → blue recipe, keeping the field populated without a dead handoff.</div>
     </div>
     <div class="behavior-card">
       <div class="bc-phase bc-lock">Lock</div>
-      <div class="bc-title">Ensemble deceleration</div>
-      <div class="bc-desc">On <code>ACTZSplash.appReady()</code>: the arrow captures its current rotation, then animates 1–2 full extra turns before easing onto true north (0°). Waves fade out over 1.4s. The three rings stop pulsing simultaneously — a single shared decel.</div>
+      <div class="bc-title">Lock · tunnel entry</div>
+      <div class="bc-desc">The arrow captures its current rotation and eases toward true north while 14 similar triangle frames expand from the arrow's focus point. The frame scale follows a geometric perspective ladder, creating the sensation of moving forward through the mark.</div>
     </div>
     <div class="behavior-card">
       <div class="bc-phase bc-logo">Static hold</div>
-      <div class="bc-title">True north · Ready</div>
-      <div class="bc-desc">The ACTZ triangle mark held steady — arrow pointing up, rings still, background gradient. On <code>ACTZSplash.dismiss()</code> the entire overlay fades out in 0.6s and fires <code>actz-splash:hidden</code>. Reduced-motion: static logo, no animation.</div>
+      <div class="bc-title">Triangle tunnel · Dismiss</div>
+      <div class="bc-desc">The nested red-gold-blue field holds on its final perspective frame until dismissed. The preview controls reset the cycle to Loading; a reusable integration can map the same transition to its dismiss lifecycle. Reduced-motion skips the tunnel motion and keeps the true-north mark static.</div>
     </div>
   </div>
 </div>
@@ -476,8 +553,8 @@
     </thead>
     <tbody>
       <tr><td><code>ACTZSplash.hold()</code></td><td>Call on app mount — takes control, disables the auto-preview loop.</td></tr>
-      <tr><td><code>ACTZSplash.appReady()</code></td><td>App finished loading — runs the lock/settle sequence, holds the static mark.</td></tr>
-      <tr><td><code>ACTZSplash.dismiss()</code></td><td><code>appReady()</code> + fades the overlay away after an 800ms hold.</td></tr>
+      <tr><td><code>ACTZSplash.appReady()</code></td><td>App finished loading — runs the shared lock and triangle-tunnel transition.</td></tr>
+      <tr><td><code>ACTZSplash.dismiss()</code></td><td>Dismisses the held triangle tunnel and returns control to the app.</td></tr>
       <tr><td><code>ACTZSplash.lock()</code></td><td>Alias of <code>appReady()</code>.</td></tr>
       <tr><td><code>ACTZSplash.setMinimumShowTime(ms)</code></td><td>Override the 2000ms minimum display time before lock runs.</td></tr>
     </tbody>
@@ -486,11 +563,35 @@
 
 <script>
   (function () {
-    var embed = document.getElementById('embed3');
-    var badge = document.getElementById('demo-badge');
-    var arrow = document.getElementById('e3-arrow');
-    var phase = 'loading';
-    var lockTimer, loadTimer;
+    var SVG_NS = 'http://www.w3.org/2000/svg';
+    var FRAME_COUNT = 14;
+    var FRAME_STAGGER = 42;
+    var TUNNEL_DURATION = 1000;
+    var TUNNEL_START_DELAY = 260;
+    var LOCK_DURATION = 2000;
+    var TUNNEL_PATH = 'M 1501.1 1050.1 L 1821.87 1605.7 A 59.00 59.00 0 0 1 1770.78 1694.2 L 1129.22 1694.2 A 59.00 59.00 0 0 1 1078.13 1605.7 L 1398.9 1050.1 A 59.00 59.00 0 0 1 1501.1 1050.1 Z';
+    var TUNNEL_PALETTE = [
+      { base: '#F0233C', shadow: '#4A0512', glow: '#FF8090' },
+      { base: '#FFC400', shadow: '#5A4400', glow: '#FFE890' },
+      { base: '#2C6CF2', shadow: '#0A1A4A', glow: '#86B4FF' }
+    ];
+    // Distance changes the stroke recipe so the field gains depth instead of repeating one ring.
+    var TUNNEL_STYLES = [
+      { shadowWidth: 22, bodyWidth: 14, glowWidth: 7, highlightWidth: 3, shadowOpacity: .52, bodyOpacity: .96, glowOpacity: .48, highlightOpacity: .96 },
+      { shadowWidth: 20, bodyWidth: 13, glowWidth: 6, highlightWidth: 2.4, shadowOpacity: .44, bodyOpacity: .92, glowOpacity: .36, highlightOpacity: .78 },
+      { shadowWidth: 18, bodyWidth: 12, glowWidth: 5, highlightWidth: 2, shadowOpacity: .36, bodyOpacity: .88, glowOpacity: .28, highlightOpacity: .62 },
+      { shadowWidth: 15, bodyWidth: 11, glowWidth: 4, highlightWidth: 1.6, shadowOpacity: .28, bodyOpacity: .84, glowOpacity: .22, highlightOpacity: .46 },
+      { shadowWidth: 12, bodyWidth: 9, glowWidth: 3, highlightWidth: 1.3, shadowOpacity: .22, bodyOpacity: .78, glowOpacity: .18, highlightOpacity: .32 },
+      { shadowWidth: 10, bodyWidth: 8, glowWidth: 2, highlightWidth: 1, shadowOpacity: .18, bodyOpacity: .72, glowOpacity: .14, highlightOpacity: .22 }
+    ];
+    var RIPPLE_FILTER_LIMIT = 8;
+    var RIPPLE_COUNT = 18;
+    var RIPPLE_DURATION = 6000;
+    var LOADING_DURATION = RIPPLE_DURATION;
+    var RIPPLE_PHASE_STEP = RIPPLE_DURATION / RIPPLE_COUNT;
+    var RIPPLE_START_SCALES = [.008, .011, .015, .020, .026, .033, .041, .051, .063, .078, .092, .108, .126, .146, .169, .195, .225, .260];
+    var RIPPLE_END_SCALES = [1.18, 1.52, 1.94, 2.42, 2.98, 3.65, 4.44, 5.36, 6.40, 7.55, 8.92, 10.52, 12.36, 14.53, 17.09, 20.09, 23.63, 27.78];
+    var reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     function getAngle(el) {
       try {
@@ -501,41 +602,264 @@
       } catch (e) { return 0; }
     }
 
-    function doLock() {
-      phase = 'locking';
-      badge.textContent = 'Locking…';
-      var cur = getAngle(arrow);
-      var end = (Math.floor(cur / 360) + 2) * 360;
-      embed.classList.remove('se-spinning');
-      embed.classList.add('se-locked');
-      arrow.style.transform = 'rotate(0deg)';
-      if (arrow.animate) {
-        var a = arrow.animate(
-          [{ transform: 'rotate(' + cur + 'deg)' }, { transform: 'rotate(' + end + 'deg)' }],
-          { duration: 2000, easing: 'cubic-bezier(.2,.6,.3,1)', fill: 'forwards' }
-        );
-        a.onfinish = function () { try { a.cancel(); } catch (e) {} onLocked(); };
-      } else {
-        setTimeout(onLocked, 2000);
+    function rewritePrefixes(value, fromPrefix, toPrefix) {
+      var boundary = '[^A-Za-z0-9_-]';
+      var fromPattern = new RegExp('(^|' + boundary + ')' + fromPrefix + '(?=[A-Za-z0-9_-])', 'g');
+      var seFromPattern = new RegExp('(^|' + boundary + ')se' + fromPrefix.slice(1) + '(?=[A-Za-z0-9_-])', 'g');
+      return value.replace(fromPattern, '$1' + toPrefix).replace(seFromPattern, '$1se' + toPrefix.slice(1));
+    }
+
+    function rewriteIds(root, fromPrefix, toPrefix) {
+      root.querySelectorAll('*').forEach(function (element) {
+        Array.from(element.attributes).forEach(function (attribute) {
+          var rewritten = rewritePrefixes(attribute.value, fromPrefix, toPrefix);
+          if (rewritten !== attribute.value) element.setAttribute(attribute.name, rewritten);
+        });
+      });
+    }
+
+    function appendTunnelPath(frame, color, width, opacity, filterId) {
+      var path = document.createElementNS(SVG_NS, 'path');
+      path.setAttribute('d', TUNNEL_PATH);
+      path.setAttribute('fill', 'none');
+      path.setAttribute('stroke', color);
+      path.setAttribute('stroke-width', String(width));
+      path.setAttribute('opacity', String(opacity));
+      path.setAttribute('vector-effect', 'non-scaling-stroke');
+      path.setAttribute('stroke-linejoin', 'round');
+      if (filterId) path.setAttribute('filter', 'url(#' + filterId + ')');
+      frame.appendChild(path);
+    }
+
+    function setRipplePath(path, color, width, opacity, filterId) {
+      path.setAttribute('fill', 'none');
+      path.setAttribute('stroke', color);
+      path.setAttribute('stroke-width', String(width));
+      path.setAttribute('opacity', String(opacity));
+      path.setAttribute('vector-effect', 'non-scaling-stroke');
+      path.setAttribute('stroke-linejoin', 'round');
+      path.style.setProperty('--se-ripple-width-start', Math.max(0.28, width * 0.14) + 'px');
+      path.style.setProperty('--se-ripple-width-end', width + 'px');
+      path.style.setProperty('stroke', color, 'important');
+      path.style.setProperty('opacity', String(opacity), 'important');
+      if (filterId) path.setAttribute('filter', 'url(#' + filterId + ')');
+      else path.removeAttribute('filter');
+    }
+
+    function ensureRippleCount(embed) {
+      var container = embed.querySelector('.se-ripples');
+      if (!container) return;
+      var ripples = Array.from(container.querySelectorAll('.se-wrip'));
+      if (!ripples.length) return;
+      var template = ripples[ripples.length - 1];
+      var prefix = embed.id.replace(/^embed/, 'se');
+      for (var index = ripples.length; index < RIPPLE_COUNT; index += 1) {
+        var clone = template.cloneNode(true);
+        clone.id = prefix + '-wr' + (index + 1);
+        container.appendChild(clone);
       }
     }
 
-    function onLocked() {
-      phase = 'locked';
-      badge.textContent = 'Locked · True North';
-      lockTimer = setTimeout(doReset, 3000);
+    // Loading waves use the same four-layer recipe as the held tunnel, then attenuate by distance.
+    function enhanceRippleComposition(embed) {
+      if (!embed) return;
+      ensureRippleCount(embed);
+      var filter = embed.querySelector('filter');
+      embed.querySelectorAll('.se-wrip').forEach(function (ripple, index) {
+        var paths = Array.from(ripple.querySelectorAll('path'));
+        if (!paths.length) return;
+        var sourcePath = paths[0];
+        var pathData = sourcePath.getAttribute('d');
+        var palette = TUNNEL_PALETTE[index % TUNNEL_PALETTE.length];
+        var style = TUNNEL_STYLES[Math.min(index, TUNNEL_STYLES.length - 1)];
+        var glowFilter = index < RIPPLE_FILTER_LIMIT && filter ? filter.id : '';
+        ripple.style.setProperty('--se-wave-opacity', Math.max(.52, .96 - index * .02).toFixed(3));
+        ripple.style.setProperty('--se-wave-body-opacity', Math.max(.32, .88 - index * .03).toFixed(3));
+        ripple.style.setProperty('--se-wave-highlight-opacity', Math.max(.24, .96 - index * .04).toFixed(3));
+        ripple.style.setProperty('--se-ripple-duration', RIPPLE_DURATION + 'ms');
+        ripple.style.setProperty('--se-wave-delay', (-index * RIPPLE_PHASE_STEP).toFixed(2) + 'ms');
+        ripple.style.setProperty('--se-wave-start', String(RIPPLE_START_SCALES[index]));
+        ripple.style.setProperty('--se-wave-end', String(RIPPLE_END_SCALES[index]));
+
+        var body = paths[1] || document.createElementNS(SVG_NS, 'path');
+        body.setAttribute('d', pathData);
+        if (!body.parentNode) ripple.appendChild(body);
+        setRipplePath(sourcePath, palette.shadow, style.shadowWidth, style.shadowOpacity, '');
+        setRipplePath(body, palette.base, style.bodyWidth, style.bodyOpacity, '');
+        var glow = paths[2] || document.createElementNS(SVG_NS, 'path');
+        var highlight = paths[3] || document.createElementNS(SVG_NS, 'path');
+        glow.setAttribute('d', pathData);
+        highlight.setAttribute('d', pathData);
+        if (!glow.parentNode) ripple.appendChild(glow);
+        if (!highlight.parentNode) ripple.appendChild(highlight);
+        setRipplePath(glow, palette.glow, style.glowWidth, style.glowOpacity, glowFilter);
+        setRipplePath(highlight, '#FFFFFF', style.highlightWidth, style.highlightOpacity, '');
+      });
     }
 
-    function doReset() {
-      embed.classList.add('se-spinning');
-      embed.classList.remove('se-locked');
-      arrow.style.transform = '';
-      phase = 'loading';
-      badge.textContent = 'Loading';
-      loadTimer = setTimeout(doLock, 4200);
+    function createTunnelFrames(embed) {
+      var tunnel = embed.querySelector('.se-tunnel');
+      var filter = embed.querySelector('filter');
+      if (!tunnel || tunnel.children.length) return;
+      for (var index = 0; index < FRAME_COUNT; index += 1) {
+        var startScale = 0.42;
+        var endScale = 1.12 * Math.pow(1.24, index);
+        var frame = document.createElementNS(SVG_NS, 'g');
+        var palette = TUNNEL_PALETTE[index % TUNNEL_PALETTE.length];
+        var style = TUNNEL_STYLES[Math.min(index, TUNNEL_STYLES.length - 1)];
+        var frameOpacity = index < 3
+          ? 0.90 - index * 0.03
+          : Math.max(0.24, 0.78 - (index - 3) * 0.06);
+        frame.setAttribute('class', 'se-tunnel-frame');
+        frame.style.setProperty('--se-tunnel-delay', index * FRAME_STAGGER + 'ms');
+        frame.style.setProperty('--se-tunnel-duration', TUNNEL_DURATION + 'ms');
+        frame.style.setProperty('--se-tunnel-start', String(startScale));
+        frame.style.setProperty('--se-tunnel-end', String(endScale));
+        frame.style.setProperty('--se-tunnel-opacity', String(frameOpacity));
+        appendTunnelPath(frame, palette.shadow, style.shadowWidth, style.shadowOpacity, '');
+        appendTunnelPath(frame, palette.base, style.bodyWidth, style.bodyOpacity, '');
+        appendTunnelPath(frame, palette.glow, style.glowWidth, style.glowOpacity, index < 8 && filter ? filter.id : '');
+        appendTunnelPath(frame, '#FFFFFF', style.highlightWidth, style.highlightOpacity, '');
+        tunnel.appendChild(frame);
+      }
     }
 
-    loadTimer = setTimeout(doLock, 4200);
+    function cloneDarkEmbed(source) {
+      var host = document.getElementById('dark-demo-host');
+      var badge = document.getElementById('demo-dark-badge');
+      if (!host || !badge || !source) return null;
+      var clone = source.cloneNode(true);
+      clone.id = 'embed4';
+      rewriteIds(clone, 'e3', 'e4');
+      host.insertBefore(clone, badge);
+      return clone;
+    }
+
+    function createTunnelDemo(config) {
+      var embed = config.embed;
+      var badge = config.badge;
+      var button = config.button;
+      var inner = embed.parentElement;
+      var arrow = embed.querySelector('.se-c4');
+      var phase = 'loading';
+      var loadTimer = null;
+      var lockTimer = null;
+      var tunnelTimer = null;
+      var settleAnimation = null;
+
+      function setBadge(text) {
+        if (badge) badge.textContent = text;
+      }
+
+      enhanceRippleComposition(embed);
+      createTunnelFrames(embed);
+
+      function clearTimers() {
+        clearTimeout(loadTimer);
+        clearTimeout(lockTimer);
+        clearTimeout(tunnelTimer);
+        loadTimer = null;
+        lockTimer = null;
+        tunnelTimer = null;
+        if (settleAnimation) {
+          settleAnimation.onfinish = null;
+          settleAnimation.cancel();
+          settleAnimation = null;
+        }
+      }
+
+      function finishReady(holdTunnel) {
+        phase = 'ready';
+        embed.classList.remove('se-locking');
+        embed.classList.add('se-tunnel-ready');
+        if (holdTunnel) {
+          inner.classList.add('se-tunnel-held');
+          setBadge('Ready · Dismiss');
+          button.disabled = false;
+          return;
+        }
+        setBadge('Locked · True North');
+        button.disabled = true;
+        lockTimer = setTimeout(setLoading, 3000);
+      }
+
+      function setLoading() {
+        clearTimers();
+        phase = 'loading';
+        inner.classList.remove('se-tunnel-held');
+        embed.classList.remove('se-locked', 'se-locking', 'se-tunnel-ready');
+        embed.classList.add('se-spinning');
+        arrow.style.transform = '';
+        setBadge('Loading');
+        button.disabled = true;
+        loadTimer = setTimeout(doLock, LOADING_DURATION);
+      }
+
+      function doLock() {
+        clearTimers();
+        phase = 'locking';
+        setBadge('Locking...');
+        var currentAngle = getAngle(arrow);
+        var targetAngle = (Math.floor(currentAngle / 360) + 2) * 360;
+        embed.classList.remove('se-spinning');
+        embed.classList.add('se-locked');
+        arrow.style.transform = 'rotate(0deg)';
+        if (reducedMotion) {
+          finishReady(false);
+          return;
+        }
+        tunnelTimer = setTimeout(function () { embed.classList.add('se-locking'); }, TUNNEL_START_DELAY);
+        if (!arrow.animate) {
+          lockTimer = setTimeout(function () { finishReady(true); }, LOCK_DURATION);
+          return;
+        }
+        settleAnimation = arrow.animate(
+          [
+            { transform: 'rotate(' + currentAngle + 'deg) scale(1)' },
+            { transform: 'rotate(' + targetAngle + 'deg) scale(1.18)' }
+          ],
+          { duration: LOCK_DURATION, easing: 'cubic-bezier(.2,.6,.3,1)', fill: 'forwards' }
+        );
+        settleAnimation.onfinish = function () {
+          settleAnimation.onfinish = null;
+          settleAnimation.cancel();
+          settleAnimation = null;
+          finishReady(true);
+        };
+      }
+
+      function dismiss() {
+        if (phase !== 'ready') return;
+        setLoading();
+      }
+
+      button.addEventListener('click', dismiss);
+      setLoading();
+    }
+
+    enhanceRippleComposition(document.getElementById('embed1'));
+    enhanceRippleComposition(document.getElementById('embed2'));
+    var lightEmbed = document.getElementById('embed3');
+    var liveEmbeds = [lightEmbed];
+    lightEmbed.classList.add('se-ripple-paused');
+    enhanceRippleComposition(lightEmbed);
+    var darkEmbed = cloneDarkEmbed(lightEmbed);
+    if (darkEmbed) liveEmbeds.push(darkEmbed);
+    createTunnelDemo({
+      embed: lightEmbed,
+      badge: document.getElementById('demo-light-badge'),
+      button: document.getElementById('demo-light-dismiss')
+    });
+    if (darkEmbed) {
+      createTunnelDemo({
+        embed: darkEmbed,
+        badge: document.getElementById('demo-dark-badge'),
+        button: document.getElementById('demo-dark-dismiss')
+      });
+    }
+    window.requestAnimationFrame(function () {
+      liveEmbeds.forEach(function (embed) { embed.classList.remove('se-ripple-paused'); });
+    });
   })();
 </script>
 </body>
