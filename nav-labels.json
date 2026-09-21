@@ -44,6 +44,7 @@
     "preview/brand-partners.html": { "label": "Brand · Partner strip",     "section": "Brand", "status": "orange" },
     "one-pagers/georgetown.html":  { "label": "Georgetown · One-pager",    "section": "Brand", "status": "blue"   },
     "one-pagers/georgetown-pitch-deck.html": { "label": "Georgetown · Founding-Partner Deck", "section": "Brand", "status": "blue", "sub": "10-slide pitch · live ACTZ captures + real provider & town dashboards · PPTX download" },
+    "deck/hotel/index.html": { "label": "Deck Hotel", "section": "Brand", "status": "blue", "sub": "14-slide Marriott hotel partnership deck · guest journey, attribution, dashboard, pilot, pricing, and modeled ROI" },
     "one-pagers/onboarding-audit.html": { "label": "Onboarding · Research audit", "section": "Brand", "status": "blue" }
   }
 }
