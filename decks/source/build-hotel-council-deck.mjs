@@ -26,6 +26,7 @@ import {
 } from './hotel-council/slides-retargeted.mjs';
 
 const OUT = 'one-pagers/actz-hotel-council-deck.html';
+const STANDARD_OUT = 'deck/hotel/index.html';
 
 // Council-deck arc, retargeted: cover → three perspectives → the problem →
 // what ACTZ does → one ecosystem → the property → the group loop → the
@@ -95,7 +96,9 @@ const html = `<!DOCTYPE html>
 <!-- CSS, nav script and component markup reused verbatim from the Georgetown City Council deck. -->
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>ACTZ × Marriott — Concierge Distribution Partner</title>
+<title>Deck Hotel — ACTZ × Marriott Concierge Distribution Partner</title>
+<meta name="description" content="Deck Hotel: ACTZ concierge distribution partnership for Marriott and hotel operators.">
+<script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -116,5 +119,8 @@ ${clipBoot}
 </script>
 </body></html>`;
 
-fs.writeFileSync(OUT, html);
-console.log('wrote', OUT, (fs.statSync(OUT).size / 1048576).toFixed(2), 'MB', `· ${slides.length} slides`);
+fs.mkdirSync('deck/hotel', { recursive: true });
+for (const output of [OUT, STANDARD_OUT]) {
+  fs.writeFileSync(output, html);
+  console.log('wrote', output, (fs.statSync(output).size / 1048576).toFixed(2), 'MB', `· ${slides.length} slides`);
+}

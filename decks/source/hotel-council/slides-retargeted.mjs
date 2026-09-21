@@ -5,6 +5,7 @@
 // like .tfrow (78 rows) and .roi-calc by hand and getting them subtly wrong;
 // substitution guarantees they render exactly as the town deck does.
 import { marriottTile, townSlides } from './assets.mjs';
+import { auditHotelRoi } from './copy-audit.mjs';
 
 const BADGE = '<span class="csbadge">Case study</span>';
 
@@ -101,6 +102,7 @@ const COMMON = [
   // "Main-St Businesses" and leave the stranded suffix "Partner operatores".
   ['<span class="nm">Main-St Businesses', '<span class="nm">Partner operators'],
   ['<span class="nm">Town', '<span class="nm">Marriott'],
+  ['<span class="to">To the</span><span class="nm">Marriott</span>', '<span class="to">To</span><span class="nm">Marriott</span>'],
   ['<span class="nm">Visitors', '<span class="nm">Guests'],
   ['Lead the region — run Georgetown as smart-destination infrastructure.', 'Lead the flag — roll one configuration across every property.'],
   ['multi-town', 'multi-property'],
@@ -237,7 +239,7 @@ export const s7 = renumber(retarget('s7', SAMPLE_NOTE), 8);
 export const s8 = renumber(retarget('s8'), 9);
 export const s8b = renumber(retarget('s8b'), 10);
 export const s10c = renumber(retarget('s10c'), 12);
-export const s10d = renumber(retarget('s10d'), 13);
+export const s10d = renumber(auditHotelRoi(retarget('s10d')), 13);
 
 // The council deck references its images by absolute server path. This build
 // inlines everything, so any surviving /deck/georgetown/assets/... reference
